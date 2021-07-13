@@ -49,8 +49,8 @@ var nameImageArr=["body10","body11",'body12','body13','body14','body15',
                 "body20","body21",'body22','body23','body24','body25',
                 "tower1","tower2","tower3","tower4","box",'wall',"water",
                 "brickwall","badbrickwall",'bullet',"rocket",'patron','burst',
-                'burstBig','burstSmall','barrel','barrel2','ganIcon','shop',
-                "star",'starContur'];
+                'burstBig','burstSmall','barrel',/*'barrel2',*/'ganIcon','shop',
+                "star",'starContur','gate'];
 var audio;
 var soundTrack;
 var flagSoundTrack=false;
@@ -224,8 +224,11 @@ var gateType={
     width:null,
     height:null,
     close:true,
+    color:null,
     being:false,
     direction:1,
+    squareCollision:[],
+    squareDoor:[],// массив стен открываюшей двери
 }
 // обьект линия
 var line={
@@ -469,7 +472,7 @@ function create ()// функция создание обьектов неоюх
         setOffsetMousePosXY((window.innerWidth - canvas.width)/2,
                             (window.innerHeight - canvas.height)/2);
         initKeyboardAndMouse(["KeyA","KeyS","KeyD","KeyW","KeyM","KeyB","KeyR",'ArrowLeft',
-                    'ArrowRight','ArrowUp','ArrowDown',"Enter","KeyP" ]);
+                    'ArrowRight','ArrowUp','ArrowDown',"Enter","KeyP","KeyO" ]);
         //changeColorImg(context,imageArr.get('body10'),0xb5e61dff,0xdf0d00ff);
         
         calcQuantityPanzer();
@@ -516,7 +519,10 @@ function drawAll()// нарисовать все
                 if (checkCollision(camera,boxArr[i])==true || scale<=1)
                 drawSprite(context,imageArr.get("box"),boxArr[i].x,boxArr[i].y,camera,scale);
             }
-            drawGate(gateArr[0],1);
+            for (let i=0;i<gateArr.length;i++)
+            {
+                drawGate(gateArr[i]);
+            }
             for (let i=0;i<wallArr.length;i++)
             {
                 if (wallArr[i].being==true)
@@ -652,7 +658,18 @@ function drawSprite(context,image,x,y,camera,scale)// функция вывод�
     context.drawImage(image,x-camera.x,y-camera.y);
     context.restore();
 }
-function drawTurnSprite(context,image,x,y,angle,x1,y1,camera,scale)// функция вывода спрайта на экран
+//function drawTurnCenterSprite(context,image,x,y,angle,camera,scale)// функция вывода повернутого в центре спрайта на экран
+//{
+//    if(!context || !image) return;
+//    context.save();
+//    context.translate((x+image.width/2-camera.x)*scale,
+//                        (y+image.height/2-camera.y)*scale);
+//    context.scale(scale,scale);
+//    context.rotate(angle*Math.PI/180);
+//    context.drawImage(image,-x1,-y1);
+//    context.restore();
+//}
+function drawTurnSprite(context,image,x,y,angle,x1,y1,camera,scale)// функция вывода повернутого спрайта на экран
 {
     if(!context || !image) return;
 //    context.save();
@@ -700,9 +717,12 @@ function drawPanzer(context,panzer,camera,scale)// функция рисован
     context.restore();
  //   console.log(panzer.bodyNameImage);
 }
-function drawGate(gate,dir)
+function drawGate(gate)
 {
-    if (dir==1)
+    let dir=gate.direction;
+    let gateX,gateY,gateAngle;
+    context.fillStyle=gate.color;
+    if (dir==1||dir==3)
     {
         drawSprite(context,imageArr.get("wall"),
                                     gate.x,gate.y,camera,scale);
@@ -712,9 +732,54 @@ function drawGate(gate,dir)
                                     gate.x+mapSize*4,gate.y,camera,scale);
         drawSprite(context,imageArr.get("wall"),
                                     gate.x+mapSize*4,gate.y+mapSize,camera,scale);
-        context.fillStyle="orange";
-        context.fillRect(gate.x+mapSize,gate.y,mapSize*3,mapSize*2);
         
+      //  context.fillRect(gate.x+mapSize,gate.y,mapSize*3,mapSize*2);
+        context.fillRect((gate.x+mapSize)*scale-(camera.x*camera.summMultScalingX),//-camera.x,//camera.summMultScalingX,
+                    gate.y*scale-(camera.y*camera.summMultScalingY),//-camera.y,//camera.summMultScalingY,
+                            mapSize*3*scale,mapSize*2*scale);
+        
+        if (dir==1)
+        {            
+            gateY=gate.y;    
+        }
+        else if (dir==3)
+        {
+            gateY=gate.y+mapSize;
+        }
+        gateAngle=0;
+        gateX=gate.x+mapSize;
+        
+    }
+    if (dir==2||dir==4)
+    {
+        drawSprite(context,imageArr.get("wall"),
+                                    gate.x,gate.y,camera,scale);
+        drawSprite(context,imageArr.get("wall"),
+                                    gate.x+mapSize,gate.y,camera,scale);
+        drawSprite(context,imageArr.get("wall"),
+                                    gate.x,gate.y+mapSize*4,camera,scale);
+        drawSprite(context,imageArr.get("wall"),
+                                    gate.x+mapSize,gate.y+mapSize*4,camera,scale);
+        //context.fillStyle="orange";
+        context.fillRect(gate.x*scale-(camera.x*camera.summMultScalingX),//-camera.x,//camera.summMultScalingX,
+                    (gate.y+mapSize)*scale-(camera.y*camera.summMultScalingY),//-camera.y,//camera.summMultScalingY,
+                            mapSize*2*scale,mapSize*3*scale);
+        if (dir==2)
+        {            
+            gateX=gate.x;    
+        }
+        else if (dir==4)
+        {
+            gateX=gate.x-mapSize;
+        }
+        gateAngle=90;
+        gateY=gate.y+mapSize*2;
+       //drawTurnSprite(context,imageArr.get("gate"),gate.x-mapSize,gate.y+mapSize*2,90,60,20,camera,scale);
+    }
+    if (gate.close==true)
+    {
+        drawTurnSprite(context,imageArr.get("gate"),gateX,gateY,gateAngle,
+                                                  60,20,camera,scale);
     }
 }
 //function playSoundTrack
@@ -898,6 +963,11 @@ function controlHuman()// управление программой челове
           if(shop.open==false) shop.start();
        }
         //alert(myBinSearch(80,accuracyToHits,"accuracy","hits")/*accuracyToHits[0].accuracy*/);
+    }
+    if (checkPressKey("KeyO"))
+    {
+        openGate("rgb(128,255,100)");
+        console.log("sosiska");
     }
     if (keyUpDuration("Space",100)) 
     {
@@ -1135,9 +1205,13 @@ function panzerControll(num)// функция автоуправления та�
                         panzerArr[num].angleTower+
                                 ((playerGan>=2)? 0:
                         mixingShot(panzerArr[num].accuracy)),
-                        panzerArr[num].hitAttack,playerGan,
+                        //panzerArr[num].hitAttack,
+                        playerGan==1?panzerArr[num].hitAttackPatron:
+                                        panzerArr[num].hitAttack,
+                        playerGan,
                         playerGan==3?(mouseX-mouseOffsetX+camera.x):-1,
-                        playerGan==3?(mouseY-mouseOffsetY+camera.y):-1);
+                        playerGan==3?(mouseY-mouseOffsetY+camera.y):-1
+                );
                 panzerArr[num].countAttack=0;
                 ganQuantityArr[playerGan]--;
                 console.log(panzerArr[num].x+' '+panzerArr[num].x+' '+
@@ -2127,6 +2201,25 @@ function checkCollisionArr(obj,arr)// сталкновение обьекта с
     }
     return -1;
 }
+function openGate(color)
+{
+    for (let i=0;i<gateArr.length;i++)
+    {
+        if (gateArr[i].color==color && gateArr[i].close==true)
+        {
+            gateArr[i].close=false;
+            for (let j=0;j<gateArr[i].squareDoor.length;j++)
+            {
+               let n=searchNumWall(gateArr[i].squareDoor[j].x+2,
+                                            gateArr[i].squareDoor[j].y+2) ;
+               wallArr[n].being=false;
+               
+               console.log(wallArr);
+            }
+            
+        }
+    }
+}
 function initShopImage()// инициализировать обьект магазин 
 {
     shopImage=JSON.parse(JSON.stringify(shopImageType));;
@@ -2154,7 +2247,7 @@ function initShopImage()// инициализировать обьект маг�
     deleteElemArrToNum(shopImage.lineArr,8);
     deleteElemArrToNum(shopImage.lineArr,12);
     
-    let buffer=calcLineArr(shopImage,0);
+    let     buffer=calcLineArr(shopImage,0);
     for (let j=0;j<4;j++)
     {
         shopImage.linePerimetrArr.push(buffer[j]);
@@ -2175,27 +2268,96 @@ function initShopImage()// инициализировать обьект маг�
 //    }
    
 }
-function initAllNoMoveObject()
+function addWallObject(x,y,type,solid=true)
 {
-    initShopImage();
-    gateArr.push(initGate(1));
-    boxArr=initNoMoveObject(quantityBox,box);
-    wallArr=initNoMoveObject(quantityWall,wall);
-    buffer= initNoMoveObject(quantityWater,wall,1);
-    for (let i=0;i<buffer.length;i++)
+    
+
+    let buffer;
+    if (x!=-1 && y!=-1)
     {
-        for (let j=0;j<buffer[i].lineArr.length;j++)
+       // buffer[0].x=x;
+        //buffer[0].y=y;
+        buffer= initNoMoveObject(1,wall,type,x,y);      
+
+    }
+    else
+    {
+        buffer= initNoMoveObject(1,wall,type);
+    }
+    if (solid==false)
+    {
+        for (let i=0;i<buffer.length;i++)
         {
-            buffer[i].lineArr[j].x=0;
-            buffer[i].lineArr[j].y=0;
-            buffer[i].lineArr[j].x1=0;
-            buffer[i].lineArr[j].y1=0;
+            for (let j=0;j<buffer[i].lineArr.length;j++)
+            {
+                buffer[i].lineArr[j].x=0;
+                buffer[i].lineArr[j].y=0;
+                buffer[i].lineArr[j].x1=0;
+                buffer[i].lineArr[j].y1=0;
+            }
         }
     }
     wallArr = wallArr.concat(buffer);
+    
+}
+function initAllNoMoveObject()
+{
+    initShopImage();
+    //gateArr.push(initGate(1));
+    boxArr=initNoMoveObject(quantityBox,box);
+    wallArr=initNoMoveObject(quantityWall,wall);
+    for (let i=0;i<quantityWater;i++)
+    {
+        addWallObject(-1,-1,1,false)
+    }
+//    buffer= initNoMoveObject(quantityWater,wall,1);
+//    for (let i=0;i<buffer.length;i++)
+//    {
+//        for (let j=0;j<buffer[i].lineArr.length;j++)
+//        {
+//            buffer[i].lineArr[j].x=0;
+//            buffer[i].lineArr[j].y=0;
+//            buffer[i].lineArr[j].x1=0;
+//            buffer[i].lineArr[j].y1=0;
+//        }
+//    }
+//    wallArr = wallArr.concat(buffer);
     buffer= initNoMoveObject(quantityBrickWall,wall,2);
     wallArr = wallArr.concat(buffer);
-    barrelArr=initNoMoveObject(quantityBarrel,barrel); 
+    barrelArr=initNoMoveObject(quantityBarrel,barrel);
+    let flag=false;
+    let gate;
+    do
+    {
+        flag=false;
+        gate=initGate(4);
+        for (let x=gate.x;x<=gate.x+gate.width;x+=mapSize)
+        {
+            for (let y=gate.y;y<=gate.y+gate.height;y+=mapSize)
+            {
+                if (checkPointCollisionAll(x+mapSize/2,y+mapSize/2))
+                {
+                        flag=true;
+                }
+                
+
+            }
+        }
+        if (gate.x+gate.width>mapWidth || gate.y+gate.height>mapHeight)
+        {
+            flag=true;
+        }
+    }while(flag==true); 
+    console.log(gate);
+    
+    for (let i=0;i<gate.squareCollision.length;i++)
+    {
+        addWallObject(gate.squareCollision[i].x,gate.squareCollision[i].y,3,true);
+    }
+    console.log(wallArr);
+    gateArr.push(gate);
+  
+ 
 }
 function initGate(dir)
 {
@@ -2205,42 +2367,101 @@ function initGate(dir)
    gate.y=randomInteger(1,mapHeight/mapSize-1-1)*mapSize;
    if (gate.direction==1||gate.direction==3)
    {
-       gate.width=2*mapSize;
-       gate.height=5*mapSize;
+       gate.width=5*mapSize;
+       gate.height=2*mapSize;
+       gate.squareCollision=[
+           {x:gate.x,y:gate.y},
+           {x:gate.x,y:gate.y+mapSize},
+           {x:gate.x+mapSize*4,y:gate.y},
+           {x:gate.x+mapSize*4,y:gate.y+mapSize},
+       ];
+       if (gate.direction==1)
+       {
+            gate.squareDoor=[
+                {x:gate.x+mapSize,y:gate.y},
+                {x:gate.x+mapSize*2,y:gate.y},
+                {x:gate.x+mapSize*3,y:gate.y}, 
+            ];
+            
+       }
+       if (gate.direction==3)
+       {
+            gate.squareDoor=[
+                {x:gate.x+mapSize,y:gate.y+mapSize},
+                {x:gate.x+mapSize*2,y:gate.y+mapSize},
+                {x:gate.x+mapSize*3,y:gate.y+mapSize}, 
+            ];
+            
+       }
+       
    }
    if (gate.direction==2||gate.direction==4)
    {
-       gate.width=5*mapSize;
-       gate.height=2*mapSize;
+       gate.width=2*mapSize;
+       gate.height=5*mapSize;
+          gate.squareCollision=[
+           {x:gate.x,y:gate.y},
+           {x:gate.x+mapSize,y:gate.y},
+           {x:gate.x,y:gate.y+mapSize*4},
+           {x:gate.x+mapSize,y:gate.y+mapSize*4},
+       ];
+        if (gate.direction==2)
+       {
+            gate.squareDoor=[
+                {x:gate.x+mapSize,y:gate.y+mapSize},
+                {x:gate.x+mapSize,y:gate.y+mapSize*2},
+                {x:gate.x+mapSize,y:gate.y+mapSize*3}, 
+            ];
+       }
+       if (gate.direction==4)
+       {
+            gate.squareDoor=[
+                {x:gate.x,y:gate.y+mapSize},
+                {x:gate.x,y:gate.y+mapSize*2},
+                {x:gate.x,y:gate.y+mapSize*3}, 
+            ];
+           
+       }
+       gate.squareCollision =gate.squareCollision.concat(gate.squareDoor);
    }
+   gate.color="rgb(128,255,100)";
+   gate.close=true;
    return gate;
 }
-function initNoMoveObject(quantity,object,type=0)
+function initNoMoveObject(quantity,object,type=0,xx=-1,yy=-1)
 {
     let arr=[];
     for (let i=0;i<quantity;i++)
     {
         // скопируем в него все свойства 
         arr[i]=JSON.parse(JSON.stringify(object));;
-        let flag=false;
-        let x=0;
-        let y=0;
-        do
+        if (xx==-1||yy==-1)
         {
-            flag=false;
-            x=(randomInteger(1,mapWidth/mapSize-1-1))*mapSize;
-            y=randomInteger(1,mapHeight/mapSize-1-1)*mapSize;
-            flag=checkPointCollisionAll(x+mapSize/2,y+mapSize/2);
-            if (x>=shopImage.x-mapSize && x<=shopImage.x+shopImage.width+mapSize &&
-                y>=shopImage.y-mapSize && y<=shopImage.y+shopImage.height+mapSize)
+            let flag=false;
+            let x=0;
+            let y=0;
+            do
             {
-                 flag=true;
+                flag=false;
+                x=(randomInteger(1,mapWidth/mapSize-1-1))*mapSize;
+                y=randomInteger(1,mapHeight/mapSize-1-1)*mapSize;
+                flag=checkPointCollisionAll(x+mapSize/2,y+mapSize/2);
+                if (x>=shopImage.x-mapSize && x<=shopImage.x+shopImage.width+mapSize &&
+                    y>=shopImage.y-mapSize && y<=shopImage.y+shopImage.height+mapSize)
+                {
+                     flag=true;
+                }
+
             }
-            
+            while(flag==true/*&&i>0*/);
+            arr[i].x=x;
+            arr[i].y=y;
         }
-        while(flag==true/*&&i>0*/);
-        arr[i].x=x;
-        arr[i].y=y;
+        else
+        {
+           arr[i].x=xx;
+           arr[i].y=yy; 
+        }
         arr[i].being=true;
         arr[i].type=type;
         arr[i].lineArr=calcLineArr(arr[i],i);
@@ -2634,22 +2855,26 @@ function uploadLevel()// функция обновления уровня пос
         
     
     
-    let i=0;
+    //let i=0;
     while (panzerArr.length>0)
     {
-        panzerArr.splice(i,1);
+        panzerArr.splice(0,1);
     }
     while (boxArr.length>0)
     {
-        boxArr.splice(i,1);
+        boxArr.splice(0,1);
     }
     while (wallArr.length>0)
     {
-        wallArr.splice(i,1);
+        wallArr.splice(0,1);
     }
     while (barrelArr.length>0)
     {
-        barrelArr.splice(i,1);
+        barrelArr.splice(0,1);
+    }
+    while (gateArr.length>0)
+    {
+        gateArr.splice(0,1);
     }
     initPanzers();
     initAllNoMoveObject();
@@ -2675,9 +2900,35 @@ function VectMult( ax,  ay,  bx, by)
        
 }
 
-function IsCrossing( a1x,  a1y,  a2x,  a2y,  b1x, b1y,  b2x,  b2y)
+//function IsCrossing( a1x,  a1y,  a2x,  a2y,  b1x, b1y,  b2x,  b2y)
+function   IsCrossing( x1,  y1,  x2,  y2,  x3,  y3,  x4,  y4)
 {
-
+    var a_dx = x2 - x1;
+    var a_dy = y2 - y1;
+    var b_dx = x4 - x3;
+    var b_dy = y4 - y3;
+    var s = (-a_dy * (x1 - x3) + a_dx * (y1 - y3)) / (-b_dx * a_dy + a_dx * b_dy);
+    var t = (+b_dx * (y1 - y3) - b_dy * (x1 - x3)) / (-b_dx * a_dy + a_dx * b_dy);
+    return (s >= 0 && s <= 1 && t >= 0 && t <= 1);
+//    let n;
+//    var dot=[];
+//    if (y2 - y1 != 0)
+//    {  // a(y)
+//        let q = (x2 - x1) / (y1 - y2);   
+//        let sn = (x3 - x4) + (y3 - y4) * q; 
+//        if (!sn)return false;   // c(x) + c(y)*q
+//        let fn = (x3 - x1) + (y3 - y1) * q;   // b(x) + b(y)*q
+//        n = fn / sn;
+//    }
+//    else 
+//    {
+//        if ((y3 - y4)!=0)return false;  // b(y)
+//        n = (y3 - y1) / (y3 - y4);   // c(y)/b(y)
+//    }
+//    dot[0] = x3 + (x4 - x3) * n;  // x3 + (-b(x))*n
+//    dot[1] = y3 + (y4 - y3) * n;  // y3 +(-b(y))*n
+//    console.log ('cross');
+//    return true;
 }
 
 function CrossingPoint(a1,  b1,  c1,  a2,  b2,  c2)
