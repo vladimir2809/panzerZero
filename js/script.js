@@ -230,6 +230,14 @@ var gateType={
     squareCollision:[],
     squareDoor:[],// массив стен открываюшей двери
 }
+var keyType={
+    x:null,
+    y:null,
+    being:false,
+    color:null,
+    width:null,
+    height:null,
+}
 // обьект линия
 var line={
   x:null,
@@ -315,9 +323,14 @@ text={
     str:'',
     font:'',
 }
+colorsForGate=["rgb(128,255,0)","rgb(128,255,100)","rgb(255,255,0)",
+               "rgb(255,0,0)","rgb(0,255,0)","rgb(0,0,255)",
+               "rgb(0,255,255)","rgb(128,255,128)",
+];
 boxArr=[];//массив яшиков
 wallArr=[];// массив стен
 gateArr=[];//массив дверей
+keyGateArr=[];//массив ключей для дверей
 burstArr=[];// массив взрывов
 barrelArr=[];// массив бочек
 bulletArr=[];// массив пуль
@@ -522,6 +535,10 @@ function drawAll()// нарисовать все
             for (let i=0;i<gateArr.length;i++)
             {
                 drawGate(gateArr[i]);
+            }
+            for (let i=0;i<keyGateArr.length;i++)
+            {
+                drawKeyForGate(keyGateArr[i]);
             }
             for (let i=0;i<wallArr.length;i++)
             {
@@ -781,6 +798,36 @@ function drawGate(gate)
         drawTurnSprite(context,imageArr.get("gate"),gateX,gateY,gateAngle,
                                                   60,20,camera,scale);
     }
+}
+function drawKeyForGate(keyGate)
+{
+    //context.save();
+    //context.closePath();
+    context.strokeStyle="blue";
+    context.strokeRect (keyGate.x*scale-(camera.x*camera.summMultScalingX),
+                        keyGate.y*scale-(camera.y*camera.summMultScalingY),
+                        mapSize*scale,mapSize*scale);
+    let x=keyGate.x+12;
+    let y=keyGate.y+18;
+    x=x*scale-(camera.x*camera.summMultScalingX);
+    y=y*scale-(camera.y*camera.summMultScalingY);
+    context.beginPath();
+    context.fillStyle=keyGate.color;
+    context.arc(x,y, 9*scale, 0, degressToRadian(360));
+    context.fill();
+    
+    context.closePath();
+    context.beginPath();
+    context.fillStyle="black";
+    context.arc(x, y, 3*scale, 0, degressToRadian(360));
+    context.fill();
+    
+    context.closePath();
+    context.fillStyle=keyGate.color ;
+    context.fillRect(x+6*scale, y-2*scale,17*scale,5*scale);
+    context.fillRect(x+(6+17-4)*scale,y-2*scale+5*scale,4*scale,3*scale);
+ //   context.strokeRect (keyGate.x,keyGate.y,mapSize,mapSize);
+    //context.stroke();
 }
 //function playSoundTrack
 function gameLoop(mult,visible)// игровой цикл
@@ -2325,6 +2372,11 @@ function initAllNoMoveObject()
     buffer= initNoMoveObject(quantityBrickWall,wall,2);
     wallArr = wallArr.concat(buffer);
     barrelArr=initNoMoveObject(quantityBarrel,barrel);
+    keyGateArr=initNoMoveObject(1,keyType);
+    for (let i=0;i<keyGateArr.length;i++)
+    {
+        keyGateArr[i].color=colorsForGate[randomInteger(0,7)];
+    }
     let flag=false;
     let gate;
     do
