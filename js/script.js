@@ -233,10 +233,11 @@ var gateType={
 var keyType={
     x:null,
     y:null,
+    width:mapSize,
+    height:mapSize,
     being:false,
+    state:0,
     color:null,
-    width:null,
-    height:null,
 }
 // обьект линия
 var line={
@@ -331,6 +332,7 @@ boxArr=[];//массив яшиков
 wallArr=[];// массив стен
 gateArr=[];//массив дверей
 keyGateArr=[];//массив ключей для дверей
+keyInStokArr=[];//массив ключей для дверей в наличиии у игрока
 burstArr=[];// массив взрывов
 barrelArr=[];// массив бочек
 bulletArr=[];// массив пуль
@@ -538,8 +540,20 @@ function drawAll()// нарисовать все
             }
             for (let i=0;i<keyGateArr.length;i++)
             {
-                drawKeyForGate(keyGateArr[i]);
+               if(keyGateArr[i].being==true)
+               {
+                   drawKeyForGate(keyGateArr[i]);
+               }
             }
+            for (let i=0;i<keyInStokArr.length;i++)
+            {
+                //if(keyInStokArr[i].being==true && keyInStokArr[i].state==1)
+                {
+                   drawKeyForGate(keyInStokArr[i],false,20,50+30*i);
+                }
+                
+            }
+                
             for (let i=0;i<wallArr.length;i++)
             {
                 if (wallArr[i].being==true)
@@ -799,33 +813,53 @@ function drawGate(gate)
                                                   60,20,camera,scale);
     }
 }
-function drawKeyForGate(keyGate)
+function drawKeyForGate(keyGate,rect=true,xx=-1,yy=-1)
 {
     //context.save();
     //context.closePath();
-    context.strokeStyle="blue";
-    context.strokeRect (keyGate.x*scale-(camera.x*camera.summMultScalingX),
+    let oldScale;
+    let x;
+    let y;
+    if (rect==true && xx==-1 && yy==-1)
+    {
+        context.strokeStyle="blue";
+        context.strokeRect (keyGate.x*scale-(camera.x*camera.summMultScalingX),
                         keyGate.y*scale-(camera.y*camera.summMultScalingY),
                         mapSize*scale,mapSize*scale);
-    let x=keyGate.x+12;
-    let y=keyGate.y+18;
-    x=x*scale-(camera.x*camera.summMultScalingX);
-    y=y*scale-(camera.y*camera.summMultScalingY);
+        x=keyGate.x+12;
+        y=keyGate.y+18;
+        x=x*scale-(camera.x*camera.summMultScalingX);
+        y=y*scale-(camera.y*camera.summMultScalingY);
+    }
+    else 
+    {
+        oldScale=scale;
+        scale=1;
+        x=xx;
+        y=yy;
+       // console.log("scale");
+    }
+   
     context.beginPath();
     context.fillStyle=keyGate.color;
     context.arc(x,y, 9*scale, 0, degressToRadian(360));
-    context.fill();
-    
+    context.fill(); 
     context.closePath();
+    
     context.beginPath();
-    context.fillStyle="black";
+    context.fillStyle="black";//keyGate.color;
     context.arc(x, y, 3*scale, 0, degressToRadian(360));
     context.fill();
-    
     context.closePath();
+    
     context.fillStyle=keyGate.color ;
     context.fillRect(x+6*scale, y-2*scale,17*scale,5*scale);
     context.fillRect(x+(6+17-4)*scale,y-2*scale+5*scale,4*scale,3*scale);
+    if (rect==false && xx!=-1 && yy!=-1)
+    {
+        scale=oldScale;
+    }
+    //console.log(scale);
  //   context.strokeRect (keyGate.x,keyGate.y,mapSize,mapSize);
     //context.stroke();
 }
@@ -957,6 +991,7 @@ function gameLoop(mult,visible)// игровой цикл
                 controlBullets();
                 boxAppearance();
                 burstService();
+                collisionPanzerKeyGate();
                 countIterationGameLoop++;
             }
             
@@ -2092,6 +2127,20 @@ function collisionPanzerBox(num)// столкновения танка с ящи
         //boxArr.splice(index, 1); 
     }
 }
+function collisionPanzerKeyGate()
+{
+   let num=numPanzer;
+   let index=checkCollisionArr(panzerArr[num],keyGateArr)
+   
+   if (index!=-1)
+   {
+        keyGateArr[index].being=false;
+       // keyGateArr[index].state=1;
+       keyInStokArr.push(keyGateArr[index]);
+       //console.log(keyInStokArr);
+   }
+    
+}
 function setOffsetMousePosXY(x,y)// устонавить смешения координаат для прицелевания так как экран начинается не в 0 0
 {
     mouseOffsetX=x;
@@ -2372,10 +2421,26 @@ function initAllNoMoveObject()
     buffer= initNoMoveObject(quantityBrickWall,wall,2);
     wallArr = wallArr.concat(buffer);
     barrelArr=initNoMoveObject(quantityBarrel,barrel);
-    keyGateArr=initNoMoveObject(1,keyType);
+    keyGateArr=initNoMoveObject(5,keyType);;
     for (let i=0;i<keyGateArr.length;i++)
     {
-        keyGateArr[i].color=colorsForGate[randomInteger(0,7)];
+        let flag=false;
+        let color;
+        do
+        {
+            color=colorsForGate[randomInteger(0,7/*colorsForGate.length-1)*/)];
+            flag=false;
+            for (let j=0;j<keyGateArr.length;j++)
+            {
+                if (color==keyGateArr[j].color)
+                {
+                    flag=true;
+                }
+            }
+            keyGateArr[i].color=colorsForGate[randomInteger(0,7/*colorsForGate.length-1)*/)];
+            
+        }while(flag==true)
+        keyGateArr[i].color=color;
     }
     let flag=false;
     let gate;
@@ -2400,6 +2465,7 @@ function initAllNoMoveObject()
             flag=true;
         }
     }while(flag==true); 
+    
     console.log(gate);
     
     for (let i=0;i<gate.squareCollision.length;i++)
@@ -2415,6 +2481,7 @@ function initGate(dir)
 {
    let gate=JSON.parse(JSON.stringify(gateType));; 
    gate.direction=dir;//randomInteger(1,4);
+   gate.being=true;
    gate.x=(randomInteger(1,mapWidth/mapSize-1-1))*mapSize;
    gate.y=randomInteger(1,mapHeight/mapSize-1-1)*mapSize;
    if (gate.direction==1||gate.direction==3)
@@ -2476,7 +2543,7 @@ function initGate(dir)
        }
        gate.squareCollision =gate.squareCollision.concat(gate.squareDoor);
    }
-   gate.color="rgb(128,255,100)";
+   gate.color=colorsForGate[randomInteger(0,7/*colorsForGate.length-1*/)];
    gate.close=true;
    return gate;
 }
