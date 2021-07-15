@@ -63,6 +63,7 @@ var countShot=0;
 var countHits=0;
 var countTestMixShot=0;
 var viewTextInShop=false;
+var viewTextInGate=false;
 var strFile='';
 // обьект танк
 var panzer={
@@ -324,9 +325,9 @@ text={
     str:'',
     font:'',
 }
-colorsForGate=["rgb(128,255,0)","rgb(128,255,100)","rgb(255,255,0)",
-               "rgb(255,0,0)","rgb(0,255,0)","rgb(0,0,255)",
-               "rgb(0,255,255)","rgb(128,255,128)",
+colorsForGate=["rgb(255,0,0)","rgb(0,0,255)","rgb(255,153,51)",
+               "rgb(255,0,255)","rgb(0,255,255)","rgb(255,255,0)",
+               "rgb(128,255,0)","rgb(255,255,255)",
 ];
 boxArr=[];//массив яшиков
 wallArr=[];// массив стен
@@ -442,7 +443,7 @@ function preload()// функция предзагрузки
     addText('Balance',"18px Arial","#00FF00","win",100,150);
     addText('XP',"18px Arial","#00FF00","win",100,200);
     addText('Time',"18px Arial","#0000FF","win",100,250);
-    addText('EnterShop',"18px Arial","#00FF00","Enter to in Shop",250,600);
+    addText('EnterOpen',"18px Arial","#00FF00","Enter to in Shop",250,600);
     //Howler.autoUnlock = false;
     audio = new Howl({
         src: ['sound/sound.mp3'],
@@ -902,7 +903,7 @@ function gameLoop(mult,visible)// игровой цикл
         {
             if (viewTextInShop==false)
             {
-                setText('EnterShop',"Press R to in Shop","#00FF00",(screenWidth/2)-80,400);
+                setText('EnterOpen',"нажмите R для того что бы войти в магазин","#00FF00",(screenWidth/2)-80,400);
                 viewTextInShop=true;
             }
         }
@@ -910,8 +911,32 @@ function gameLoop(mult,visible)// игровой цикл
         {
             if (viewTextInShop==true)
             {
-                setText('EnterShop',"Enter to in Shop","#FFFFFF00",(screenWidth/2)-80,400);
+                setText('EnterOpen',"нажмите R для того что бы войти в магазин","#FFFFFF00",(screenWidth/2)-80,400);
                 viewTextInShop=false;
+            }
+        }
+        let index=checkInGate(numPanzer);
+        if (index!=-1 && gateArr[index].close==true)
+        {
+            if (viewTextInGate==false)
+            {
+                if (checkColorInStokKey(gateArr[index].color)==true)
+                {
+                    setText('EnterOpen',"нажмите R для того что бы окрыть дверь","#00FF00",(screenWidth/2)-80,400);
+                }
+                else
+                {
+                    setText('EnterOpen',"У вас нет подходяшего ключа для этой двери","#00FF00",(screenWidth/2)-80,400);
+                }
+                viewTextInGate=true;
+            }
+        }
+        else
+        {
+            if (viewTextInGate==true)
+            {
+                setText('EnterOpen',"нажмите R для того что бы окрыть дверь","#FFFFFF00",(screenWidth/2)-80,400);
+                viewTextInGate=false;
             }
         }
         if (XP>=levelXPValue[levelPlayer-1]) levelPlayer++;
@@ -1031,26 +1056,58 @@ function calibrationAccuracy()
 
     }
 }
+function checkColorInStokKey(color)
+{
+    for (let j=0;j<keyInStokArr.length;j++)
+    {
+        if (color==keyInStokArr[j].color)
+        {
+           return true; 
+        }
+    }
+    return false;
+}
+function searchKeyInStokByColor(color)
+{
+    for (let i=0;i<keyInStokArr.length;i++)
+    {
+        if (color==keyInStokArr[i].color)
+        {
+           return i; 
+        }
+    }
+    return -1;
+}
 function controlHuman()// управление программой человеком
 {
     if (checkPressKey("KeyR"))
     {
-       if (checkInShop(numPanzer)!=true) 
-       {
-           pause=!pause;
-           if (pause==true) console.log(panzerArr[numPanzer]);
-       }
-       else
-       {
-          if(shop.open==false) shop.start();
-       }
-        //alert(myBinSearch(80,accuracyToHits,"accuracy","hits")/*accuracyToHits[0].accuracy*/);
-    }
-    if (checkPressKey("KeyO"))
-    {
-        openGate("rgb(128,255,100)");
-        console.log("sosiska");
-    }
+        if (checkInShop(numPanzer)!=true) 
+        {
+           // pause=!pause;
+         //   if (pause==true) console.log(panzerArr[numPanzer]);
+        }
+        else
+        {
+           if(shop.open==false) shop.start();
+        }
+        //открывание двери
+        let index=checkInGate(numPanzer);
+        if (index!=-1 &&checkColorInStokKey(gateArr[index].color))
+        {
+            openGate(gateArr[index].color);
+            let indexKey=searchKeyInStokByColor(gateArr[index].color);
+            if (indexKey!=-1)
+            {
+                deleteElemArrToNum(keyInStokArr,indexKey);
+            }
+        }
+              
+    }  
+        //    console.log("sosiska");
+    
+  
+    
     if (keyUpDuration("Space",100)) 
     {
         nextNumPanzer(true);
@@ -2113,6 +2170,20 @@ function checkInShop(num)
     }
     return false;
 }
+function checkInGate(num)
+{
+    for (let i=0;i<gateArr.length;i++)
+    {
+        if (panzerArr[num].x/*+panzerArr[num].width*/>gateArr[i].x &&
+            panzerArr[num].x+panzerArr[num].width<gateArr[i].x+gateArr[i].width &&
+            panzerArr[num].y/*+panzerArr[num].height*/>gateArr[i].y &&
+            panzerArr[num].y+panzerArr[num].height<gateArr[i].y+gateArr[i].height)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
 function collisionPanzerBox(num)// столкновения танка с ящиком
 {
     index=checkCollisionArr(panzerArr[num],boxArr)
@@ -2421,14 +2492,14 @@ function initAllNoMoveObject()
     buffer= initNoMoveObject(quantityBrickWall,wall,2);
     wallArr = wallArr.concat(buffer);
     barrelArr=initNoMoveObject(quantityBarrel,barrel);
-    keyGateArr=initNoMoveObject(5,keyType);;
+    keyGateArr=initNoMoveObject(8,keyType);;
     for (let i=0;i<keyGateArr.length;i++)
     {
         let flag=false;
         let color;
         do
         {
-            color=colorsForGate[randomInteger(0,7/*colorsForGate.length-1)*/)];
+            color=colorsForGate[randomInteger(0,colorsForGate.length-1)];
             flag=false;
             for (let j=0;j<keyGateArr.length;j++)
             {

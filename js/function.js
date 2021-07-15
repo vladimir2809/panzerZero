@@ -19,7 +19,7 @@ function deleteElemArr(array,elem)// удалить обьект из масси
       array.splice(index, 1);
     }
 }
-function deleteElemArrToNum(array,num)// удалить обьект из массива по значению
+function deleteElemArrToNum(array,num)// удалить обьект из массива по номеру
 {
     var index = num;
     if (index > -1) 
