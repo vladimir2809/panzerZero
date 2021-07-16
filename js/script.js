@@ -308,7 +308,7 @@ shopImageType={
     lineArr:[],
     linePerimetrArr:[],
 }
-shopImage={};
+shopImageArr=[];
 leser={
     x:null,
     y:null,
@@ -527,8 +527,11 @@ function drawAll()// нарисовать все
         context.fillRect(0,0,camera.width,camera.height);// очистка экрана
         if (visibleGame==true)// если влючено отображение
         {
-            
-            drawSprite(context,imageArr.get("shop"),shopImage.x,shopImage.y,camera,scale)
+            for (let i=0;i<shopImageArr.length;i++)
+            {
+                drawSprite(context,imageArr.get("shop"),shopImageArr[i].x,shopImageArr[i].y,
+                                                        camera,scale);
+            }
             for (let i=0;i<boxArr.length;i++)
             {
                 if (boxArr[i].being==true)
@@ -638,13 +641,16 @@ function drawAll()// нарисовать все
             drawText(context,textArr[key]);
         }
         drawIconGan(playerGan);
-        for (let i=0;i<shopImage.lineArr.length;i++)
+        for (let i=0;i<shopImageArr.length;i++)
         {
-            context.beginPath();
-            context.strokeStyle="#00FF00";
-            context.moveTo(shopImage.lineArr[i].x,shopImage.lineArr[i].y); //передвигаем перо
-            context.lineTo(shopImage.lineArr[i].x1,shopImage.lineArr[i].y1); //рисуем линию
-            context.stroke();
+            for (let j=0;j<shopImageArr[i].lineArr.length;j++)
+            {
+                context.beginPath();
+                context.strokeStyle="#00FF00";
+                context.moveTo(shopImageArr[i].lineArr[j].x,shopImageArr[i].lineArr[j].y); //передвигаем перо
+                context.lineTo(shopImageArr[i].lineArr[j].x1,shopImageArr[i].lineArr[j].y1); //рисуем линию
+                context.stroke();
+            }
         }
         for (let i=0;i<panzerArr[numPanzer].lineArr.length;i++)
         {
@@ -1720,10 +1726,6 @@ function controlBullets()// функция управления полетами
                     console.log("Laser "+x1+"  "+y1);
                     if (checkPointCollisionAll(bulletArr[i].x1,bulletArr[i].y1)==true)
                     if (checkWater(bulletArr[i].x1,bulletArr[i].y1)==false)    
-//                    if (bulletArr[i].x1+bulletArr[i].width>shopImage.x &&
-//                        bulletArr[i].x1<shopImage.x+shopImage.width &&
-//                        bulletArr[i].y1+bulletArr[i].height>shopImage.y &&
-//                        bulletArr[i].y1<shopImage.y+shopImage.height)
                     {
                        
                         let index=numObjPointCollision(bulletArr[i].x1,bulletArr[i].y1,panzerArr)
@@ -1797,9 +1799,17 @@ function controlBullets()// функция управления полетами
     {
         if (bulletArr[i].being==true && bulletArr[i].type<2)
         {
-                if (checkCollisionArr(bulletArr[i],wallArr)!=-1||// пуля столкнулась со стеной или с магазином
-                    (x>=shopImage.x && x<=shopImage.x+shopImage.width &&
-                     y>=shopImage.y && y<=shopImage.y+shopImage.height))
+                let flag=false;
+                for (let j=0;j<shopImageArr.length;j++)
+                {
+                    if (checkCollisionArr(bulletArr[i],wallArr)!=-1||// пуля столкнулась со стеной или с магазином
+                        (x>=shopImageArr[j].x && x<=shopImageArr[j].x+shopImageArr[j].width &&
+                         y>=shopImageArr[j].y && y<=shopImageArr[j].y+shopImageArr[j].height))
+                    {
+                        flag=true;
+                    }
+                }
+                if (flag==true)
                 if (checkWater(bulletArr[i].x,bulletArr[i].y)==false) 
                 {
                     if (bulletArr[i].type==0)
@@ -1858,7 +1868,7 @@ function controlBullets()// функция управления полетами
 
                 }
 
-                let flag=false;
+               // let flag=false;
                 for (let j=0;j<panzerArr.length;j++)// пуля столкнулась с танком
                 {
                     if (panzerArr[j].being==true)
@@ -2106,14 +2116,16 @@ function collissionPanzerSolid(num)// столкновения танка ств
     {
         return true;
     }
-    if (panzerArr[num].x+panzerArr[num].width>shopImage.x &&
-        panzerArr[num].x<shopImage.x+shopImage.width &&
-        panzerArr[num].y+panzerArr[num].height>shopImage.y &&
-        panzerArr[num].y<shopImage.y+shopImage.height)
+    for (let i=0;i<shopImageArr.length;i++)
+    {
+        if (panzerArr[num].x+panzerArr[num].width>shopImageArr[i].x &&
+            panzerArr[num].x<shopImageArr[i].x+shopImageArr[i].width &&
+            panzerArr[num].y+panzerArr[num].height>shopImageArr[i].y &&
+            panzerArr[num].y<shopImageArr[i].y+shopImageArr[i].height)
         {
             let res=true;
-            let X=shopImage.x;
-            let Y=shopImage.y;
+            let X=shopImageArr[i].x;
+            let Y=shopImageArr[i].y;
             let pointArr=[
                 {x:panzerArr[num].x,y:panzerArr[num].y},
                 {x:panzerArr[num].x+panzerArr[num].width,
@@ -2123,50 +2135,55 @@ function collissionPanzerSolid(num)// столкновения танка ств
                 {x:panzerArr[num].x,y:panzerArr[num].y+panzerArr[num].height},
             ]
             let count=0;
-            for (let i=0;i<shopImage.entranceArr.length;i++ )
+            for (let j=0;j<shopImageArr[i].entranceArr.length;j++ )
             {
                 let flag=false;
-                for (let j=0;j<pointArr.length;j++)
+                for (let k=0;k<pointArr.length;k++)
                 {
-                    if (pointArr[j].x>shopImage.entranceArr[i].x &&
-                        pointArr[j].x<shopImage.entranceArr[i].x+shopImage.entranceWidth  &&
-                        pointArr[j].y>shopImage.entranceArr[i].y &&
-                        pointArr[j].y<shopImage.entranceArr[i].y+shopImage.entranceHeight )
+                    if (pointArr[k].x>shopImageArr[i].entranceArr[j].x &&
+                        pointArr[k].x<shopImageArr[i].entranceArr[j].x+shopImageArr[i].entranceWidth  &&
+                        pointArr[k].y>shopImageArr[i].entranceArr[j].y &&
+                        pointArr[k].y<shopImageArr[i].entranceArr[j].y+shopImageArr[i].entranceHeight )
                     {
-                       
+
                         if (num==numPanzer )res=false; else res=true;
-                        if (checkCrossPerimeterPanzToLine(shopImage.lineArr,num))
+                        if (checkCrossPerimeterPanzToLine(shopImageArr[i].lineArr,num))
                         {
                             res=true;
-                           
+                            console.log("ENTRANCE");
                             ///break;
                         } 
                         flag=true;
                         break;
                     }
                     if (flag==true) break;
-//                if (panzerArr[num].x+panzerArr[num].width>X+shopImage.entranceArr[i].x &&
-//                    panzerArr[num].x<X+shopImage.entranceArr[i].x+shopImage.entranceWidth &&
-//                    panzerArr[num].y+panzerArr[num].height>Y+shopImage.entranceArr[i].y &&
-//                    panzerArr[num].y<Y+shopImage.entranceArr[i].y+shopImage.entranceHeight)
-//                    {
-//                        res=false;
-//                        break;
-//                    }
+    //                if (panzerArr[num].x+panzerArr[num].width>X+shopImageArr[i].entranceArr[i].x &&
+    //                    panzerArr[num].x<X+shopImageArr[i].entranceArr[i].x+shopImageArr[i].entranceWidth &&
+    //                    panzerArr[num].y+panzerArr[num].height>Y+shopImageArr[i].entranceArr[i].y &&
+    //                    panzerArr[num].y<Y+shopImageArr[i].entranceArr[i].y+shopImageArr[i].entranceHeight)
+    //                    {
+    //                        res=false;
+    //                        break;
+    //                    }
                 }
             }
             return res;
         }
+        
+    }
     return false;
 }
 function checkInShop(num)
 {
-    if (panzerArr[num].x/*+panzerArr[num].width*/>shopImage.x &&
-        panzerArr[num].x+panzerArr[num].width<shopImage.x+shopImage.width &&
-        panzerArr[num].y/*+panzerArr[num].height*/>shopImage.y &&
-        panzerArr[num].y+panzerArr[num].height<shopImage.y+shopImage.height)
+    for (let i=0;i<shopImageArr.length;i++)
     {
-        return true;
+        if (panzerArr[num].x/*+panzerArr[num].width*/>shopImageArr[i].x &&
+            panzerArr[num].x+panzerArr[num].width<shopImageArr[i].x+shopImageArr[i].width &&
+            panzerArr[num].y/*+panzerArr[num].height*/>shopImageArr[i].y &&
+            panzerArr[num].y+panzerArr[num].height<shopImageArr[i].y+shopImageArr[i].height)
+        {
+            return true;
+        }
     }
     return false;
 }
@@ -2265,10 +2282,13 @@ function checkPointCollisionAll(x,y,noPanzer=false)//попадает ли то�
         }
     }
   //  //console.log(boxArr.length); 
-    if (x>=shopImage.x && x<=shopImage.x+shopImage.width &&
-            y>=shopImage.y && y<=shopImage.y+shopImage.height)
+    for (let i=0;i<shopImageArr.length;i++)
     {
-        return true;
+        if (x>=shopImageArr[i].x && x<=shopImageArr[i].x+shopImageArr[i].width &&
+                y>=shopImageArr[i].y && y<=shopImageArr[i].y+shopImageArr[i].height)
+        {
+            return true;
+        }
     }
     if (wallArr.length>0 && checkCollisionArr(objCheck,wallArr)!=-1) return true;
     if (boxArr.length>0 && checkCollisionArr(objCheck,boxArr)!=-1) return true;
@@ -2389,50 +2409,44 @@ function openGate(color)
 }
 function initShopImage()// инициализировать обьект магазин 
 {
-    shopImage=JSON.parse(JSON.stringify(shopImageType));;
-    let x=mapWidth/2-shopImage.width/2+mapSize;
-    let y=mapHeight/2-shopImage.height/2+mapSize;
-    
-    shopImage.x=Math.floor(x/mapSize)*mapSize;
-    shopImage.y=Math.floor(y/mapSize)*mapSize;
-    for (let i=0;i<shopImage.entranceArr.length;i++ )
+    for (let i=0;i<2;i++)
     {
-        shopImage.entranceArr[i].x+= shopImage.x;
-        shopImage.entranceArr[i].y+= shopImage.y;
-    }
-    for (let i=0;i<shopImage.entranceArr.length;i++ )
-    {
-        let buffer=calcLineArr(shopImage.entranceArr[i],i);
+        shopImageArr.push(JSON.parse(JSON.stringify(shopImageType)));;
+        let x=mapWidth/2-shopImageArr[i].width/2+mapSize+shopImageArr[i].width*i+mapSize*2;
+        let y=mapHeight/2-shopImageArr[i].height/2+mapSize+shopImageArr[i].height*i+mapSize*2;
+
+        shopImageArr[i].x=Math.floor(x/mapSize)*mapSize;
+        shopImageArr[i].y=Math.floor(y/mapSize)*mapSize;
+//        for (let i=0;i<shopImageArr.length;i++)
+//        {
+        for (let j=0;j<shopImageArr[i].entranceArr.length;j++ )
+        {
+            shopImageArr[i].entranceArr[j].x+= shopImageArr[i].x;
+            shopImageArr[i].entranceArr[j].y+= shopImageArr[i].y;
+        }
+//        }
+        for (let j=0;j<shopImageArr[i].entranceArr.length;j++ )
+        {
+            let buffer=calcLineArr(shopImageArr[i].entranceArr[j],i);
+            for (let k=0;k<4;k++)
+            {
+                shopImageArr[i].lineArr.push(buffer[k]);
+            }
+
+        }
+        deleteElemArrToNum(shopImageArr[i].lineArr,0);
+        deleteElemArrToNum(shopImageArr[i].lineArr,4);
+        deleteElemArrToNum(shopImageArr[i].lineArr,8);
+        deleteElemArrToNum(shopImageArr[i].lineArr,12);
+
+        let     buffer=calcLineArr(shopImageArr[i],i);
         for (let j=0;j<4;j++)
         {
-            shopImage.lineArr.push(buffer[j]);
+            shopImageArr[i].linePerimetrArr.push(buffer[j]);
         }
-        
+       // delete shopImageArr[i].lineArr[
+        console.log(shopImageArr);
     }
-    deleteElemArrToNum(shopImage.lineArr,0);
-    deleteElemArrToNum(shopImage.lineArr,4);
-    deleteElemArrToNum(shopImage.lineArr,8);
-    deleteElemArrToNum(shopImage.lineArr,12);
-    
-    let     buffer=calcLineArr(shopImage,0);
-    for (let j=0;j<4;j++)
-    {
-        shopImage.linePerimetrArr.push(buffer[j]);
-    }
-   // delete shopImage.lineArr[1];
-    console.log(shopImage.linePerimetrArr);
-//    for (let i=0;i<shopImage.entranceArr.length;i++ )
-//    {
-//        for (let j=0;j<4;j++)
-//        {
-//            shopImage.lineArr[j].x=shopImage.x+shopImage.entranceArr[i].x; 
-//            shopImage.lineArr[j].y=shopImage.y+shopImage.entranceArr[i].y;
-//            shopImage.lineArr[j].x1=shopImage.x+shopImage.entranceArr[i]+
-//                                shopImage.entranceArr.entranceWidth; 
-//            shopImage.lineArr[j].y1=shopImage.y+shopImage.entranceArr[i].y+
-//                                shopImage.entranceArr.entranceWidth;
-//        }
-//    }
    
 }
 function addWallObject(x,y,type,solid=true)
@@ -2513,39 +2527,41 @@ function initAllNoMoveObject()
         }while(flag==true)
         keyGateArr[i].color=color;
     }
-    let flag=false;
-    let gate;
-    do
+    for (let i=0;i<2;i++)
     {
-        flag=false;
-        gate=initGate(4);
-        for (let x=gate.x;x<=gate.x+gate.width;x+=mapSize)
+        let flag=false;
+        let gate;
+        do
         {
-            for (let y=gate.y;y<=gate.y+gate.height;y+=mapSize)
+            flag=false;
+            gate=initGate(4);
+            for (let x=gate.x;x<=gate.x+gate.width;x+=mapSize)
             {
-                if (checkPointCollisionAll(x+mapSize/2,y+mapSize/2))
+                for (let y=gate.y;y<=gate.y+gate.height;y+=mapSize)
                 {
-                        flag=true;
-                }
-                
+                    if (checkPointCollisionAll(x+mapSize/2,y+mapSize/2))
+                    {
+                            flag=true;
+                    }
 
+
+                }
             }
-        }
-        if (gate.x+gate.width>mapWidth || gate.y+gate.height>mapHeight)
+            if (gate.x+gate.width>mapWidth || gate.y+gate.height>mapHeight)
+            {
+                flag=true;
+            }
+        }while(flag==true); 
+
+        console.log(gate);
+
+        for (let i=0;i<gate.squareCollision.length;i++)
         {
-            flag=true;
+            addWallObject(gate.squareCollision[i].x,gate.squareCollision[i].y,3,true);
         }
-    }while(flag==true); 
-    
-    console.log(gate);
-    
-    for (let i=0;i<gate.squareCollision.length;i++)
-    {
-        addWallObject(gate.squareCollision[i].x,gate.squareCollision[i].y,3,true);
+        //console.log(wallArr);
+        gateArr.push(gate);
     }
-    console.log(wallArr);
-    gateArr.push(gate);
-  
  
 }
 function initGate(dir)
@@ -2636,10 +2652,13 @@ function initNoMoveObject(quantity,object,type=0,xx=-1,yy=-1)
                 x=(randomInteger(1,mapWidth/mapSize-1-1))*mapSize;
                 y=randomInteger(1,mapHeight/mapSize-1-1)*mapSize;
                 flag=checkPointCollisionAll(x+mapSize/2,y+mapSize/2);
-                if (x>=shopImage.x-mapSize && x<=shopImage.x+shopImage.width+mapSize &&
-                    y>=shopImage.y-mapSize && y<=shopImage.y+shopImage.height+mapSize)
+                for (let i=0;i<shopImageArr.length;i++)
                 {
-                     flag=true;
+                    if (x>=shopImageArr[i].x-mapSize && x<=shopImageArr[i].x+shopImageArr[i].width+mapSize &&
+                        y>=shopImageArr[i].y-mapSize && y<=shopImageArr[i].y+shopImageArr[i].height+mapSize)
+                    {
+                         flag=true;
+                    }
                 }
 
             }
@@ -3066,6 +3085,10 @@ function uploadLevel()// функция обновления уровня пос
     {
         gateArr.splice(0,1);
     }
+    while (shopImageArr.length>0)
+    {
+        shopImageArr.splice(0,1);
+    }
     initPanzers();
     initAllNoMoveObject();
 //    initBox();
@@ -3156,18 +3179,20 @@ function checkCrossLinePanzerShopImage(num,point)
 {
      let pPanz={x:panzerArr[num].x+panzerArr[num].width/2,
                 y:panzerArr[num].y+panzerArr[num].height/2};
-        
-        if (shopImage.being==true )
-        {        
-            ////console.log('true');
-            for (let j=0;j<4;j++)
-            {
-                if (IsCrossing( pPanz.x, pPanz.y,  point.x,point.y,
-                    shopImage.linePerimetrArr[j].x,shopImage.linePerimetrArr[j].y,
-                    shopImage.linePerimetrArr[j].x1, shopImage.linePerimetrArr[j].y1)) 
-                    {
-                        return true;
-                    }
+        for (let i=0;i<shopImageArr.length;i++)
+        {
+            if (shopImageArr[i].being==true )
+            {        
+                ////console.log('true');
+                for (let j=0;j<4;j++)
+                {
+                    if (IsCrossing( pPanz.x, pPanz.y,  point.x,point.y,
+                        shopImageArr[i].linePerimetrArr[j].x,shopImageArr[i].linePerimetrArr[j].y,
+                        shopImageArr[i].linePerimetrArr[j].x1, shopImageArr[i].linePerimetrArr[j].y1)) 
+                        {
+                            return true;
+                        }
+                }
             }
         }
         return false;
