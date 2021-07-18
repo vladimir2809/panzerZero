@@ -23,6 +23,7 @@ boxWindowSelect={
      // drawShop(); 
         this.init();
         console.log('boxSelect');
+        resetMouseLeft();
         pause=true;
         this.open=true;
         if (this.open==true) 

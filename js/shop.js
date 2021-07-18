@@ -7,6 +7,7 @@ shop={
     tabMenu:0,
     x:100,
     y:100,
+    numShopImage:0,
     width:586,
     height:400,
     widthTab:108,
@@ -29,11 +30,12 @@ shop={
     {
 
     },
-    init:function()
+    init:function(num)
     {
         this.x=screenWidth/2-this.width/2;
         this.y=screenHeight/2-this.height/2;
         this.quantityTab=shop.tabText.length;
+        
     },
     calcValuesParam:function(startI,numPanz=-1)
     {
@@ -102,14 +104,16 @@ shop={
 //        console.log(numPanz);
 //        console.log(this.valuesParam);
     },
-    start:function ()
+    start:function (num)
     {
      // drawShop(); 
         this.init();
         console.log('SHOP');
         pause=true;
+        this.numShopImage=num;
         this.open=true;
         this.tabMenu=0;
+        this.countProductList=4;
         //this.clearListProduct();
         this.startNumProduct=0;
         this.arrMaxValuesParam=this.calcMaxParams();
@@ -648,9 +652,10 @@ shop={
                     if (mouseLeftClick())
                     {
                         money-=listProduct[startI].price;
-                        let x=shopImage.x;
-                        let y=shopImage.y-mapSize;
-                        for (let i=0;i<shopImage.width/mapSize;i++)
+                        let index=this.numShopImage;
+                        let x=shopImageArr[index].x;
+                        let y=shopImageArr[index].y-mapSize;
+                        for (let i=0;i<shopImageArr[index].width/mapSize;i++)
                         {
                             if (checkKvadrMap((x+5)/mapSize,(y+5)/mapSize)==true)
                             {
@@ -662,9 +667,9 @@ shop={
                                break;
                             }
                         }
-                        if (x>shopImage.x)
+                        if (x>shopImageArr[index].x)
                         {
-                            for (let i=0;i<shopImage.height/mapSize+1;i++)
+                            for (let i=0;i<shopImageArr[index].height/mapSize+1;i++)
                             {
                                 if (checkKvadrMap((x+5)/mapSize,(y+5)/mapSize)==true)
                                 {
@@ -677,10 +682,10 @@ shop={
                                 }
                             } 
                         }
-                        if (y>shopImage.y)
+                        if (y>shopImageArr[index].y)
                         {
                             y-=5;
-                            for (let i=0;i<shopImage.height/mapSize;i++)
+                            for (let i=0;i<shopImageArr[index].height/mapSize;i++)
                             {
                                 if (checkKvadrMap((x+5)/mapSize,(y+5)/mapSize)==true)
                                 {

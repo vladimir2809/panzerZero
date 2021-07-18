@@ -98,6 +98,11 @@ function checkMouseLeft()// была лм нажата левая кнопка �
 {
     return mouseLeftPress;
 }
+
+function resetMouseLeft()
+{
+    mouseClick=false;
+}
 function mouseLeftClick()// функция определения клика. после 1 вызова второй будет false
 {
     var result=mouseClick;
