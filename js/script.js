@@ -48,7 +48,7 @@ var nameImageArr=["body10","body11",'body12','body13','body14','body15',
                 "body101","body111",'body121','body131','body141',
                 "body20","body21",'body22','body23','body24','body25',
                 "tower1","tower2","tower3","tower4","box","bonusMoney","bonusXP",
-                "bonusPatron",'bonusBullet',
+                "bonusPatron",'bonusBullet','garage',
                 'wall',"water","brickwall","badbrickwall",'bullet',"rocket",
                 'patron','burst','burstBig','burstSmall','barrel',/*'barrel2',*/
                 'ganIcon','shop',"star",'starContur','gate'];
@@ -65,6 +65,7 @@ var countHits=0;
 var countTestMixShot=0;
 var viewTextInShop=false;
 var viewTextInGate=false;
+var viewTextInGarage=false;
 var strFile='';
 // обьект танк
 var panzer={
@@ -310,7 +311,22 @@ shopImageType={
     lineArr:[],
     linePerimetrArr:[],
 }
+garageImageType={
+    being:true,
+    x:null,
+    y:null,
+    width:120,
+    height:80,
+    entranceArr:[
+        {x:0,y:40,width:40,height:40}, //наверху
+    ],
+    entranceWidth:40,
+    entranceHeight:40,
+    lineArr:[],
+    linePerimetrArr:[],
+}
 shopImageArr=[];
+garageImageArr=[];
 leser={
     x:null,
     y:null,
@@ -533,6 +549,11 @@ function drawAll()// нарисовать все
             for (let i=0;i<shopImageArr.length;i++)
             {
                 drawSprite(context,imageArr.get("shop"),shopImageArr[i].x,shopImageArr[i].y,
+                                                        camera,scale);
+            }
+            for (let i=0;i<garageImageArr.length;i++)
+            {
+                drawSprite(context,imageArr.get("garage"),garageImageArr[i].x,garageImageArr[i].y,
                                                         camera,scale);
             }
             for (let i=0;i<bonusArr.length;i++)
@@ -966,6 +987,31 @@ function gameLoop(mult,visible)// игровой цикл
                 viewTextInGate=false;
             }
         }
+        if (checkInGarage(numPanzer)!=-1)
+        {
+            if (viewTextInGarage==false)
+            {
+                setText('MessageText',"нажмите R для того что бы войти в гараж","#00FF00",(screenWidth/2)-210,400);
+              //  messageCenterScreen("нажмите R для того что бы войти в магазин","#00FF00");
+                viewTextInGarage=true;
+            }
+        }
+        else
+        {
+            if (viewTextInGarage==true)
+            {
+                setText('MessageText',"","#FFFFFF00",(screenWidth/2)-210,400);
+               // messageCenterScreen("нажмите R для того что бы войти в магазин","#FFFFFF00");
+                viewTextInGarage=false;
+            }
+        }
+//        if (checkInGarage(numPanzer)!=-1)
+//        {
+//            setText('MessageText',"нажмите R для того что бы открыть дверь","#FFFFFF00",(screenWidth/2)-240,400);
+////            context.fillStyle="#00FF00";
+//         //   str="Нажмите R для того чтобы войти в гараж";
+//         //   context.fillText(str, (screenWidth/2)-240,400);
+//        }
         if (XP>=levelXPValue[levelPlayer-1]) levelPlayer++;
         if (timeAddMoney>=1000) 
         {
@@ -2195,6 +2241,20 @@ function collissionPanzerSolid(num)// столкновения танка ств
     }
     return false;
 }
+function checkInGarage(num)
+{
+    for (let i=0;i<garageImageArr.length;i++)
+    {
+        if (panzerArr[num].x/*+panzerArr[num].width*/>garageImageArr[i].x &&
+            panzerArr[num].x+panzerArr[num].width<garageImageArr[i].x+garageImageArr[i].width &&
+            panzerArr[num].y/*+panzerArr[num].height*/>garageImageArr[i].y &&
+            panzerArr[num].y+panzerArr[num].height<garageImageArr[i].y+garageImageArr[i].height)
+        {
+            return i;
+        }
+    }
+    return -1;   
+}
 function checkInShop(num)
 {
     for (let i=0;i<shopImageArr.length;i++)
@@ -2448,14 +2508,12 @@ function initShopImage()// инициализировать обьект маг�
 
         shopImageArr[i].x=Math.floor(x/mapSize)*mapSize;
         shopImageArr[i].y=Math.floor(y/mapSize)*mapSize;
-//        for (let i=0;i<shopImageArr.length;i++)
-//        {
         for (let j=0;j<shopImageArr[i].entranceArr.length;j++ )
         {
             shopImageArr[i].entranceArr[j].x+= shopImageArr[i].x;
             shopImageArr[i].entranceArr[j].y+= shopImageArr[i].y;
         }
-//        }
+
         for (let j=0;j<shopImageArr[i].entranceArr.length;j++ )
         {
             let buffer=calcLineArr(shopImageArr[i].entranceArr[j],i);
@@ -2479,6 +2537,38 @@ function initShopImage()// инициализировать обьект маг�
         console.log(shopImageArr);
     }
    
+}
+function initGarageImage()
+{
+    
+    for (let i=0;i<2;i++)
+    {
+        garageImageArr.push(JSON.parse(JSON.stringify(garageImageType)));;
+        garageImageArr[i].x=200+i*(garageImageArr[i].width+mapSize);
+        garageImageArr[i].y=80;
+//        for (let j=0;j<garageImageArr[i].entranceArr.length;j++ )
+//        {
+//            garageImageArr[i].entranceArr[j].x+= garageImageArr[i].x;
+//            garageImageArr[i].entranceArr[j].y+= garageImageArr[i].y;
+//        }
+//        for (let j=0;j<garageImageArr[i].entranceArr.length;j++ )
+//        {
+//            let buffer=calcLineArr(garageImageArr[i].entranceArr[j],i);
+//            for (let k=0;k<4;k++)
+//            {
+//                garageImageArr[i].lineArr.push(buffer[k]);
+//            }
+//
+//        }
+ //       deleteElemArrToNum(garageImageArr[i].lineArr,3);
+ //       deleteElemArrToNum(garageImageArr[i].lineArr,4);
+        addWallObject(garageImageArr[i].x,garageImageArr[i].y,3,true);
+        addWallObject(garageImageArr[i].x+mapSize,garageImageArr[i].y,3,true);
+        addWallObject(garageImageArr[i].x+mapSize*2,garageImageArr[i].y,3,true);
+        addWallObject(garageImageArr[i].x+mapSize,garageImageArr[i].y+mapSize,3,true);
+        addWallObject(garageImageArr[i].x+mapSize*2,garageImageArr[i].y+mapSize,3,true);
+    }
+    console.log(garageImageArr);
 }
 function addWallObject(x,y,type,solid=true)
 {
@@ -2514,7 +2604,7 @@ function addWallObject(x,y,type,solid=true)
 }
 function initAllNoMoveObject()
 {
-    initShopImage();
+    
     //gateArr.push(initGate(1));
     bonusArr=initNoMoveObject(quantityBonus,bonus);
     for (let i=0;i<bonusArr.length;i++)
@@ -2523,6 +2613,8 @@ function initAllNoMoveObject()
     }
     
     wallArr=initNoMoveObject(quantityWall,wall);
+    initShopImage();
+    initGarageImage();
     for (let i=0;i<quantityWater;i++)
     {
         addWallObject(-1,-1,1,false)
@@ -3126,6 +3218,10 @@ function uploadLevel()// функция обновления уровня пос
     while (shopImageArr.length>0)
     {
         shopImageArr.splice(0,1);
+    }
+    while (garageImageArr.length>0)
+    {
+        garageImageArr.splice(0,1);
     }
     initPanzers();
     initAllNoMoveObject();
