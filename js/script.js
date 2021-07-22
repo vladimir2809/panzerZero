@@ -542,6 +542,11 @@ function drawAll()// нарисовать все
             boxWindowSelect.draw();
             return 0;
         }
+        if (garage.open==true)
+        {
+            garage.draw();
+            return 0;
+        }
         context.fillStyle='rgb(210,210,210)';
         context.fillRect(0,0,camera.width,camera.height);// очистка экрана
         if (visibleGame==true)// если влючено отображение
@@ -1176,6 +1181,10 @@ function controlHuman()// управление программой челове
                 deleteElemArrToNum(keyInStokArr,indexKey);
             }
         }
+        if (checkInGarage(numPanzer)!=-1)
+        {
+            if (garage.open==false)garage.start();
+        }
               
     }  
         //    console.log("sosiska");
@@ -1584,8 +1593,8 @@ function panzerAutoAttack(num)// функция отвечаюшия за ата
             if (checkCrossLinePanzerArrObj(bonusArr,num,{x:panzerArr[i].x+panzerArr[i].width/2,
                     y:panzerArr[i].y+panzerArr[i].height/2})==false)
                 
-            if (checkCrossLinePanzerShopImage(num,{x:panzerArr[i].x+panzerArr[i].width/2,
-                    y:panzerArr[i].y+panzerArr[i].height/2})==false)
+//            if (checkCrossLinePanzerShopImage(num,{x:panzerArr[i].x+panzerArr[i].width/2,
+//                    y:panzerArr[i].y+panzerArr[i].height/2})==false)
             {
             
                 let dx=panzerArr[num].x-panzerArr[i].x;
@@ -2184,61 +2193,61 @@ function collissionPanzerSolid(num)// столкновения танка ств
     {
         return true;
     }
-    for (let i=0;i<shopImageArr.length;i++)
-    {
-        if (panzerArr[num].x+panzerArr[num].width>shopImageArr[i].x &&
-            panzerArr[num].x<shopImageArr[i].x+shopImageArr[i].width &&
-            panzerArr[num].y+panzerArr[num].height>shopImageArr[i].y &&
-            panzerArr[num].y<shopImageArr[i].y+shopImageArr[i].height)
-        {
-            let res=true;
-            let X=shopImageArr[i].x;
-            let Y=shopImageArr[i].y;
-            let pointArr=[
-                {x:panzerArr[num].x,y:panzerArr[num].y},
-                {x:panzerArr[num].x+panzerArr[num].width,
-                            y:panzerArr[num].y},
-                {x:panzerArr[num].x+panzerArr[num].width,
-                            y:panzerArr[num].y+panzerArr[num].height},
-                {x:panzerArr[num].x,y:panzerArr[num].y+panzerArr[num].height},
-            ]
-            let count=0;
-            for (let j=0;j<shopImageArr[i].entranceArr.length;j++ )
-            {
-                let flag=false;
-                for (let k=0;k<pointArr.length;k++)
-                {
-                    if (pointArr[k].x>shopImageArr[i].entranceArr[j].x &&
-                        pointArr[k].x<shopImageArr[i].entranceArr[j].x+shopImageArr[i].entranceWidth  &&
-                        pointArr[k].y>shopImageArr[i].entranceArr[j].y &&
-                        pointArr[k].y<shopImageArr[i].entranceArr[j].y+shopImageArr[i].entranceHeight )
-                    {
-
-                        if (num==numPanzer )res=false; else res=true;
-                        if (checkCrossPerimeterPanzToLine(shopImageArr[i].lineArr,num))
-                        {
-                            res=true;
-                            console.log("ENTRANCE");
-                            ///break;
-                        } 
-                        flag=true;
-                        break;
-                    }
-                    if (flag==true) break;
-    //                if (panzerArr[num].x+panzerArr[num].width>X+shopImageArr[i].entranceArr[i].x &&
-    //                    panzerArr[num].x<X+shopImageArr[i].entranceArr[i].x+shopImageArr[i].entranceWidth &&
-    //                    panzerArr[num].y+panzerArr[num].height>Y+shopImageArr[i].entranceArr[i].y &&
-    //                    panzerArr[num].y<Y+shopImageArr[i].entranceArr[i].y+shopImageArr[i].entranceHeight)
-    //                    {
-    //                        res=false;
-    //                        break;
-    //                    }
-                }
-            }
-            return res;
-        }
-        
-    }
+//    for (let i=0;i<shopImageArr.length;i++)
+//    {
+//        if (panzerArr[num].x+panzerArr[num].width>shopImageArr[i].x &&
+//            panzerArr[num].x<shopImageArr[i].x+shopImageArr[i].width &&
+//            panzerArr[num].y+panzerArr[num].height>shopImageArr[i].y &&
+//            panzerArr[num].y<shopImageArr[i].y+shopImageArr[i].height)
+//        {
+//            let res=true;
+//            let X=shopImageArr[i].x;
+//            let Y=shopImageArr[i].y;
+//            let pointArr=[
+//                {x:panzerArr[num].x,y:panzerArr[num].y},
+//                {x:panzerArr[num].x+panzerArr[num].width,
+//                            y:panzerArr[num].y},
+//                {x:panzerArr[num].x+panzerArr[num].width,
+//                            y:panzerArr[num].y+panzerArr[num].height},
+//                {x:panzerArr[num].x,y:panzerArr[num].y+panzerArr[num].height},
+//            ]
+//            let count=0;
+//            for (let j=0;j<shopImageArr[i].entranceArr.length;j++ )
+//            {
+//                let flag=false;
+//                for (let k=0;k<pointArr.length;k++)
+//                {
+//                    if (pointArr[k].x>shopImageArr[i].entranceArr[j].x &&
+//                        pointArr[k].x<shopImageArr[i].entranceArr[j].x+shopImageArr[i].entranceWidth  &&
+//                        pointArr[k].y>shopImageArr[i].entranceArr[j].y &&
+//                        pointArr[k].y<shopImageArr[i].entranceArr[j].y+shopImageArr[i].entranceHeight )
+//                    {
+//
+//                        if (num==numPanzer )res=false; else res=true;
+//                        if (checkCrossPerimeterPanzToLine(shopImageArr[i].lineArr,num))
+//                        {
+//                            res=true;
+//                            console.log("ENTRANCE");
+//                            ///break;
+//                        } 
+//                        flag=true;
+//                        break;
+//                    }
+//                    if (flag==true) break;
+//    //                if (panzerArr[num].x+panzerArr[num].width>X+shopImageArr[i].entranceArr[i].x &&
+//    //                    panzerArr[num].x<X+shopImageArr[i].entranceArr[i].x+shopImageArr[i].entranceWidth &&
+//    //                    panzerArr[num].y+panzerArr[num].height>Y+shopImageArr[i].entranceArr[i].y &&
+//    //                    panzerArr[num].y<Y+shopImageArr[i].entranceArr[i].y+shopImageArr[i].entranceHeight)
+//    //                    {
+//    //                        res=false;
+//    //                        break;
+//    //                    }
+//                }
+//            }
+//            return res;
+//        }
+//        
+//    }
     return false;
 }
 function checkInGarage(num)
@@ -2508,32 +2517,53 @@ function initShopImage()// инициализировать обьект маг�
 
         shopImageArr[i].x=Math.floor(x/mapSize)*mapSize;
         shopImageArr[i].y=Math.floor(y/mapSize)*mapSize;
-        for (let j=0;j<shopImageArr[i].entranceArr.length;j++ )
-        {
-            shopImageArr[i].entranceArr[j].x+= shopImageArr[i].x;
-            shopImageArr[i].entranceArr[j].y+= shopImageArr[i].y;
-        }
-
-        for (let j=0;j<shopImageArr[i].entranceArr.length;j++ )
-        {
-            let buffer=calcLineArr(shopImageArr[i].entranceArr[j],i);
-            for (let k=0;k<4;k++)
-            {
-                shopImageArr[i].lineArr.push(buffer[k]);
-            }
-
-        }
-        deleteElemArrToNum(shopImageArr[i].lineArr,0);
-        deleteElemArrToNum(shopImageArr[i].lineArr,4);
-        deleteElemArrToNum(shopImageArr[i].lineArr,8);
-        deleteElemArrToNum(shopImageArr[i].lineArr,12);
-
-        let     buffer=calcLineArr(shopImageArr[i],i);
-        for (let j=0;j<4;j++)
-        {
-            shopImageArr[i].linePerimetrArr.push(buffer[j]);
-        }
+//        for (let j=0;j<shopImageArr[i].entranceArr.length;j++ )
+//        {
+//            shopImageArr[i].entranceArr[j].x+= shopImageArr[i].x;
+//            shopImageArr[i].entranceArr[j].y+= shopImageArr[i].y;
+//        }
+//
+//        for (let j=0;j<shopImageArr[i].entranceArr.length;j++ )
+//        {
+//            let buffer=calcLineArr(shopImageArr[i].entranceArr[j],i);
+//            for (let k=0;k<4;k++)
+//            {
+//                shopImageArr[i].lineArr.push(buffer[k]);
+//            }
+//
+//        }
+//        deleteElemArrToNum(shopImageArr[i].lineArr,0);
+//        deleteElemArrToNum(shopImageArr[i].lineArr,4);
+//        deleteElemArrToNum(shopImageArr[i].lineArr,8);
+//        deleteElemArrToNum(shopImageArr[i].lineArr,12);
+//
+//        let     buffer=calcLineArr(shopImageArr[i],i);
+//        for (let j=0;j<4;j++)
+//        {
+//            shopImageArr[i].linePerimetrArr.push(buffer[j]);
+//        }
        // delete shopImageArr[i].lineArr[
+        addWallObject(shopImageArr[i].x,shopImageArr[i].y,3,true);
+        addWallObject(shopImageArr[i].x+mapSize,shopImageArr[i].y,3,true);
+        addWallObject(shopImageArr[i].x+mapSize*3,shopImageArr[i].y,3,true);
+        
+        addWallObject(shopImageArr[i].x+mapSize*4,shopImageArr[i].y,3,true);
+        addWallObject(shopImageArr[i].x+mapSize*4,shopImageArr[i].y+mapSize,3,true);
+        addWallObject(shopImageArr[i].x+mapSize*4,shopImageArr[i].y+mapSize*3,3,true);
+        
+        addWallObject(shopImageArr[i].x+mapSize*4,shopImageArr[i].y+mapSize*4,3,true);
+        addWallObject(shopImageArr[i].x+mapSize*3,shopImageArr[i].y+mapSize*4,3,true);
+        addWallObject(shopImageArr[i].x+mapSize,shopImageArr[i].y+mapSize*4,3,true)
+        ;
+        addWallObject(shopImageArr[i].x,shopImageArr[i].y+mapSize*4,3,true);
+        addWallObject(shopImageArr[i].x,shopImageArr[i].y+mapSize*3,3,true);
+        addWallObject(shopImageArr[i].x,shopImageArr[i].y+mapSize,3,true);
+        
+        addWallObject(shopImageArr[i].x+mapSize*2,shopImageArr[i].y+mapSize,3,true);
+        addWallObject(shopImageArr[i].x+mapSize*2,shopImageArr[i].y+mapSize*3,3,true);
+        
+        addWallObject(shopImageArr[i].x+mapSize,shopImageArr[i].y+mapSize*2,3,true);
+        addWallObject(shopImageArr[i].x+mapSize*3,shopImageArr[i].y+mapSize*2,3,true);
         console.log(shopImageArr);
     }
    
