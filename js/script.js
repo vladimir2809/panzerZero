@@ -356,6 +356,7 @@ burstArr=[];// массив взрывов
 barrelArr=[];// массив бочек
 bulletArr=[];// массив пуль
 panzerArr=[];// массив танков
+panzerInGarageArr=[];
 textArr=new Object();// массив текстов
 //panzerArr.push(panzer);
 function addText(key,font,fill,str,x,y)// добавить текс
@@ -507,7 +508,7 @@ function create ()// функция создание обьектов неоюх
         setOffsetMousePosXY((window.innerWidth - canvas.width)/2,
                             (window.innerHeight - canvas.height)/2);
         initKeyboardAndMouse(["KeyA","KeyS","KeyD","KeyW","KeyM","KeyB","KeyR",'ArrowLeft',
-                    'ArrowRight','ArrowUp','ArrowDown',"Enter","KeyP","KeyO" ]);
+                    'ArrowRight','ArrowUp','ArrowDown',"Enter","KeyP","KeyO",'KeyG' ]);
         //changeColorImg(context,imageArr.get('body10'),0xb5e61dff,0xdf0d00ff);
         
         calcQuantityPanzer();
@@ -522,6 +523,10 @@ function create ()// функция создание обьектов неоюх
         //initWall();
         //initBarrel();
         playerGan=nextGan(1);
+        for (let i=0;i<panzerOption.length;i++)
+        {
+            panzerInGarageArr.push(panzerOption[i]);
+        }
         loadLevel=true;
        
 
@@ -1190,7 +1195,10 @@ function controlHuman()// управление программой челове
         //    console.log("sosiska");
     
   
-    
+    if (keyUpDuration("KeyG",100)) 
+    {
+        if (garage.open==false)garage.start();
+    }
     if (keyUpDuration("Space",100)) 
     {
         nextNumPanzer(true);
