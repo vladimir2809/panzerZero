@@ -1188,7 +1188,7 @@ function controlHuman()// управление программой челове
         }
         if (checkInGarage(numPanzer)!=-1)
         {
-            if (garage.open==false)garage.start();
+            if (garage.open==false)garage.start(numPanzer);
         }
               
     }  
@@ -1197,7 +1197,7 @@ function controlHuman()// управление программой челове
   
     if (keyUpDuration("KeyG",100)) 
     {
-        if (garage.open==false)garage.start();
+        if (garage.open==false)garage.start(numPanzer);
     }
     if (keyUpDuration("Space",100)) 
     {
@@ -3558,6 +3558,56 @@ function calcBalance(absolute=true,maxPower=false)
     }
     //return Math.trunc(powerGroup0-powerGroup1);
 
+}
+function calcMaxParams()
+{
+    let maxHP=0;
+    let maxTimeAttack=100;
+    let maxHit=0;
+    let maxSpeed=0;
+    let maxAccuracy=100;
+    for (let i=0;i<panzerOption.length;i++)
+    {
+        let buffer=panzerOption[i].HP;
+        for (let j=0;j<3;j++)
+        {
+            buffer*=1+panzerOption[i].mapUp.upHP.up[j]/100;
+        }
+        if (buffer>maxHP) maxHP=buffer;
+    }
+    for (let i=0;i<panzerOption.length;i++)
+    {
+        let buffer=panzerOption[i].attackPatron==false ?
+                            panzerOption[i].hitAttack:
+                            panzerOption[i].hitAttackPatron;
+        for (let j=0;j<3;j++)
+        {
+            buffer*=1+panzerOption[i].mapUp.upHit.up[j]/100;
+        }
+        if (buffer>maxHit) maxHit=buffer;
+    }
+    for (let i=0;i<panzerOption.length;i++)
+    {
+        let buffer=panzerOption[i].speed;
+        for (let j=0;j<3;j++)
+        {
+            buffer*=1+panzerOption[i].mapUp.upSpeed.up[j]/100;
+        }
+        if (buffer>maxSpeed) maxSpeed=buffer;
+    }
+    return [maxHP,maxTimeAttack,maxHit,maxSpeed,maxAccuracy];
+}
+function drawListProgressBar(valuesParam,arrMaxValuesParam,x,y,ofsX,ofsY,dy)
+{
+    let width=150;
+    for (let i=0;i<valuesParam.length;i++)
+    {
+        context.fillStyle="#AAAAAA";
+        context.fillRect(x+ofsX,y+ofsY+dy*i,width,15);
+        context.fillStyle="#FF0000";
+        context.fillRect(x+ofsX,y+ofsY+dy*i,valuesParam[i]/arrMaxValuesParam[i]*width,15);
+
+    }    
 }
 function killGroupPanzer()// вычесление какая группа танков убита
 {
