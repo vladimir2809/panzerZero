@@ -116,7 +116,7 @@ shop={
         this.countProductList=4;
         //this.clearListProduct();
         this.startNumProduct=0;
-        this.arrMaxValuesParam=this.calcMaxParams();
+        this.arrMaxValuesParam=calcMaxParams();
         
         this.createListProduct();
       //  this.calcValuesParam(0);

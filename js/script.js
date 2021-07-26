@@ -1925,10 +1925,11 @@ function controlBullets()// функция управления полетами
                     continue;  
                 }
                 index=checkCollisionArr(bulletArr[i],bonusArr)// пуля столкнулась с яшиком
-                if (index!=-1)
+                if (index!=-1 && bonusArr[index].type==0)
                 {
                     if (bulletArr[i].type==0)
                     {
+                        
                         newBurst(bulletArr[i].x,bulletArr[i].y);
                         bonusArr[index].being=false;
                         //bonusArr.splice(index, 1); 
