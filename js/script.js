@@ -508,7 +508,7 @@ function create ()// функция создание обьектов неоюх
         setOffsetMousePosXY((window.innerWidth - canvas.width)/2,
                             (window.innerHeight - canvas.height)/2);
         initKeyboardAndMouse(["KeyA","KeyS","KeyD","KeyW","KeyM","KeyB","KeyR",'ArrowLeft',
-                    'ArrowRight','ArrowUp','ArrowDown',"Enter","KeyP","KeyO",'KeyG' ]);
+                    'ArrowRight','ArrowUp','ArrowDown',"Enter","KeyP","KeyO",'KeyG',"KeyM" ]);
         //changeColorImg(context,imageArr.get('body10'),0xb5e61dff,0xdf0d00ff);
         
         calcQuantityPanzer();
@@ -550,6 +550,11 @@ function drawAll()// нарисовать все
         if (garage.open==true)
         {
             garage.draw();
+            return 0;
+        }
+        if (messageBox.open==true)
+        {
+            messageBox.draw();
             return 0;
         }
         context.fillStyle='rgb(210,210,210)';
@@ -1198,6 +1203,10 @@ function controlHuman()// управление программой челове
     if (keyUpDuration("KeyG",100)) 
     {
         if (garage.open==false)garage.start(numPanzer);
+    }
+    if (keyUpDuration("KeyH",100)) 
+    {
+        if (messageBox.open==false)messageBox.start("Выбирете что нужно сделать bp 'njuj cgbcrf?","Да","Нет","незнаю");
     }
     if (keyUpDuration("Space",100)) 
     {
