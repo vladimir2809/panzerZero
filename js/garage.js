@@ -7,6 +7,8 @@ garage={
     numPanz:0,
     maxParamArr:[],
     valuesParam:[],
+    timerId:null,
+    timerIdResponse:null,
     buttonArrows:{
                     left:{x:25,y:80,width:25,height:100}, 
                     right:{x:0,y:80,width:25,height:100}
@@ -27,14 +29,63 @@ garage={
         pause=true;
         resetMouseLeft();
         this.open=true;
-        if (this.open==true)  timerId=setInterval(function(){
+        if (this.open==true)  this.timerId=setInterval(function(){
             garage.update();
         },50);
+        this.timerIdResponse=setInterval(function(){
+            garage.select();
+        },50);
+        
     }, 
     close:function()
     {
+        clearInterval(this.timerId);
+        //clearInterval(this.timerIdResponse);
         pause=false;
         this.open=false;
+    },
+    stop:function()
+    {
+         clearInterval(this.timerId);
+    },
+    play:function()
+    {
+        pause=trie;
+        this.open=true;
+        this.timerId=setInterval(function(){
+             garage.update();
+         },50); 
+    },
+    select:function ()
+    {
+        if (messageBox.open==true || this.open==true)
+        {
+            pause=true;
+        }else
+        {
+            pause=false;
+        }
+        if (messageBox.open==false)
+        {
+            if (messageBox.response!=0)
+            {
+             //   messageBox.draw(); messageBox.close();
+                    
+                if (messageBox.response==1)
+                {
+                    messageBox.close();
+                    messageBox.response=0;
+                    this.start();
+                   // clearInterval(this.timerIdResponse);
+                }
+                if (messageBox.response==2)
+                {
+                    messageBox.close();
+                    messageBox.response=0;
+                    this.start();
+                }
+            }
+        }
     },
     draw:function()
     {
@@ -156,7 +207,7 @@ garage={
                 
             }
             //if (mX>x+this.width-25 && mX<x+this.width && mY>y+100 && mY<y+100+150)
-            if (mX>this.buttonArrows.right.x &&
+            if (mX>x+this.buttonArrows.right.x &&
                     mX<x+this.buttonArrows.right.x+this.buttonArrows.right.width
                     && mY>y+this.buttonArrows.right.y &&
                     mY<y+this.buttonArrows.right.y+this.buttonArrows.right.height)
@@ -164,6 +215,37 @@ garage={
             {
                 this.numPanz++;
                 this.numPanz%=panzerInGarageArr.length;
+            }
+            if (mX>x+this.buttonSelectPanz.x &&
+                    mX<x+this.buttonSelectPanz.x+this.buttonSelectPanz.width
+                    && mY>y+this.buttonSelectPanz.y &&
+                    mY<y+this.buttonSelectPanz.y+this.buttonSelectPanz.height)
+            
+            {
+                // выбор танка
+            }
+            if (mX>x+this.buttonSellPanz.x &&
+                    mX<x+this.buttonSellPanz.x+this.buttonSellPanz.width
+                    && mY>y+this.buttonSellPanz.y &&
+                    mY<y+this.buttonSellPanz.y+this.buttonSellPanz.height)
+            
+            {
+                // продать танк
+                let price=0;
+                for (let i=0;i<shopProduct.length;i++)
+                {
+                    if (shopProduct[i].category==3 &&
+                            shopProduct[i].numCount==this.numPanz)
+                    {
+                        price=shopProduct[i].price*0.7;
+                    }
+                }
+                if (messageBox.open==false)
+                {
+                   
+                    messageBox.start("Продать танк за "+price+"$ ?","Да","Нет",);
+                    this.close();
+                }
             }
            console.log("CLICK GARAGE"+(mouseX-x)+" "+(mouseY-y));
         }

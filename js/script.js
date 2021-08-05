@@ -1206,7 +1206,7 @@ function controlHuman()// управление программой челове
     }
     if (keyUpDuration("KeyH",100)) 
     {
-        if (messageBox.open==false)messageBox.start("Выбирете что нужно сделать bp 'njuj cgbcrf?","Да","Нет","незнаю");
+        if (messageBox.open==false)messageBox.start("Выбирете что нужно сделать?","сесть","в гараж","отмена");
     }
     if (keyUpDuration("Space",100)) 
     {

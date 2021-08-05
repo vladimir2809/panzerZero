@@ -21,6 +21,7 @@ shop={
     quantityTab:null,
     noMoneyLabel:false,
     countNoMoney:0,
+    timerIdResponse:null,
     arrMaxValuesParam:[500,100,20,5,100],
     valuesParam:[],
     labelCoord:{x:20,y:220,width:535,height:130},
@@ -123,10 +124,49 @@ shop={
         if (this.open==true)  timerId=setInterval(function(){
             shop.update()
         },50);
+        this.timerIdResponse=setInterval(function(){
+            shop.select();
+        },50);
         
     //  do{
     //          
     //  } while(keyUpDuration("Escape",100)==false);  
+    },
+    select:function ()
+    {
+        if (messageBox.open==true || this.open==true)
+        {
+            pause=true;
+        }else
+        {
+            pause=false;
+        }
+        if (messageBox.open==false)
+        {
+            if (messageBox.response!=0)
+            {
+             //   messageBox.draw();
+                if (messageBox.response==1)
+                {
+                    messageBox.close();
+                    messageBox.response=0;
+                    this.start();
+                   // clearInterval(this.timerIdResponse);
+                }
+                if (messageBox.response==2)
+                {
+                    messageBox.close();
+                    messageBox.response=0;
+                    this.start();
+                }
+                if (messageBox.response==3)
+                {
+                    messageBox.close();
+                    messageBox.response=0;
+                    this.start();
+                }
+            }
+        }
     },
     draw:function()
     {
@@ -355,6 +395,7 @@ shop={
     {
         shop.open=false;
         clearTimeout(timerId);
+        //  clearInterval(this.timerIdResponse);
         pause=false; 
     },
     update:function()
@@ -648,9 +689,12 @@ shop={
                     mY>this.y+this.buttonPayPanz.y &&
                     mY<this.y+this.buttonPayPanz.y+this.buttonPayPanz.height)
                 {
-                    
+                   
                     if (mouseLeftClick())
-                    {
+                    { 
+                        messageBox.start("Выбирете что нужно сделать?","сесть",
+                                        "в гараж","отмена");
+                        this.close();
                         money-=listProduct[startI].price;
                         let index=this.numShopImage;
                         let x=shopImageArr[index].x;

@@ -191,6 +191,7 @@ let shopProduct=[
 //            upAccuracy:{up:[10,20,25],price:[50,80,110],levelUp:0},
     {
         category:3,
+        numCount:0,
         type:0,
         levelOpen:1,
         text:'БТР110',
@@ -202,6 +203,7 @@ let shopProduct=[
     },
     {
         category:3,
+        numCount:1,
         type:0,
         levelOpen:1,
         text:'КВ1',
@@ -213,6 +215,7 @@ let shopProduct=[
     },
     {
         category:3,
+        numCount:2,
         type:0,
         levelOpen:3,
         text:'БТР220',
@@ -224,6 +227,7 @@ let shopProduct=[
     },
     {
         category:3,
+        numCount:3,
         type:0,
         levelOpen:3,
         text:'Т60',
@@ -235,6 +239,7 @@ let shopProduct=[
     },
     {
         category:3,
+        numCount:4,
         type:0,
         levelOpen:3,
         text:'Т87',
@@ -246,6 +251,7 @@ let shopProduct=[
     },
     {
         category:3,
+        numCount:5,
         type:0,
         levelOpen:3,
         text:'Армата',
