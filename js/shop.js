@@ -7,6 +7,7 @@ shop={
     tabMenu:0,
     x:100,
     y:100,
+    pauseShop:false,
     numShopImage:0,
     width:586,
     height:400,
@@ -22,6 +23,8 @@ shop={
     noMoneyLabel:false,
     countNoMoney:0,
     timerIdResponse:null,
+    blockMouseLeft:false,
+    startI:0,
     arrMaxValuesParam:[500,100,20,5,100],
     valuesParam:[],
     labelCoord:{x:20,y:220,width:535,height:130},
@@ -122,11 +125,21 @@ shop={
         this.createListProduct();
       //  this.calcValuesParam(0);
         if (this.open==true)  timerId=setInterval(function(){
-            shop.update()
+            if (shop.pauseShop==false) shop.update();
+            if (shop.open==true)
+            {
+                let response=messageBox.checkResponse();
+                if (response!=0)
+                {
+                    shop.select();
+                    shop.pauseShop=false;
+                }
+                console.log("shop");
+            }
         },50);
-        this.timerIdResponse=setInterval(function(){
-            shop.select();
-        },50);
+//        this.timerIdResponse=setInterval(function(){
+//            shop.select();
+//        },50);
         
     //  do{
     //          
@@ -134,39 +147,96 @@ shop={
     },
     select:function ()
     {
-        if (messageBox.open==true || this.open==true)
-        {
-            pause=true;
-        }else
-        {
-            pause=false;
-        }
-        if (messageBox.open==false)
-        {
-            if (messageBox.response!=0)
-            {
+//        if (messageBox.open==true || this.open==true)
+//        {
+//            pause=true;
+//        }else
+//        {
+//            pause=false;
+//        }
+//        if (messageBox.open==true)
+//        {
+//            this.blockMouseLeft=true;
+//        }
+//        else
+//        {
+//            this.blockMouseLeft=false;
+//        }
+//        if (messageBox.open==false)
+//        {
+//            if (messageBox.response!=0)
+//            {
              //   messageBox.draw();
+//                copyPanz=function(panz)
+//                {
+//                    let onePanz=clone(panzer);
+//                    for (var attr1 in onePanz)
+//                    {
+//                        for (var attr2 in panz)
+//                        {
+//                            //console.log(listProduct[this.startI].option[attr2]);
+//                            if (attr1==attr2) 
+//                            {
+//                                onePanz[attr1]=panz[attr2];
+//                            }
+//                        }
+//                    }
+//                    return onePanz;
+//                }
                 if (messageBox.response==1)
                 {
-                    messageBox.close();
-                    messageBox.response=0;
-                    this.start();
+                    console.log("RESPONSE 1");
+                   
+                    for (var attr1 in panzerArr[0])
+                    {
+                        for (var attr2 in listProduct[this.startI].option)
+                        {
+                            console.log(listProduct[this.startI].option[attr2]);
+                            if (attr1==attr2) 
+                            {
+                                panzerArr[numPanzer][attr1]=listProduct[this.startI].option[attr2];
+                            }
+                        }
+                    } 
+                    let copy=copyPanz(panzerArr[numPanzer]);
+                    panzerInGarageArr.push(copy);
+                    playerGan=nextGan(1);
+//                    for (let i=0;i<panzerArr[0].maskGan;i++)
+//                    {
+//                        if (panzerArr[0].maskGan[i]==1)
+//                        {
+//                            playerGan=i;
+//                            break;
+//                        }
+//                        
+//                    }
+                 //  panzerArr[0]=listProduct[startI].option;
                    // clearInterval(this.timerIdResponse);
                 }
                 if (messageBox.response==2)
                 {
-                    messageBox.close();
-                    messageBox.response=0;
-                    this.start();
+                    let onePanz=clone(panzer);
+                    for (var attr1 in onePanz)
+                    {
+                        for (var attr2 in listProduct[this.startI].option)
+                        {
+                            //console.log(listProduct[this.startI].option[attr2]);
+                            if (attr1==attr2) 
+                            {
+                                onePanz[attr1]=listProduct[this.startI].option[attr2];
+                            }
+                        }
+                    }  
+                    panzerInGarageArr.push(onePanz);
                 }
                 if (messageBox.response==3)
                 {
-                    messageBox.close();
-                    messageBox.response=0;
-                    this.start();
                 }
-            }
-        }
+                messageBox.close();
+                messageBox.response=0;
+           //     this.start();
+//            }
+//        }
     },
     draw:function()
     {
@@ -394,8 +464,8 @@ shop={
     close:function ()
     {
         shop.open=false;
-        clearTimeout(timerId);
-        //  clearInterval(this.timerIdResponse);
+        clearInterval(timerId);
+        clearInterval(this.timerIdResponse);
         pause=false; 
     },
     update:function()
@@ -694,60 +764,63 @@ shop={
                     { 
                         messageBox.start("Выбирете что нужно сделать?","сесть",
                                         "в гараж","отмена");
-                        this.close();
-                        money-=listProduct[startI].price;
-                        let index=this.numShopImage;
-                        let x=shopImageArr[index].x;
-                        let y=shopImageArr[index].y-mapSize;
-                        for (let i=0;i<shopImageArr[index].width/mapSize;i++)
-                        {
-                            if (checkKvadrMap((x+5)/mapSize,(y+5)/mapSize)==true)
-                            {
-                                x+=mapSize;
-
-                            }
-                            else 
-                            {
-                               break;
-                            }
-                        }
-                        if (x>shopImageArr[index].x)
-                        {
-                            for (let i=0;i<shopImageArr[index].height/mapSize+1;i++)
-                            {
-                                if (checkKvadrMap((x+5)/mapSize,(y+5)/mapSize)==true)
-                                {
-                                    y+=mapSize;
-
-                                }
-                                else 
-                                {
-                                   break;
-                                }
-                            } 
-                        }
-                        if (y>shopImageArr[index].y)
-                        {
-                            y-=5;
-                            for (let i=0;i<shopImageArr[index].height/mapSize;i++)
-                            {
-                                if (checkKvadrMap((x+5)/mapSize,(y+5)/mapSize)==true)
-                                {
-                                    x-=mapSize;
-
-                                }
-                                else 
-                                {
-                                   break;
-                                }
-                            } 
-                        }
-                        initOnePanzer(x,y,0,startI);
+                        this.startI=startI;
+                       // this.close();
+                        this.pauseShop=true;
+//                        money-=listProduct[startI].price;
+//                        let index=this.numShopImage;
+//                        let x=shopImageArr[index].x;
+//                        let y=shopImageArr[index].y-mapSize;
+//                        for (let i=0;i<shopImageArr[index].width/mapSize;i++)
+//                        {
+//                            if (checkKvadrMap((x+5)/mapSize,(y+5)/mapSize)==true)
+//                            {
+//                                x+=mapSize;
+//
+//                            }
+//                            else 
+//                            {
+//                               break;
+//                            }
+//                        }
+//                        if (x>shopImageArr[index].x)
+//                        {
+//                            for (let i=0;i<shopImageArr[index].height/mapSize+1;i++)
+//                            {
+//                                if (checkKvadrMap((x+5)/mapSize,(y+5)/mapSize)==true)
+//                                {
+//                                    y+=mapSize;
+//
+//                                }
+//                                else 
+//                                {
+//                                   break;
+//                                }
+//                            } 
+//                        }
+//                        if (y>shopImageArr[index].y)
+//                        {
+//                            y-=5;
+//                            for (let i=0;i<shopImageArr[index].height/mapSize;i++)
+//                            {
+//                                if (checkKvadrMap((x+5)/mapSize,(y+5)/mapSize)==true)
+//                                {
+//                                    x-=mapSize;
+//
+//                                }
+//                                else 
+//                                {
+//                                   break;
+//                                }
+//                            } 
+//                        }
+//                        initOnePanzer(x,y,0,startI);
                     }
                 }   
             }
         }
-        if (mouseLeftClick())
+      
+        if (this.blockMouseLeft==false && mouseLeftClick())
         {
        
             console.log(mX+" "+mY);

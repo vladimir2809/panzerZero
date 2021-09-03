@@ -199,7 +199,7 @@ var option=[
         quantityBrickWall:1,
         maxDistBullet:5250,
         typePanzerArrGR0:[0,0,0,1,0,0],
-        typePanzerArrGR1:[0,1,0,0,0,0],
+        typePanzerArrGR1:[0,0,0,1,0,0],
         quantityPanzerGroup0:0,
         quantityPanzerGroup1:0,
         speedGame:1,

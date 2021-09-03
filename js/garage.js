@@ -5,10 +5,14 @@ garage={
     width:500,
     height:270,
     numPanz:0,
+    pauseGarage:false,
     maxParamArr:[],
     valuesParam:[],
     timerId:null,
+    blockMouseLeft:false,
+    price:0,
     timerIdResponse:null,
+    numPanzerPlayer:null,
     buttonArrows:{
                     left:{x:25,y:80,width:25,height:100}, 
                     right:{x:0,y:80,width:25,height:100}
@@ -29,18 +33,38 @@ garage={
         pause=true;
         resetMouseLeft();
         this.open=true;
+//       if (panzerInGarageArr.length==0)
+//        {
+////            panzerInGarageArr.push(panzerArr[numPanzer]);
+////                    }
+//            let panz=copyPanz(panzerArr[numPanzer]);
+//            panzerInGarageArr.push(panz);
+//            this.numPanzerPlayer=panzerInGarageArr.length-1;
+//            
+//        }
         if (this.open==true)  this.timerId=setInterval(function(){
-            garage.update();
+            if (garage.pauseGarage==false)   garage.update();
+            if (garage.open==true)
+            {
+                let response=messageBox.checkResponse();
+                if (response!=0)
+                {
+                    garage.select();
+                    garage.pauseGarage=false;
+                }
+            }
         },50);
-        this.timerIdResponse=setInterval(function(){
-            garage.select();
-        },50);
+        console.log(panzerInGarageArr);
+//        this.timerIdResponse=setInterval(function(){
+//            garage.select();
+//        },50);
         
     }, 
     close:function()
     {
         clearInterval(this.timerId);
-        //clearInterval(this.timerIdResponse);
+        clearInterval(this.timerIdResponse);
+        //deleteElemArrToNum(panzerInGarageArr,this.numPanzerPlayer);
         pause=false;
         this.open=false;
     },
@@ -50,7 +74,7 @@ garage={
     },
     play:function()
     {
-        pause=trie;
+        pause=true;
         this.open=true;
         this.timerId=setInterval(function(){
              garage.update();
@@ -58,34 +82,39 @@ garage={
     },
     select:function ()
     {
-        if (messageBox.open==true || this.open==true)
-        {
-            pause=true;
-        }else
-        {
-            pause=false;
-        }
-        if (messageBox.open==false)
-        {
-            if (messageBox.response!=0)
-            {
+//        if (messageBox.open==true || this.open==true)
+//        {
+//            pause=true;
+//        }else
+//        {
+//            pause=false;
+//        }
+//        if (messageBox.open==false)
+//        {
+//            if (messageBox.response!=0)
+//            {
              //   messageBox.draw(); messageBox.close();
-                    
-                if (messageBox.response==1)
+                if (garage.pauseGarage==true)
                 {
-                    messageBox.close();
-                    messageBox.response=0;
-                    this.start();
-                   // clearInterval(this.timerIdResponse);
+                    if (messageBox.response==1)
+                    {
+                        deleteElemArrToNum(panzerInGarageArr,this.numPanz);
+                        money+=this.price;
+                        console.log(panzerInGarageArr);
+                        this.numPanz=this.numPanz<=0?0:this.numPanz-1;
+                       // clearInterval(this.timerIdResponse);
+                    }
+                    if (messageBox.response==2)
+                    {
+
+                    }  
+                  //  garage.pauseGarage=false;
                 }
-                if (messageBox.response==2)
-                {
-                    messageBox.close();
-                    messageBox.response=0;
-                    this.start();
-                }
-            }
-        }
+                messageBox.close();
+                messageBox.response=0;
+               // this.start();
+//            }
+//        }
     },
     draw:function()
     {
@@ -222,6 +251,27 @@ garage={
                     mY<y+this.buttonSelectPanz.y+this.buttonSelectPanz.height)
             
             {
+                for (var attr1 in panzerArr[numPanzer])
+                 {
+                     for (var attr2 in panzerInGarageArr[this.numPanz])
+                     {
+                         //console.log(listProduct[this.startI].option[attr2]);
+                         if (attr1==attr2) 
+                         {
+                            console.log(attr1);
+                            if (attr1!='x' && attr1!='y')
+                            {
+                                panzerArr[numPanzer][attr1]=panzerInGarageArr[this.numPanz][attr2];
+                            }
+                         }
+                     }
+                     //if (this.numPanz==this.numPanzerPlayer)
+                     {
+                         //deleteElemArrToNum(panzerInGarageArr,this.numPanz);
+                     }
+                     playerGan=nextGan(1);
+                     this.close();
+                 }
                 // выбор танка
             }
             if (mX>x+this.buttonSellPanz.x &&
@@ -242,9 +292,14 @@ garage={
                 }
                 if (messageBox.open==false)
                 {
-                   
-                    messageBox.start("Продать танк за "+price+"$ ?","Да","Нет",);
-                    this.close();
+                    if (panzerInGarageArr.length>1)
+                    {
+                        messageBox.start("Продать танк за "+price+"$ ?","Да","Нет",);
+                        this.price=price;
+                    
+                        this.pauseGarage=true;
+                    }
+                  //  this.close();
                 }
             }
            console.log("CLICK GARAGE"+(mouseX-x)+" "+(mouseY-y));

@@ -10,6 +10,7 @@ messageBox={
     buttonArr:[],
     textButton:[],
     a:2,
+    flagResponse:false,
     response:null,
     
     init: function (){
@@ -65,7 +66,7 @@ messageBox={
     },
     close:function (){
         this.open=false;
-        pause=false;
+        //pause=false;
         clearInterval(messageBox.timerId);
     },
     draw:function(){
@@ -85,6 +86,15 @@ messageBox={
             context.fillText(this.buttonArr[i].message,this.x+this.buttonArr[i].x,
                                 this.y+this.buttonArr[i].y);
         }
+    },
+    checkResponse: function()
+    {
+      if (this.flagResponse==true)
+      {
+          this.flagResponse=false;
+          return this.response;
+      }
+      return 0;
     },
     update: function(){
         mX=mouseX-mouseOffsetX;
@@ -106,6 +116,7 @@ messageBox={
                                         this.buttonArr[i].height+a*2
                     )
                 {
+                    this.flagResponse=true;
                     this.response=i+1;
                     this.close();
                 }

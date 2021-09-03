@@ -523,10 +523,8 @@ function create ()// функция создание обьектов неоюх
         //initWall();
         //initBarrel();
         playerGan=nextGan(1);
-        for (let i=0;i<panzerOption.length;i++)
-        {
-            panzerInGarageArr.push(panzerOption[i]);
-        }
+        let panz=copyPanz(panzerArr[numPanzer]);
+        panzerInGarageArr.push(panz);
         loadLevel=true;
        
 
@@ -540,22 +538,27 @@ function drawAll()// нарисовать все
         if (shop.open==true)
         {
             shop.draw();
-            return 0;
+          //  return 0;
         }
         if (boxWindowSelect.open==true)
         {
             boxWindowSelect.draw();
-            return 0;
+           // return 0;
         }
         if (garage.open==true)
         {
             garage.draw();
-            return 0;
+          //  return 0;
         }
         if (messageBox.open==true)
         {
             messageBox.draw();
-            return 0;
+          //  return 0;
+        }
+        if (shop.open==true || boxWindowSelect.open==true || 
+                garage.open==true ||   messageBox.open==true )
+        {
+           return 0;   
         }
         context.fillStyle='rgb(210,210,210)';
         context.fillRect(0,0,camera.width,camera.height);// очистка экрана
@@ -1202,7 +1205,7 @@ function controlHuman()// управление программой челове
   
     if (keyUpDuration("KeyG",100)) 
     {
-        if (garage.open==false)garage.start(numPanzer);
+        if (garage.open==false)garage.start();
     }
     if (keyUpDuration("KeyH",100)) 
     {
@@ -1242,7 +1245,7 @@ function controlHuman()// управление программой челове
     }
     if (shop.open==false && checkPressKey("KeyM")) 
     {
-          shop.start();
+          shop.start(0);
     }
     if (boxWindowSelect.open==false && checkPressKey("KeyB")) 
     {
@@ -3513,6 +3516,22 @@ function crossPanzerToPanzer(num,point,numAttack)
     }
     return false;
     
+}
+copyPanz=function(panz)
+{
+    let onePanz=clone(panzer);
+    for (var attr1 in onePanz)
+    {
+        for (var attr2 in panz)
+        {
+            //console.log(listProduct[this.startI].option[attr2]);
+            if (attr1==attr2) 
+            {
+                onePanz[attr1]=panz[attr2];
+            }
+        }
+    }
+    return onePanz;
 }
 // расчет баланса сил между комондами
 function calcBalance(absolute=true,maxPower=false)
