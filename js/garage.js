@@ -98,10 +98,34 @@ garage={
                 {
                     if (messageBox.response==1)
                     {
+                        let flag=false;
+                        if (panzerInGarageArr[this.numPanz].id=panzerArr[numPanzer].id)
+                        {
+                            flag=true;
+                        }
                         deleteElemArrToNum(panzerInGarageArr,this.numPanz);
                         money+=this.price;
                         console.log(panzerInGarageArr);
                         this.numPanz=this.numPanz<=0?0:this.numPanz-1;
+                        if (flag==true)
+                        {
+                            for (var attr1 in panzerArr[numPanzer])
+                            {
+                                for (var attr2 in panzerInGarageArr[this.numPanz])
+                                {
+                                    //console.log(listProduct[this.startI].option[attr2]);
+                                    if (attr1==attr2) 
+                                    {
+                                       console.log(attr1);
+                                       if (attr1!='x' && attr1!='y')
+                                       {
+                                           panzerArr[numPanzer][attr1]=panzerInGarageArr[this.numPanz][attr2];
+                                       }
+                                    }
+                                }
+                            }  
+                            playerGan=nextGan(1);
+                        }
                        // clearInterval(this.timerIdResponse);
                     }
                     if (messageBox.response==2)
@@ -214,6 +238,30 @@ garage={
         arr[4]=panzerInGarageArr[num].accuracy;
         return arr;
     },
+//    assignPanzer:function(assignPanz,panz)
+//    {
+//        for (var attr1 in panzerArr[numPanzer])
+//         {
+//             for (var attr2 in panzerInGarageArr[this.numPanz])
+//             {
+//                 //console.log(listProduct[this.startI].option[attr2]);
+//                 if (attr1==attr2) 
+//                 {
+//                    console.log(attr1);
+//                    if (attr1!='x' && attr1!='y')
+//                    {
+//                        panzerArr[numPanzer][attr1]=panzerInGarageArr[this.numPanz][attr2];
+//                    }
+//                 }
+//             }
+//             //if (this.numPanz==this.numPanzerPlayer)
+//             {
+//                 //deleteElemArrToNum(panzerInGarageArr,this.numPanz);
+//             }
+//             playerGan=nextGan(1);
+//             this.close();
+//         }
+//    },
     update: function()
     {
         let x=this.x;
@@ -265,13 +313,9 @@ garage={
                             }
                          }
                      }
-                     //if (this.numPanz==this.numPanzerPlayer)
-                     {
-                         //deleteElemArrToNum(panzerInGarageArr,this.numPanz);
-                     }
-                     playerGan=nextGan(1);
-                     this.close();
-                 }
+                 }  
+                 playerGan=nextGan(1);
+                 this.close();
                 // выбор танка
             }
             if (mX>x+this.buttonSellPanz.x &&

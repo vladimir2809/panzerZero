@@ -34,6 +34,7 @@ var maxPowerGroup;// максимальная мошность команды
 var numBattle=0;// количество битв
 var countBeforeUpload=0;// время задержки в циклах после того как бой закончен
 let flagPressV=false;// флаг того что нажата кнопка отключить\включить отобюражение
+var maxPanzerId=0;
 
 var time=0;// время боя
 var timeNow=0;// текушие время
@@ -69,6 +70,7 @@ var viewTextInGarage=false;
 var strFile='';
 // обьект танк
 var panzer={
+    id:0,
     numType:null,
     bodyNameImage:null,// имя картинки корпуса
     towerNameImage:null,// имя картинки башни
@@ -433,7 +435,7 @@ function loadImageArr()// загрузить массив изображений
 }
 function calcQuantityPanzer()
 {
- for (i=0;i<option[numOption].typePanzerArrGR0.length;i++)
+    for (i=0;i<option[numOption].typePanzerArrGR0.length;i++)
     {
         quantityPanzerGroup0+=option[numOption].typePanzerArrGR0[i];
         //console.log(option[numOption].typePanzerArrGR0[i]);
@@ -508,7 +510,7 @@ function create ()// функция создание обьектов неоюх
         setOffsetMousePosXY((window.innerWidth - canvas.width)/2,
                             (window.innerHeight - canvas.height)/2);
         initKeyboardAndMouse(["KeyA","KeyS","KeyD","KeyW","KeyM","KeyB","KeyR",'ArrowLeft',
-                    'ArrowRight','ArrowUp','ArrowDown',"Enter","KeyP","KeyO",'KeyG',"KeyM" ]);
+                    'ArrowRight','ArrowUp','ArrowDown',"Enter","KeyP","KeyO",'KeyG',"KeyM","KeyI" ]);
         //changeColorImg(context,imageArr.get('body10'),0xb5e61dff,0xdf0d00ff);
         
         calcQuantityPanzer();
@@ -523,6 +525,7 @@ function create ()// функция создание обьектов неоюх
         //initWall();
         //initBarrel();
         playerGan=nextGan(1);
+        panzerArr[numPanzer].id=1;
         let panz=copyPanz(panzerArr[numPanzer]);
         panzerInGarageArr.push(panz);
         loadLevel=true;
@@ -1158,6 +1161,10 @@ function checkColorInStokKey(color)
     }
     return false;
 }
+function checkId2Array(arr1,arr2)
+{
+    
+}
 function searchKeyInStokByColor(color)
 {
     for (let i=0;i<keyInStokArr.length;i++)
@@ -1168,6 +1175,13 @@ function searchKeyInStokByColor(color)
         }
     }
     return -1;
+}
+function informationOfPanzer(numPanz)
+{
+    for (var attr in panzerArr[numPanz])
+    {
+        console.log(attr+ " "+panzerArr[numPanz][attr]);
+    }
 }
 function controlHuman()// управление программой человеком
 {
@@ -1202,7 +1216,10 @@ function controlHuman()// управление программой челове
     }  
         //    console.log("sosiska");
     
-  
+    if (keyUpDuration("KeyI",100)) 
+    {
+        informationOfPanzer(numPanzer);
+    }
     if (keyUpDuration("KeyG",100)) 
     {
         if (garage.open==false)garage.start();

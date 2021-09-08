@@ -145,6 +145,24 @@ shop={
     //          
     //  } while(keyUpDuration("Escape",100)==false);  
     },
+    newPanzerId:function()
+    {
+        let maxId=0;
+        if (maxPanzerId==0)
+        {
+            for (let i=0;i<panzerInGarageArr.length;i++)
+            {
+                if (maxId<panzerInGarageArr[i].id)
+                {
+                    maxId=panzerInGarageArr[i].id;
+                }
+            }
+            maxPanzerId=maxId;
+        }
+        maxPanzerId++;   
+         
+        return maxPanzerId;
+    },
     select:function ()
     {
 //        if (messageBox.open==true || this.open==true)
@@ -186,8 +204,8 @@ shop={
                 if (messageBox.response==1)
                 {
                     console.log("RESPONSE 1");
-                   
-                    for (var attr1 in panzerArr[0])
+                    
+                    for (var attr1 in panzerArr[numPanzer])
                     {
                         for (var attr2 in listProduct[this.startI].option)
                         {
@@ -198,7 +216,9 @@ shop={
                             }
                         }
                     } 
+                    panzerArr[numPanzer].id=this.newPanzerId();
                     let copy=copyPanz(panzerArr[numPanzer]);
+                    
                     panzerInGarageArr.push(copy);
                     playerGan=nextGan(1);
 //                    for (let i=0;i<panzerArr[0].maskGan;i++)
@@ -227,6 +247,7 @@ shop={
                             }
                         }
                     }  
+                    onePanz.id=this.newPanzerId();
                     panzerInGarageArr.push(onePanz);
                 }
                 if (messageBox.response==3)
