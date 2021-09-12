@@ -25,6 +25,7 @@ shop={
     timerIdResponse:null,
     blockMouseLeft:false,
     startI:0,
+    sellPanzer:false,
     arrMaxValuesParam:[500,100,20,5,100],
     valuesParam:[],
     labelCoord:{x:20,y:220,width:535,height:130},
@@ -108,7 +109,7 @@ shop={
 //        console.log(numPanz);
 //        console.log(this.valuesParam);
     },
-    start:function (num)
+    start:function (num,sellPanzer=false)
     {
      // drawShop(); 
         this.init();
@@ -116,7 +117,8 @@ shop={
         pause=true;
         this.numShopImage=num;
         this.open=true;
-        this.tabMenu=0;
+        this.sellPanzer=sellPanzer;
+        this.tabMenu=sellPanzer==true? 3 :0;
         this.countProductList=4;
         //this.clearListProduct();
         this.startNumProduct=0;
@@ -204,7 +206,7 @@ shop={
                 if (messageBox.response==1)
                 {
                     console.log("RESPONSE 1");
-                    
+                    money-=listProduct[this.startI].price;
                     for (var attr1 in panzerArr[numPanzer])
                     {
                         for (var attr2 in listProduct[this.startI].option)
@@ -216,6 +218,7 @@ shop={
                             }
                         }
                     } 
+                    panzerArr[numPanzer].being=true;
                     panzerArr[numPanzer].id=this.newPanzerId();
                     let copy=copyPanz(panzerArr[numPanzer]);
                     
@@ -235,6 +238,7 @@ shop={
                 }
                 if (messageBox.response==2)
                 {
+                    money-=listProduct[this.startI].price;
                     let onePanz=clone(panzer);
                     for (var attr1 in onePanz)
                     {
@@ -730,6 +734,26 @@ shop={
                                 break;
                                 
                             }
+                            let num=calcNumById(panzerArr[numPanzer].id,
+                                                            panzerInGarageArr)
+                            if (num!=-1)
+                            {
+                                for (var attr1 in panzerArr[numPanzer])
+                                {
+                                    for (var attr2 in panzerInGarageArr[num])
+                                    {
+                                        //console.log(listProduct[this.startI].option[attr2]);
+                                        if (attr1==attr2) 
+                                        {
+                                           console.log(attr1);
+                                       //    if (attr1!='x' && attr1!='y')
+                                           {
+                                               panzerInGarageArr[num][attr1]=panzerArr[numPanzer][attr2];
+                                           }
+                                        }
+                                    }
+                                }  
+                            }
 //                            console.log("Upgrade");
 //                            console.log("maxHP "+panzerArr[numPanzer].maxHP);
 //                            console.log("timeAttack "+panzerArr[numPanzer].timeAttack);
@@ -783,8 +807,17 @@ shop={
                    
                     if (mouseLeftClick())
                     { 
-                        messageBox.start("Выбирете что нужно сделать?","сесть",
-                                        "в гараж","отмена");
+                        if (this.sellPanzer==false)
+                        {
+                            
+                            messageBox.start("Выбирете что нужно сделать?","сесть",
+                                                "в гараж","отмена");
+                        }   
+                        else
+                        {
+                            messageBox.start("Выбирете что нужно сделать?","сесть",
+                                                "отмена",[1,3]);
+                        }
                         this.startI=startI;
                        // this.close();
                         this.pauseShop=true;

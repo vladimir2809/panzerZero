@@ -63,7 +63,7 @@ garage={
     close:function()
     {
         clearInterval(this.timerId);
-        clearInterval(this.timerIdResponse);
+       // clearInterval(this.timerIdResponse);
         //deleteElemArrToNum(panzerInGarageArr,this.numPanzerPlayer);
         pause=false;
         this.open=false;
@@ -298,7 +298,7 @@ garage={
                     && mY>y+this.buttonSelectPanz.y &&
                     mY<y+this.buttonSelectPanz.y+this.buttonSelectPanz.height)
             
-            {
+            {  // выбор танка
                 for (var attr1 in panzerArr[numPanzer])
                  {
                      for (var attr2 in panzerInGarageArr[this.numPanz])
@@ -314,9 +314,10 @@ garage={
                          }
                      }
                  }  
+                 panzerArr[numPanzer].being=true;
                  playerGan=nextGan(1);
                  this.close();
-                // выбор танка
+              
             }
             if (mX>x+this.buttonSellPanz.x &&
                     mX<x+this.buttonSellPanz.x+this.buttonSellPanz.width

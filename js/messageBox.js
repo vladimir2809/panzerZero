@@ -10,6 +10,7 @@ messageBox={
     buttonArr:[],
     textButton:[],
     a:2,
+    responseMask:[1,2,3],
     flagResponse:false,
     response:null,
     
@@ -17,7 +18,7 @@ messageBox={
         this.x=screenWidth/2-this.width/2;
         this.y=screenHeight/2-this.height/2;
     },
-    start:function(message,text1,text2="",text3=""){
+    start:function(message,text1){
         this.message=message;
         pause=true;
         this.response=0;
@@ -29,9 +30,30 @@ messageBox={
         {
             this.buttonArr.splice(0,1);
         }
+        this.responseMask=[1,2,3];
         this.textButton.push(text1);
-        if (text2!="")this.textButton.push(text2);
-        if (text3!="")this.textButton.push(text3);
+        for (let i=2;i<arguments.length;i++)
+        {
+            if (typeof arguments[i]==="object")
+            {
+                this.responseMask=[];
+                for (let j=0;j<arguments[i].length;j++)
+                {
+                    this.responseMask.push(arguments[i][j]);
+                //    alert("maskResp"+" "+this.responseMask) ;
+                }
+                break;
+            }
+            if (typeof arguments[i]==="string"&& arguments[i]!='')
+            {
+                this.textButton.push(arguments[i]);
+            }
+//               alert("maskResp"+" "+this.responseMask) ;
+//              alert(arguments[i]) ; 
+            
+        }
+//        if (text2!="")this.textButton.push(text2);
+//        if (text3!="")this.textButton.push(text3);
         this.open=true;
         this.init();
         context.font = this.font;
@@ -117,7 +139,7 @@ messageBox={
                     )
                 {
                     this.flagResponse=true;
-                    this.response=i+1;
+                    this.response=this.responseMask[i];
                     this.close();
                 }
 

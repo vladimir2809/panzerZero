@@ -21,7 +21,7 @@ var quantityPanzerGroup1=0;//option[numOption].quantityPanzerGroup1;// коли�
 var visibleGame=option[numOption].visibleGame;// отображение игры
 var gamePlayer=option[numOption].gamePlayer;// играет ли игрок или игра идет автоматически
 var playerGan=0;// номер оружия у танка игрока
-var money=10000;// деньги игрока
+var money=100;// деньги игрока
 var addMoney=0;
 var timeAddMoney=0;
 var levelPlayer=1;
@@ -435,6 +435,8 @@ function loadImageArr()// загрузить массив изображений
 }
 function calcQuantityPanzer()
 {
+    quantityPanzerGroup0=0;
+    quantityPanzerGroup1=0;
     for (i=0;i<option[numOption].typePanzerArrGR0.length;i++)
     {
         quantityPanzerGroup0+=option[numOption].typePanzerArrGR0[i];
@@ -1082,7 +1084,7 @@ function gameLoop(mult,visible)// игровой цикл
             }
             timeNow=new Date().getTime();
             time=timeNow-timeOld;
-           if (shop.open==false && boxWindowSelect.open==false) timeAddMoney+=time;
+            if (shop.open==false && boxWindowSelect.open==false) timeAddMoney+=time;
             timeOld=new Date().getTime();
            //if (countIterationGameLoop>countUpload) // условия обновления уровня       
             if (killGroupPanzer()!=-1)
@@ -1097,7 +1099,41 @@ function gameLoop(mult,visible)// игровой цикл
                     {
                         if (calcBalance()>0) win++; else win--;
                     }
-                    uploadLevel();
+                    if (killGroupPanzer()==0 && killGroupPanzer()!=-1 )
+                    {
+                        if (pause==false)
+                        {
+                            let num=calcNumById(panzerArr[numPanzer].id,
+                                                                panzerInGarageArr);
+                          //deleteElemArrToNum
+                            
+                            deleteElemArrToNum(panzerInGarageArr,num);
+                            if (panzerInGarageArr.length>0)
+                            {
+                                if (garage.open==false)garage.start();
+                            }
+                            else
+                            {
+                                if (money>=500)
+                                {
+                                    if (shop.open==false)shop.start(0,true); 
+                                    
+                                }
+                                else
+                                {
+                                 //   alert("Game Over");
+                                    uploadLevel();
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        
+                        uploadLevel();
+                        console.log(panzerArr);
+                        alert("im deli");
+                    }
 //                    countIterationGameLoop=0;
 //                    countBeforeUpload=0;
                     countBreak++;
@@ -1161,9 +1197,16 @@ function checkColorInStokKey(color)
     }
     return false;
 }
-function checkId2Array(arr1,arr2)
+function calcNumById(id,arr)
 {
-    
+    for(let i=0;i<arr.length;i++)
+    {
+        if (id==arr[i].id)
+        {
+            return i;
+        }
+    }
+    return -1;
 }
 function searchKeyInStokByColor(color)
 {
@@ -3094,9 +3137,13 @@ function initPanzers()// функция инициализации танков
                     }
                 }
             //   panzerArr[i].bodyNameImage[4]='2';
-                var str=panzerArr[i].bodyNameImage;
-                console.log(str);
-                panzerArr[i].bodyNameImage=str.replace('body1','body2');;
+//                let str=panzerArr[i].bodyNameImage;
+//                console.log(str);
+//                panzerArr[i].bodyNameImage=str.replace('body1','body2');;
+                
+                panzerArr[i].bodyNameImage='body2'+ panzerArr[i].numType;
+                            
+                            
                 console.log(panzerArr[i].bodyNameImage);
 //                panzerArr[i].HP= option[numOption].panzerRed[(i==quantityPanzerGroup0)?0:1].HP;//(i==0)?1000:100; 
 //                panzerArr[i].speedReaction=option[numOption].panzerRed[(i==quantityPanzerGroup0)?0:1].speedReaction;
@@ -3118,7 +3165,7 @@ function initPanzers()// функция инициализации танков
             panzerArr[i].DMG*=myBinSearch(panzerArr[i].accuracy,
                  accuracyToHits,"accuracy","hits")/100;
                 console.log(panzerArr[i].DMG);
-            console.log(panzerArr[i]);
+            console.log(panzerArr);
         }   
     }
     
@@ -3155,7 +3202,7 @@ function initOnePanzer(x,y,GR,type)
     }
     if (GR==1)
     {
-        var str=onePanzer.bodyNameImage;
+        let str=onePanzer.bodyNameImage;
         console.log(str);
         onePanzer.bodyNameImage=str.replace('body1','body2');;
     }           
@@ -3240,24 +3287,24 @@ function restartLevel()
 }
 function uploadLevel()// функция обновления уровня после того как бой закончен
 {
-    for (let i=0;i<panzerArr.length;i++)
-    {
-        delete panzerArr[i].body;
-        delete panzerArr[i].tower;
-        delete panzerArr[i];
-    }
-    for (let i=0;i<bonusArr.length;i++)
-    {
-        delete bonusArr[i];
-    }
-    for (let i=0;i<wallArr.length;i++)
-    {
-        delete wallArr[i];
-    }
-    for (let i=0;i<barrelArr.length;i++)
-    {
-        delete barrelArr[i];
-    }
+//    for (let i=0;i<panzerArr.length;i++)
+//    {
+//        delete panzerArr[i].body;
+//        delete panzerArr[i].tower;
+//        delete panzerArr[i];
+//    }
+//    for (let i=0;i<bonusArr.length;i++)
+//    {
+//        delete bonusArr[i];
+//    }
+//    for (let i=0;i<wallArr.length;i++)
+//    {
+//        delete wallArr[i];
+//    }
+//    for (let i=0;i<barrelArr.length;i++)
+//    {
+//        delete barrelArr[i];
+//    }
         
         
     
@@ -3291,11 +3338,20 @@ function uploadLevel()// функция обновления уровня пос
     {
         garageImageArr.splice(0,1);
     }
+    while (panzerInGarageArr.length>0)
+    {
+        panzerInGarageArr.splice(0,1);
+    }
+    
+    calcQuantityPanzer();
     initPanzers();
     initAllNoMoveObject();
 //    initBox();
 //    initWall();
 //    initBarrel();
+    panzerArr[numPanzer].id=1;
+    let panz=copyPanz(panzerArr[numPanzer]);
+    panzerInGarageArr.push(panz);
     calcBalance(false,true);
     countIterationGameLoop=0;
     countBeforeUpload=0;
