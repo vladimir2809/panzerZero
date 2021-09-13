@@ -162,7 +162,7 @@
         mixTowerPosX:17,// координаты куда должна встать башня у корпуса
         mixTowerPosY:17,
         speed:2,
-        HP:100,
+        HP:10000,
         DMG:1,
         attackPatron:false,
         timeAttack:1000/50,// время перезарядки

@@ -52,7 +52,7 @@ var nameImageArr=["body10","body11",'body12','body13','body14','body15',
                 "bonusPatron",'bonusBullet','garage',
                 'wall',"water","brickwall","badbrickwall",'bullet',"rocket",
                 'patron','burst','burstBig','burstSmall','barrel',/*'barrel2',*/
-                'ganIcon','shop',"star",'starContur','gate'];
+                'ganIcon','shop',"star",'starContur','gate',"base"];
 var audio;
 var soundTrack;
 var flagSoundTrack=false;
@@ -327,8 +327,22 @@ garageImageType={
     lineArr:[],
     linePerimetrArr:[],
 }
+baseImageType={
+    x:null,
+    y:null,
+    being:false,
+   // sprite:null,
+    maxHP:100,
+    HP:100,
+    width:80,
+    height:80,
+    maxCount:5,
+    count:0,
+    lineArr:[],
+}
 shopImageArr=[];
 garageImageArr=[];
+baseImageArr=[];
 leser={
     x:null,
     y:null,
@@ -684,6 +698,10 @@ function drawAll()// нарисовать все
                 if (checkCollision(camera,panzerArr[i])==true || scale<=1)
                 drawPanzer(context,panzerArr[i],camera,scale);
             } 
+            for (let i=0;i<baseImageArr.length;i++)
+            {
+                drawBase(baseImageArr[i]);
+            }
             for (let i=0;i<burstArr.length;i++)
             {
                 if (burstArr[i].being==true)    
@@ -718,7 +736,7 @@ function drawAll()// нарисовать все
             context.lineTo(panzerArr[numPanzer].lineArr[i].x1,panzerArr[numPanzer].lineArr[i].y1); //рисуем линию
             context.stroke();
         }
-      
+       
       
     }
 }
@@ -813,6 +831,17 @@ function drawPanzer(context,panzer,camera,scale)// функция рисован
     context.restore();
  //   console.log(panzer.bodyNameImage);
 }
+function drawBase(base)
+{
+    if (base.being==true)
+    {
+        drawSprite(context,imageArr.get("base"),
+                                    base.x,base.y,camera,scale);
+        context.fillStyle="rgb(0,255,0)";
+        context.fillRect(base.x-camera.x,base.y-camera.y-5,base.width*(base.HP/base.maxHP),3);
+    }
+}
+
 function drawGate(gate)
 {
     let dir=gate.direction;
@@ -1146,6 +1175,7 @@ function gameLoop(mult,visible)// игровой цикл
                 controlBullets();
                 bonusAppearance();
                 burstService();
+                controlBase();
                 collisionPanzerKeyGate();
                 countIterationGameLoop++;
             }
@@ -1672,6 +1702,8 @@ function panzerAutoAttack(num)// функция отвечаюшия за ата
                     y:panzerArr[i].y+panzerArr[i].height/2})==false)
             if (checkCrossLinePanzerArrObj(bonusArr,num,{x:panzerArr[i].x+panzerArr[i].width/2,
                     y:panzerArr[i].y+panzerArr[i].height/2})==false)
+            if (checkCrossLinePanzerArrObj(baseImageArr,num,{x:panzerArr[i].x+panzerArr[i].width/2,
+                    y:panzerArr[i].y+panzerArr[i].height/2})==false)
                 
 //            if (checkCrossLinePanzerShopImage(num,{x:panzerArr[i].x+panzerArr[i].width/2,
 //                    y:panzerArr[i].y+panzerArr[i].height/2})==false)
@@ -1836,6 +1868,105 @@ function searchNumWall(x,y)
     }
     return -1;
 }
+function perimetrObjForPanzer(xx,yy,width,height)
+{
+   // for (let i=0;i<shopImageArr[index].width/mapSize;i++)
+   let x=xx;
+   let y=yy-mapSize;
+    while (x<width+xx)
+    {
+        if (checkKvadrMap((x+5)/mapSize,(y+5)/mapSize)==true)
+        {
+            x+=mapSize;
+
+        }
+        else 
+        {
+           break;
+        }
+    }
+    if (x>=width+xx)
+    {
+                // for (let i=0;i<shopImageArr[index].height/mapSize+1;i++)
+        while (y<=height+yy-mapSize)
+        {
+            if (checkKvadrMap((x+5)/mapSize,(y+5)/mapSize)==true)
+            {
+                y+=mapSize;
+
+            }
+            else 
+            {
+               break;
+            }
+        } 
+    }
+    if (y>height+yy-mapSize)
+    {
+      //  y-=5;
+        while (x>=xx)
+        {
+            if (checkKvadrMap((x+5)/mapSize,(y+5)/mapSize)==true)
+            {
+                x-=mapSize;
+
+            }
+            else 
+            {
+               break;
+            }
+        } 
+    }
+    if (x<xx)
+    {
+      //  y-=5;
+        while (y>yy)
+        {
+            if (checkKvadrMap((x+5)/mapSize,(y+5)/mapSize)==true)
+            {
+                y-=mapSize;
+                if (checkKvadrMap((x+5)/mapSize,(y+5)/mapSize)==true)
+                {
+                    return 0;
+                }
+            }
+            else 
+            {
+               break;
+            }
+            
+        } 
+    }
+    return {x:x,y:y}
+}
+function controlBase()// функция ответственная за то что бы поелялись новые танки возле базы
+{
+    for (let i=0;i<baseImageArr.length;i++)
+    {
+        if (baseImageArr[i].being==true)
+        {
+            if (baseImageArr[i].count>=baseImageArr[i].maxCount)
+            {
+                let data=perimetrObjForPanzer(baseImageArr[i].x,
+                                    baseImageArr[i].y,
+                                    baseImageArr[i].width,
+                                    baseImageArr[i].height);
+                if (data!=0) 
+                {
+                    baseImageArr[i].count=0;
+                    initOnePanzer(data.x,data.y,1,0);
+                }
+                //initOnePanzer(baseImageArr[i].x,baseImageArr[i].y-mapSize,1,0);
+                // alert("count BAse");
+                
+            }
+            baseImageArr[i].count++;
+            
+        }
+    }
+    
+    
+}
 function controlBullets()// функция управления полетами пуль
 {
     let speedBullet=20.0;
@@ -1999,17 +2130,18 @@ function controlBullets()// функция управления полетами
                 index=checkCollisionArr(bulletArr[i],bonusArr)// пуля столкнулась с яшиком
                 if (index!=-1 && bonusArr[index].type==0)
                 {
-                    if (bulletArr[i].type==0)
-                    {
-                        
-                        newBurst(bulletArr[i].x,bulletArr[i].y);
-                        bonusArr[index].being=false;
-                        //bonusArr.splice(index, 1); 
-                    }
-                    else
-                    {
-                        newBurst(bulletArr[i].x,bulletArr[i].y,2);
-                    }
+                    callBurst(i);
+//                    if (bulletArr[i].type==0)
+//                    {
+//                        
+//                        newBurst(bulletArr[i].x,bulletArr[i].y);
+//                        bonusArr[index].being=false;
+//                        //bonusArr.splice(index, 1); 
+//                    }
+//                    else
+//                    {
+//                        newBurst(bulletArr[i].x,bulletArr[i].y,2);
+//                    }
                     killBullet(i);
                     continue;
                 }
@@ -2034,14 +2166,15 @@ function controlBullets()// функция управления полетами
                         if (checkCollision(bulletArr[i],panzerArr[j],0,0,
                                     panzerArr[j].width/2,panzerArr[j].height/2)==true)
                         {
-                            if (bulletArr[i].type==0)
-                            {
-                                newBurst(bulletArr[i].x,bulletArr[i].y);
-                            }
-                            else
-                            {
-                                newBurst(bulletArr[i].x,bulletArr[i].y,2);
-                            }
+                            callBurst(i);
+//                            if (bulletArr[i].type==0)
+//                            {
+//                                newBurst(bulletArr[i].x,bulletArr[i].y);
+//                            }
+//                            else
+//                            {
+//                                newBurst(bulletArr[i].x,bulletArr[i].y,2);
+//                            }
                             killBullet(i);
                             panzerArr[j].HP-=bulletArr[i].hit;
                             if(panzerArr[j].HP<=0 /*&& j!=0*/) 
@@ -2057,8 +2190,31 @@ function controlBullets()// функция управления полетами
                         }
                     }
                 }
+                for (let j=0;j<baseImageArr.length;j++)  // если пуля столкнулась с базой врага
+                {
+                    if (baseImageArr[j].being==true)
+                    if (checkCollision(bulletArr[i],baseImageArr[j],0,0,
+                                    baseImageArr[j].width/2,baseImageArr[j].height/2)==true)
+                    {
+                        callBurst(i);
+                        killBullet(i);
+                        baseImageArr[j].HP-=bulletArr[i].hit;
+                        if (baseImageArr[j].HP<=0)  baseImageArr[j].being=false;
+                    }
+                }
                // if (flag==true)   continue;
         }  
+    }
+    callBurst=function(i)
+    {
+        if (bulletArr[i].type==0)
+        {
+            newBurst(bulletArr[i].x,bulletArr[i].y);
+        }
+        else
+        {
+            newBurst(bulletArr[i].x,bulletArr[i].y,2);
+        }
     }
     
 }
@@ -2265,6 +2421,7 @@ function collissionPanzerSolid(num)// столкновения танка ств
 {
     if (  checkCollisionArr(panzerArr[num],wallArr)!=-1||
           checkCollisionArr(panzerArr[num],barrelArr)!=-1||
+          checkCollisionArr(panzerArr[num],baseImageArr)!=-1||
           checkCollisionPanz(num,panzerArr)||
           panzerArr[num].x<0||
           panzerArr[num].x+panzerArr[num].width>mapWidth||
@@ -2474,6 +2631,7 @@ function checkPointCollisionAll(x,y,noPanzer=false)//попадает ли то�
     if (wallArr.length>0 && checkCollisionArr(objCheck,wallArr)!=-1) return true;
     if (bonusArr.length>0 && checkCollisionArr(objCheck,bonusArr)!=-1) return true;
     if (barrelArr.length>0 && checkCollisionArr(objCheck,barrelArr)!=-1) return true;
+    if (barrelArr.length>0 && checkCollisionArr(objCheck,baseImageArr)!=-1) return true;
    
     return false;
 
@@ -2482,7 +2640,7 @@ function checkKvadrMap(x,y)
 {
         x=Math.floor(x);
         y=Math.floor(y);
-
+    
      if (checkPointCollisionAll(x*mapSize+2,y*mapSize+2)==true) return true;
      if (checkPointCollisionAll(x*mapSize+mapSize/2,y*mapSize+2)==true) return true;
      if (checkPointCollisionAll(x*mapSize+mapSize-2,y*mapSize+2)==true) return true;
@@ -2726,6 +2884,8 @@ function initAllNoMoveObject()
     wallArr=initNoMoveObject(quantityWall,wall);
     initShopImage();
     initGarageImage();
+    initBase(100,100);
+    initBase(100,260);
     for (let i=0;i<quantityWater;i++)
     {
         addWallObject(-1,-1,1,false)
@@ -2802,6 +2962,15 @@ function initAllNoMoveObject()
         gateArr.push(gate);
     }
  
+}
+function initBase(x,y)
+{
+      let base=JSON.parse(JSON.stringify(baseImageType));;
+      base.x=Math.floor(x/mapSize)*mapSize;
+      base.y=Math.floor(y/mapSize)*mapSize;;
+      base.being=true;
+      base.lineArr=calcLineArr(base);
+      baseImageArr.push(base);
 }
 function initGate(dir)
 {
