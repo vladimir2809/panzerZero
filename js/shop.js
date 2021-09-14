@@ -118,8 +118,17 @@ shop={
         this.numShopImage=num;
         this.open=true;
         this.sellPanzer=sellPanzer;
-        this.tabMenu=sellPanzer==true? 3 :0;
-        this.countProductList=4;
+        if (sellPanzer==true)
+        {
+            this.tabMenu= 3
+            this.countProductList=1;
+        }
+        else 
+        {
+            this.tabMenu= 0
+            this.countProductList=4;
+        }
+      //  this.countProductList=4;
         //this.clearListProduct();
         this.startNumProduct=0;
         this.arrMaxValuesParam=calcMaxParams();
@@ -223,7 +232,9 @@ shop={
                     let copy=copyPanz(panzerArr[numPanzer]);
                     
                     panzerInGarageArr.push(copy);
+                    
                     playerGan=nextGan(1);
+                    if (this.sellPanzer) this.close();
 //                    for (let i=0;i<panzerArr[0].maskGan;i++)
 //                    {
 //                        if (panzerArr[0].maskGan[i]==1)

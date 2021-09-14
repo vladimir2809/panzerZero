@@ -21,7 +21,7 @@ var quantityPanzerGroup1=0;//option[numOption].quantityPanzerGroup1;// коли�
 var visibleGame=option[numOption].visibleGame;// отображение игры
 var gamePlayer=option[numOption].gamePlayer;// играет ли игрок или игра идет автоматически
 var playerGan=0;// номер оружия у танка игрока
-var money=100;// деньги игрока
+var money=10000;// деньги игрока
 var addMoney=0;
 var timeAddMoney=0;
 var levelPlayer=1;
@@ -540,11 +540,13 @@ function create ()// функция создание обьектов неоюх
 //        barrelArr=initNoMoveObject(quantityBarrel,barrel);
         //initWall();
         //initBarrel();
+        numPanzer=0;
         playerGan=nextGan(1);
         panzerArr[numPanzer].id=1;
         let panz=copyPanz(panzerArr[numPanzer]);
         panzerInGarageArr.push(panz);
         loadLevel=true;
+       // alert(panzerArr[numPanzer].id);
        
 
         
@@ -1135,7 +1137,7 @@ function gameLoop(mult,visible)// игровой цикл
                             let num=calcNumById(panzerArr[numPanzer].id,
                                                                 panzerInGarageArr);
                           //deleteElemArrToNum
-                            
+                        //    alert(num+" "+panzerArr[numPanzer].id+" "+panzerInGarageArr[0].id);
                             deleteElemArrToNum(panzerInGarageArr,num);
                             if (panzerInGarageArr.length>0)
                             {
@@ -1161,7 +1163,7 @@ function gameLoop(mult,visible)// игровой цикл
                         
                         uploadLevel();
                         console.log(panzerArr);
-                        alert("im deli");
+                        alert("YOU WIN!!!");
                     }
 //                    countIterationGameLoop=0;
 //                    countBeforeUpload=0;
@@ -3392,7 +3394,7 @@ function initOnePanzer(x,y,GR,type)
     let flag=false;
     for (let i=0;i<panzerArr.length;i++)
     {
-        if (panzerArr[i].being==false)
+        if (panzerArr[i].being==false && i!=numPanzer)
         {
             flag=true;
             panzerArr[i]=clone(onePanzer);
@@ -3518,6 +3520,7 @@ function uploadLevel()// функция обновления уровня пос
 //    initBox();
 //    initWall();
 //    initBarrel();
+    numPanzer=0;
     panzerArr[numPanzer].id=1;
     let panz=copyPanz(panzerArr[numPanzer]);
     panzerInGarageArr.push(panz);

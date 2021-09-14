@@ -300,23 +300,27 @@ garage={
             
             {  // выбор танка
                 for (var attr1 in panzerArr[numPanzer])
-                 {
-                     for (var attr2 in panzerInGarageArr[this.numPanz])
-                     {
-                         //console.log(listProduct[this.startI].option[attr2]);
-                         if (attr1==attr2) 
-                         {
-                            console.log(attr1);
-                            if (attr1!='x' && attr1!='y')
-                            {
-                                panzerArr[numPanzer][attr1]=panzerInGarageArr[this.numPanz][attr2];
-                            }
-                         }
-                     }
-                 }  
-                 panzerArr[numPanzer].being=true;
-                 playerGan=nextGan(1);
-                 this.close();
+                {
+                    for (var attr2 in panzerInGarageArr[this.numPanz])
+                    {
+                        //console.log(listProduct[this.startI].option[attr2]);
+                        if (attr1==attr2) 
+                        {
+                           console.log(attr1);
+                           if (attr1!='x' && attr1!='y')
+                           {
+                               panzerArr[numPanzer][attr1]=panzerInGarageArr[this.numPanz][attr2];
+                           }
+                        }
+                    }
+                }  
+                panzerArr[numPanzer].being=true;
+                let x=garageImageArr[0].entranceArr[0].x+garageImageArr[0].x;
+                let y=garageImageArr[0].entranceArr[0].y+garageImageArr[0].y;
+                panzerArr[numPanzer].x=x;
+                panzerArr[numPanzer].y=y;
+                playerGan=nextGan(1);
+                this.close();
               
             }
             if (mX>x+this.buttonSellPanz.x &&
