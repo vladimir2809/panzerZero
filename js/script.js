@@ -67,6 +67,11 @@ var countTestMixShot=0;
 var viewTextInShop=false;
 var viewTextInGate=false;
 var viewTextInGarage=false;
+var lastNumGarage=0;
+var lastShop={
+    numShop:0,
+    numEntrance:0,
+}
 var strFile='';
 // обьект танк
 var panzer={
@@ -336,7 +341,7 @@ baseImageType={
     HP:100,
     width:80,
     height:80,
-    maxCount:5,
+    maxCount:225,
     count:0,
     lineArr:[],
 }
@@ -526,7 +531,8 @@ function create ()// функция создание обьектов неоюх
         setOffsetMousePosXY((window.innerWidth - canvas.width)/2,
                             (window.innerHeight - canvas.height)/2);
         initKeyboardAndMouse(["KeyA","KeyS","KeyD","KeyW","KeyM","KeyB","KeyR",'ArrowLeft',
-                    'ArrowRight','ArrowUp','ArrowDown',"Enter","KeyP","KeyO",'KeyG',"KeyM","KeyI" ]);
+                    'ArrowRight','ArrowUp','ArrowDown',"Enter","KeyP","KeyO",'KeyG',"KeyM",
+                    "KeyI","KeyK" ]);
         //changeColorImg(context,imageArr.get('body10'),0xb5e61dff,0xdf0d00ff);
         
         calcQuantityPanzer();
@@ -999,7 +1005,7 @@ function gameLoop(mult,visible)// игровой цикл
         setText('Balance','Balance: '+calcBalance(false),
                 calcBalance()<0?"#FF0000":"#00FF00",10,y+stepY*2);
         setText('Time','Time: '+Math.trunc(time),"#0000FF",10,y+stepY*3);
-        if (checkInShop(numPanzer)!=-1)
+        if (checkInShop(numPanzer).num!=-1)
         {
             if (viewTextInShop==false)
             {
@@ -1263,14 +1269,12 @@ function controlHuman()// управление программой челове
     if (checkPressKey("KeyR"))
     {
         let numShop=checkInShop(numPanzer);
-        if (numShop==-1) 
+        if (numShop.num!=-1) 
         {
-           // pause=!pause;
-         //   if (pause==true) console.log(panzerArr[numPanzer]);
-        }
-        else
-        {
-           if(shop.open==false) shop.start(numShop);
+           lastShop.numShop=numShop.num; 
+           lastShop.numEntrance=numShop.numEntr;
+         //  alert(checkInShop(numPanzer).num+" "+checkInShop(numPanzer).numEntr);
+           if(shop.open==false) shop.start(numShop.num);
         }
         //открывание двери
         let index=checkInGate(numPanzer);
@@ -1285,12 +1289,17 @@ function controlHuman()// управление программой челове
         }
         if (checkInGarage(numPanzer)!=-1)
         {
+            lastNumGarage=checkInGarage(numPanzer);
             if (garage.open==false)garage.start(numPanzer);
+            
         }
               
     }  
         //    console.log("sosiska");
-    
+    if (keyUpDuration("KeyK",100))
+    {
+        panzerArr[numPanzer].being=false;
+    }
     if (keyUpDuration("KeyI",100)) 
     {
         informationOfPanzer(numPanzer);
@@ -2513,10 +2522,24 @@ function checkInShop(num)
             panzerArr[num].y/*+panzerArr[num].height*/>shopImageArr[i].y &&
             panzerArr[num].y+panzerArr[num].height<shopImageArr[i].y+shopImageArr[i].height)
         {
-            return i;
+            for (let j=0;j<shopImageArr[i].entranceArr.length;j++)
+            {
+                let entrX=shopImageArr[i].entranceArr[j].x+shopImageArr[i].x;
+                let entrY=shopImageArr[i].entranceArr[j].y+shopImageArr[i].y;
+                let width=shopImageArr[i].entranceArr[j].width;
+                let height=shopImageArr[i].entranceArr[j].height;
+                if (panzerArr[num].x/*+panzerArr[num].width*/>entrX &&
+                    panzerArr[num].x+panzerArr[num].width<entrX+width &&
+                    panzerArr[num].y/*+panzerArr[num].height*/>entrY &&
+                    panzerArr[num].y+panzerArr[num].height<entrY+height)
+                {
+                   // alert (i+'  '+j);
+                    return {num:i,numEntr:j};
+                }
+            }
         }
     }
-    return -1;
+    return {num:-1,numEntr:-1}
 }
 function checkInGate(num)
 {

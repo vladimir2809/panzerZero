@@ -315,8 +315,11 @@ garage={
                     }
                 }  
                 panzerArr[numPanzer].being=true;
-                let x=garageImageArr[0].entranceArr[0].x+garageImageArr[0].x;
-                let y=garageImageArr[0].entranceArr[0].y+garageImageArr[0].y;
+                let num=lastNumGarage;
+                let x=garageImageArr[num].entranceArr[0].x+garageImageArr[num].x;
+                let y=garageImageArr[num].entranceArr[0].y+garageImageArr[num].y;
+                x+=mapSize/2-panzerArr[numPanzer].width/2;
+                y+=mapSize/2-panzerArr[numPanzer].height/2;
                 panzerArr[numPanzer].x=x;
                 panzerArr[numPanzer].y=y;
                 playerGan=nextGan(1);

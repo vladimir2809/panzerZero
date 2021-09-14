@@ -234,6 +234,14 @@ shop={
                     panzerInGarageArr.push(copy);
                     
                     playerGan=nextGan(1);
+                    let num=lastShop.numShop;
+                    let entr=lastShop.numEntrance;
+                    let x=shopImageArr[num].entranceArr[entr].x+shopImageArr[num].x;
+                    let y=shopImageArr[num].entranceArr[entr].y+shopImageArr[num].y;
+                    x+=mapSize/2-panzerArr[numPanzer].width/2;
+                    y+=mapSize/2-panzerArr[numPanzer].height/2;
+                    panzerArr[numPanzer].x=x;
+                    panzerArr[numPanzer].y=y;
                     if (this.sellPanzer) this.close();
 //                    for (let i=0;i<panzerArr[0].maskGan;i++)
 //                    {
