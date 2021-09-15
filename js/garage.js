@@ -125,7 +125,9 @@ garage={
                                 }
                             }  
                             playerGan=nextGan(1);
+                            
                         }
+                        panzerArr[numPanzer].HP=panzerArr[numPanzer].maxHP;
                        // clearInterval(this.timerIdResponse);
                     }
                     if (messageBox.response==2)
@@ -227,7 +229,7 @@ garage={
     calcValuesParams: function(num)
     {
         let arr=[];
-        arr[0]=panzerInGarageArr[num].HP;
+        arr[0]=panzerInGarageArr[num].maxHP;
         arr[1]=100/(panzerInGarageArr[num].attackPatron==false ?
                             panzerInGarageArr[num].timeAttack:
                             panzerInGarageArr[num].timeAttackPatron);
@@ -337,7 +339,7 @@ garage={
                 for (let i=0;i<shopProduct.length;i++)
                 {
                     if (shopProduct[i].category==3 &&
-                            shopProduct[i].numCount==this.numPanz)
+                            shopProduct[i].numCount==panzerInGarageArr[this.numPanz].numType)
                     {
                         price=shopProduct[i].price*0.7;
                     }

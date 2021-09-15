@@ -55,7 +55,7 @@ shop={
         {
             attackPatron=panzerArr[numPanz].attackPatron;
         }
-        let arrValuesName=["HP",attackPatron==false?"timeAttack":"timeAttackPatron",
+        let arrValuesName=["maxHP",attackPatron==false?"timeAttack":"timeAttackPatron",
                                 attackPatron==false?"hitAttack":"hitAttackPatron","speed",
                                 "accuracy"];
         if (numPanz==-1)
@@ -242,6 +242,7 @@ shop={
                     y+=mapSize/2-panzerArr[numPanzer].height/2;
                     panzerArr[numPanzer].x=x;
                     panzerArr[numPanzer].y=y;
+                    panzerArr[numPanzer].HP=panzerArr[numPanzer].maxHP;
                     if (this.sellPanzer) this.close();
 //                    for (let i=0;i<panzerArr[0].maskGan;i++)
 //                    {
@@ -390,13 +391,15 @@ shop={
             let centerRectY=this.y+50+80/2;
             let widthPanz=listProduct[startI].option.width;
             let heightPanz=listProduct[startI].option.height;
-            context.drawImage(imageArr.get(listProduct[startI].option.bodyNameImage),
-                                centerRectX-widthPanz/2,centerRectY-heightPanz/2);
-            let towerX=listProduct[startI].option.mixTowerPosX-listProduct[startI].option.mixTowerX;
-            let towerY=listProduct[startI].option.mixTowerPosY-listProduct[startI].option.mixTowerY;
-            context.drawImage(imageArr.get(listProduct[startI].option.towerNameImage),
-                                centerRectX-widthPanz/2+towerX,
-                                centerRectY-heightPanz/2+towerY);
+            drawPanzerIcon(centerRectX-widthPanz/2,
+                        centerRectY-heightPanz/2,startI,0,true);
+//            context.drawImage(imageArr.get(listProduct[startI].option.bodyNameImage),
+//                                centerRectX-widthPanz/2,centerRectY-heightPanz/2);
+//            let towerX=listProduct[startI].option.mixTowerPosX-listProduct[startI].option.mixTowerX;
+//            let towerY=listProduct[startI].option.mixTowerPosY-listProduct[startI].option.mixTowerY;
+//            context.drawImage(imageArr.get(listProduct[startI].option.towerNameImage),
+//                                centerRectX-widthPanz/2+towerX,
+//                                centerRectY-heightPanz/2+towerY);
             let dy=25;
             context.fillStyle="#FF0000";
             context.fillText("Броня", this.x+130,this.y+63+dy*0);
@@ -893,7 +896,7 @@ shop={
             }
         }
       
-        if (this.blockMouseLeft==false && mouseLeftClick())
+        if (this.blockMouseLeft==false && mouseLeftClick() && this.sellPanzer==false)
         {
        
             console.log(mX+" "+mY);

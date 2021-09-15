@@ -341,8 +341,9 @@ baseImageType={
     HP:100,
     width:80,
     height:80,
-    maxCount:225,
+    maxCount:250,
     count:0,
+    typePanzerCreate:0,
     lineArr:[],
 }
 shopImageArr=[];
@@ -629,14 +630,7 @@ function drawAll()// нарисовать все
                    drawKeyForGate(keyGateArr[i]);
                }
             }
-            for (let i=0;i<keyInStokArr.length;i++)
-            {
-                //if(keyInStokArr[i].being==true && keyInStokArr[i].state==1)
-                {
-                   drawKeyForGate(keyInStokArr[i],false,20,50+30*i);
-                }
-                
-            }
+         
                 
             for (let i=0;i<wallArr.length;i++)
             {
@@ -718,6 +712,14 @@ function drawAll()// нарисовать все
                    drawSprite(context,image,burstArr[i].x,burstArr[i].y,camera,scale);
                 }
             }
+            for (let i=0;i<keyInStokArr.length;i++)
+            {
+                //if(keyInStokArr[i].being==true && keyInStokArr[i].state==1)
+                {
+                   drawKeyForGate(keyInStokArr[i],false,20,50+20*i);
+                }
+                
+            }
         }
         for (key in textArr)
         {
@@ -725,6 +727,7 @@ function drawAll()// нарисовать все
             drawText(context,textArr[key]);
         }
         drawIconGan(playerGan);
+        drawHPPlayer();
         for (let i=0;i<shopImageArr.length;i++)
         {
             for (let j=0;j<shopImageArr[i].lineArr.length;j++)
@@ -755,6 +758,22 @@ function drawText(context,text)// нарисовать текс
   context.fillStyle=text.fill;
   context.fillText(text.str, text.x, text.y);
   context.restore();
+}
+function drawHPPlayer()
+{
+    context.fillStyle="#0000FF";
+    let maxHP=panzerArr[numPanzer].maxHP;
+    let HP=panzerArr[numPanzer].HP;
+    
+    context.beginPath();
+    context.moveTo(610,57);
+    if (HP>0)
+    {
+        context.arc(610,57,14, Math.PI*2,(Math.PI*2)*(HP-0.1)/maxHP,false);
+    }
+    context.fill();
+    context.closePath();
+    //arc(x,y, radius, startAngle, endAngle, anticlockwise);
 }
 function drawIconGan(numGan)
 {
@@ -817,6 +836,29 @@ function drawLaser(x,y,x1,y1,camera,scale)
     context.stroke();
 
 }
+function drawPanzerIcon(x,y,type,GR=0,noScaleAndCamera=false)
+{
+    let bodyNameImage=panzerOption[type].bodyNameImage;
+    let towerNameImage=panzerOption[type].towerNameImage;
+    if (GR!=0)
+    {
+       bodyNameImage= bodyNameImage.replace('body1',"body2");
+        //towerNameImage.replace('body1',"body2");
+    } 
+    let towerX=panzerOption[type].mixTowerPosX - panzerOption[type].mixTowerX+x;
+    let towerY=panzerOption[type].mixTowerPosY - panzerOption[type].mixTowerY+y;
+    if (noScaleAndCamera==false)
+    {
+        drawSprite(context,imageArr.get(bodyNameImage),x,y,camera,scale);  
+        drawSprite(context,imageArr.get(towerNameImage),towerX,towerY,camera,scale);
+    }
+    else
+    {
+       context.drawImage(imageArr.get(bodyNameImage),x,y);
+       context.drawImage(imageArr.get(towerNameImage),towerX,towerY); 
+    }
+    
+}
 function drawPanzer(context,panzer,camera,scale)// функция рисования танка вместе с башней
 {
     if(!context || !imageArr.get(panzer.bodyNameImage) || !imageArr.get(panzer.towerNameImage )) return;
@@ -839,14 +881,47 @@ function drawPanzer(context,panzer,camera,scale)// функция рисован
     context.restore();
  //   console.log(panzer.bodyNameImage);
 }
+function drawStrokeRectScale(x,y,w,h,color)
+{
+    context.strokeStyle=color;
+    context.strokeRect (x*scale-(camera.x*camera.summMultScalingX),
+                        y*scale-(camera.y*camera.summMultScalingY),
+                        w*scale,h*scale);
+}
+function drawFillRectScale(x,y,w,h,color)
+{
+    context.fillStyle=color;
+    context.fillRect (x*scale-(camera.x*camera.summMultScalingX),
+                        y*scale-(camera.y*camera.summMultScalingY),
+                        w*scale,h*scale);
+}
 function drawBase(base)
 {
     if (base.being==true)
     {
         drawSprite(context,imageArr.get("base"),
                                     base.x,base.y,camera,scale);
-        context.fillStyle="rgb(0,255,0)";
-        context.fillRect(base.x-camera.x,base.y-camera.y-5,base.width*(base.HP/base.maxHP),3);
+        drawFillRectScale(base.x,base.y-10,
+                           base.width*base.HP/base.maxHP,3,"#00FF00");
+        drawFillRectScale(base.x,base.y-5,
+                            base.width*base.count/base.maxCount,3,"#0000FF");
+            
+        let type=base.typePanzerCreate;
+        let x=(base.x+base.width-4-panzerOption[type].width);//*scale-(camera.x*camera.summMultScalingX);            
+        let y=(base.y+base.height-4-panzerOption[type].height);//*scale-(camera.y*camera.summMultScalingY);            
+        drawPanzerIcon(x,y,base.typePanzerCreate,1);                    
+       // context.fillStyle="rgb(0,255,0)";
+//        context.fillRect(base.x*scale-(camera.x*camera.summMultScalingX),
+//                         (base.y-10)*scale-(camera.y*camera.summMultScalingY),
+//                          (base.width*(base.HP/base.maxHP))*scale-(camera.x*camera.summMultScalingX),
+//                         3*scale-(camera.y*camera.summMultScalingY));
+//        context.fillStyle="rgb(0,0,255)";
+//        context.fillRect(base.x*scale-(camera.x*camera.summMultScalingX),
+//                         (base.y-5)*scale-(camera.y*camera.summMultScalingY),
+//                         ( base.width*(base.count/base.maxCount))*
+//                                  scale-(camera.x*camera.summMultScalingX),
+//                         3*scale-(camera.y*camera.summMultScalingY));
+     //   context.fillRect(base.x-camera.x,base.y-camera.y-5,base.width*(base.count/base.maxCount),3);
     }
 }
 
@@ -867,9 +942,10 @@ function drawGate(gate)
                                     gate.x+mapSize*4,gate.y+mapSize,camera,scale);
         
       //  context.fillRect(gate.x+mapSize,gate.y,mapSize*3,mapSize*2);
-        context.fillRect((gate.x+mapSize)*scale-(camera.x*camera.summMultScalingX),//-camera.x,//camera.summMultScalingX,
-                    gate.y*scale-(camera.y*camera.summMultScalingY),//-camera.y,//camera.summMultScalingY,
-                            mapSize*3*scale,mapSize*2*scale);
+          drawFillRectScale(gate.x+mapSize,gate.y,mapSize*3,mapSize*2,gate.color);
+//        context.fillRect((gate.x+mapSize)*scale-(camera.x*camera.summMultScalingX),//-camera.x,//camera.summMultScalingX,
+//                    gate.y*scale-(camera.y*camera.summMultScalingY),//-camera.y,//camera.summMultScalingY,
+//                            mapSize*3*scale,mapSize*2*scale);
         
         if (dir==1)
         {            
@@ -894,9 +970,10 @@ function drawGate(gate)
         drawSprite(context,imageArr.get("wall"),
                                     gate.x+mapSize,gate.y+mapSize*4,camera,scale);
         //context.fillStyle="orange";
-        context.fillRect(gate.x*scale-(camera.x*camera.summMultScalingX),//-camera.x,//camera.summMultScalingX,
-                    (gate.y+mapSize)*scale-(camera.y*camera.summMultScalingY),//-camera.y,//camera.summMultScalingY,
-                            mapSize*2*scale,mapSize*3*scale);
+        drawFillRectScale(gate.x,gate.y+mapSize,mapSize*2,mapSize*3,gate.color);
+//        context.fillRect(gate.x*scale-(camera.x*camera.summMultScalingX),//-camera.x,//camera.summMultScalingX,
+//                    (gate.y+mapSize)*scale-(camera.y*camera.summMultScalingY),//-camera.y,//camera.summMultScalingY,
+//                            mapSize*2*scale,mapSize*3*scale);
         if (dir==2)
         {            
             gateX=gate.x;    
@@ -936,12 +1013,12 @@ function drawKeyForGate(keyGate,rect=true,xx=-1,yy=-1)
     else 
     {
         oldScale=scale;
-        scale=1;
+        scale=0.8;
         x=xx;
         y=yy;
        // console.log("scale");
     }
-   
+    
     context.beginPath();
     context.fillStyle=keyGate.color;
     context.arc(x,y, 9*scale, 0, degressToRadian(360));
@@ -997,7 +1074,7 @@ function gameLoop(mult,visible)// игровой цикл
 //                '  HP2:'+panzerArr[1].HP,"#44FF44",10,y-stepY);
         setText('Level','Уровень: '+levelPlayer,"#44FF44",10,y);
         let str=money+"$";
-        setText('Money',str,"#00FF00",screenWidth-90-str.length*10,55);
+        setText('Money',str,"#00FF00",screenWidth-53-str.length*10,95);
        // money++;
        // setText('Balance','HP1: '+panzerArr[0].HP+' HP2: '+panzerArr[1].HP,"#44FF44",10,y+stepY);
         setText('XP','XP: '+XP+"/"+levelXPValue[levelPlayer-1],
@@ -1965,7 +2042,7 @@ function controlBase()// функция ответственная за то ч�
                 if (data!=0) 
                 {
                     baseImageArr[i].count=0;
-                    initOnePanzer(data.x,data.y,1,0);
+                    initOnePanzer(data.x,data.y,1,baseImageArr[i].typePanzerCreate);
                 }
                 //initOnePanzer(baseImageArr[i].x,baseImageArr[i].y-mapSize,1,0);
                 // alert("count BAse");
@@ -2191,7 +2268,7 @@ function controlBullets()// функция управления полетами
                             if(panzerArr[j].HP<=0 /*&& j!=0*/) 
                             {
                                 killPanzer(j);
-                                if  (j==numPanzer && gamePlayer==true)   nextNumPanzer();
+                                //if  (j==numPanzer && gamePlayer==true)   nextNumPanzer();
                             }
                             ////console.log("bul col panz");
                             flag=true;
@@ -2232,6 +2309,19 @@ function controlBullets()// функция управления полетами
 function killPanzer(num)// убить танк
 {
     panzerArr[num].being=false;
+    if (panzerArr[num].group==1)
+    {
+        switch(panzerArr[num].numType)
+        {
+            case 0: XP+=100;break;
+            case 1: XP+=150;break;                
+            case 2: XP+=250;break;
+            case 3: XP+=500;break;
+            case 4: XP+=750;break;
+            case 5: XP+=1000;break;
+        }
+    }
+    
 }
 function killBullet(num)// убить пулю
 {
@@ -2433,6 +2523,8 @@ function collissionPanzerSolid(num)// столкновения танка ств
     if (  checkCollisionArr(panzerArr[num],wallArr)!=-1||
           checkCollisionArr(panzerArr[num],barrelArr)!=-1||
           checkCollisionArr(panzerArr[num],baseImageArr)!=-1||
+          (checkCollisionArr(panzerArr[num],garageImageArr)!=-1 && num!=numPanzer)||
+          (checkCollisionArr(panzerArr[num],shopImageArr)!=-1 && num!=numPanzer)|| 
           checkCollisionPanz(num,panzerArr)||
           panzerArr[num].x<0||
           panzerArr[num].x+panzerArr[num].width>mapWidth||
@@ -2763,7 +2855,8 @@ function openGate(color)
             {
                let n=searchNumWall(gateArr[i].squareDoor[j].x+2,
                                             gateArr[i].squareDoor[j].y+2) ;
-               wallArr[n].being=false;
+                //alert(n);
+                if (n!=-1)  wallArr[n].being=false;
                
                console.log(wallArr);
             }
@@ -2909,8 +3002,8 @@ function initAllNoMoveObject()
     wallArr=initNoMoveObject(quantityWall,wall);
     initShopImage();
     initGarageImage();
-    initBase(100,100);
-    initBase(100,260);
+    initBase(100,100,randomInteger(0,5));
+    initBase(100,260,randomInteger(0,5));
     for (let i=0;i<quantityWater;i++)
     {
         addWallObject(-1,-1,1,false)
@@ -2951,14 +3044,15 @@ function initAllNoMoveObject()
         }while(flag==true)
         keyGateArr[i].color=color;
     }
-    for (let i=0;i<2;i++)
+   // let count=1;
+    for (let i=0;i<4;i++)
     {
         let flag=false;
         let gate;
         do
         {
             flag=false;
-            gate=initGate(4);
+            gate=initGate(i+1);
             for (let x=gate.x;x<=gate.x+gate.width;x+=mapSize)
             {
                 for (let y=gate.y;y<=gate.y+gate.height;y+=mapSize)
@@ -2988,12 +3082,14 @@ function initAllNoMoveObject()
     }
  
 }
-function initBase(x,y)
+function initBase(x,y,typePanz=0)
 {
       let base=JSON.parse(JSON.stringify(baseImageType));;
       base.x=Math.floor(x/mapSize)*mapSize;
       base.y=Math.floor(y/mapSize)*mapSize;;
       base.being=true;
+      base.typePanzerCreate=typePanz;
+      base.maxCount=100+typePanz*40;
       base.lineArr=calcLineArr(base);
       baseImageArr.push(base);
 }
@@ -3061,8 +3157,9 @@ function initGate(dir)
             ];
            
        }
-       gate.squareCollision =gate.squareCollision.concat(gate.squareDoor);
-   }
+      
+   } 
+   gate.squareCollision =gate.squareCollision.concat(gate.squareDoor);
    gate.color=colorsForGate[randomInteger(0,7/*colorsForGate.length-1*/)];
    gate.close=true;
    return gate;
@@ -3346,7 +3443,7 @@ function initPanzers()// функция инициализации танков
             }
             
             panzerArr[i].being=true;
-            panzerArr[i].maxHP=panzerArr[i].HP;
+            panzerArr[i].HP=panzerArr[i].maxHP;
             panzerArr[i].stopMove=false;
             panzerArr[i].angleTower=0;
             panzerArr[i].angleBody=0;
@@ -3865,7 +3962,7 @@ function calcMaxParams()
     let maxAccuracy=100;
     for (let i=0;i<panzerOption.length;i++)
     {
-        let buffer=panzerOption[i].HP;
+        let buffer=panzerOption[i].maxHP;
         for (let j=0;j<3;j++)
         {
             buffer*=1+panzerOption[i].mapUp.upHP.up[j]/100;

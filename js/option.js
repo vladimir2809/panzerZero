@@ -12,7 +12,7 @@
         mixTowerPosX:11,// координаты куда должна встать башня у корпуса
         mixTowerPosY:11,
         speed:4,
-        HP:100,
+        maxHP:100,
         DMG:1,
         attackPatron:true,
         timeAttack:1000/500,// время перезарядки
@@ -42,7 +42,7 @@
         mixTowerPosX:11,// координаты куда должна встать башня у корпуса
         mixTowerPosY:11,
         speed:3,
-        HP:150,
+        maxHP:150,
         DMG:1,
         attackPatron:false,
         timeAttack:1000/50,// время перезарядки
@@ -71,8 +71,8 @@
         mixTowerY:7.5,
         mixTowerPosX:13,// координаты куда должна встать башня у корпуса
         mixTowerPosY:13,
-        speed:3,
-        HP:200,
+        speed:8,
+        maxHP:200,
         DMG:1,
         attackPatron:true,
         timeAttack:1000/50,// время перезарядки
@@ -102,7 +102,7 @@
         mixTowerPosX:14.5,// координаты куда должна встать башня у корпуса
         mixTowerPosY:14.5,
         speed:2,
-        HP:300,
+        maxHP:300,
         DMG:1,
         attackPatron:false,
         timeAttack:1000/100,// время перезарядки
@@ -132,7 +132,7 @@
         mixTowerPosX:17,// координаты куда должна встать башня у корпуса
         mixTowerPosY:17,
         speed:2,
-        HP:300,
+        maxHP:300,
         DMG:1,
         attackPatron:false,
         timeAttack:1000/200,// время перезарядки
@@ -162,7 +162,7 @@
         mixTowerPosX:17,// координаты куда должна встать башня у корпуса
         mixTowerPosY:17,
         speed:2,
-        HP:10,
+        maxHP:10,
         DMG:1,
         attackPatron:false,
         timeAttack:1000/50,// время перезарядки
