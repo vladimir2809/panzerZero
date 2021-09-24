@@ -162,7 +162,7 @@
         mixTowerPosX:17,// координаты куда должна встать башня у корпуса
         mixTowerPosY:17,
         speed:2,
-        maxHP:10,
+        maxHP:1000,
         DMG:1,
         attackPatron:false,
         timeAttack:1000/50,// время перезарядки
@@ -198,7 +198,7 @@ var option=[
         quantityWater:1,
         quantityBrickWall:1,
         maxDistBullet:5250,
-        typePanzerArrGR0:[0,0,1,0,0,0],
+        typePanzerArrGR0:[0,0,0,0,0,1],
         typePanzerArrGR1:[0,0,0,1,0,0],
         quantityPanzerGroup0:0,
         quantityPanzerGroup1:0,

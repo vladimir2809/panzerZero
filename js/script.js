@@ -447,11 +447,7 @@ function loadImageArr()// загрузить массив изображений
                    //alert(pair[0].name);
                    
              }
-
-     }
-    
-    
-    
+     }  
 }
 function calcQuantityPanzer()
 {
@@ -495,6 +491,8 @@ function preload()// функция предзагрузки
         sprite:{
             patron:[1,1418],
             shot: [5000,1613],
+            laser: [7975,1300],
+            rocket: [9469,556],
            // soundTrack:[10*1000,4*60*1000,true]
         },
        
@@ -1357,7 +1355,7 @@ function controlHuman()// управление программой челове
         let index=checkInGate(numPanzer);
         if (index!=-1 &&checkColorInStokKey(gateArr[index].color))
         {
-            openGate(gateArr[index].color);
+            openGate(gateArr[index].color,index);
             let indexKey=searchKeyInStokByColor(gateArr[index].color);
             if (indexKey!=-1)
             {
@@ -1637,8 +1635,11 @@ function panzerControll(num)// функция автоуправления та�
                 console.log(panzerArr[num].x+' '+panzerArr[num].x+' '+
                         ' '+panzerArr[num].shotX+" "+panzerArr[num].shotY+
                         " "+mouseX+' '+mouseY);
+                
                 if (playerGan==1) audio.play("patron");
                 if (playerGan==0) audio.play("shot");
+                if (playerGan==2) audio.play("laser");
+                if (playerGan==3) audio.play("rocket");
             }
         }
     if (panzerArr[num].stopMove==false || num==numPanzer)
@@ -1792,7 +1793,10 @@ function panzerAutoAttack(num)// функция отвечаюшия за ата
                     y:panzerArr[i].y+panzerArr[i].height/2})==false)
             if (checkCrossLinePanzerArrObj(baseImageArr,num,{x:panzerArr[i].x+panzerArr[i].width/2,
                     y:panzerArr[i].y+panzerArr[i].height/2})==false)
-                
+            if (checkCrossLinePanzerArrObj(shopImageArr,num,{x:panzerArr[i].x+panzerArr[i].width/2,
+                    y:panzerArr[i].y+panzerArr[i].height/2})==false)    
+            if (checkCrossLinePanzerArrObj(garageImageArr,num,{x:panzerArr[i].x+panzerArr[i].width/2,
+                    y:panzerArr[i].y+panzerArr[i].height/2})==false) 
 //            if (checkCrossLinePanzerShopImage(num,{x:panzerArr[i].x+panzerArr[i].width/2,
 //                    y:panzerArr[i].y+panzerArr[i].height/2})==false)
             {
@@ -1963,7 +1967,7 @@ function perimetrObjForPanzer(xx,yy,width,height)
    let y=yy-mapSize;
     while (x<width+xx)
     {
-        if (checkKvadrMap((x+5)/mapSize,(y+5)/mapSize)==true)
+        if (checkKvadrMap((x+5),(y+5))==true)
         {
             x+=mapSize;
 
@@ -1978,7 +1982,7 @@ function perimetrObjForPanzer(xx,yy,width,height)
                 // for (let i=0;i<shopImageArr[index].height/mapSize+1;i++)
         while (y<=height+yy-mapSize)
         {
-            if (checkKvadrMap((x+5)/mapSize,(y+5)/mapSize)==true)
+            if (checkKvadrMap((x+5),(y+5))==true)
             {
                 y+=mapSize;
 
@@ -1994,7 +1998,7 @@ function perimetrObjForPanzer(xx,yy,width,height)
       //  y-=5;
         while (x>=xx)
         {
-            if (checkKvadrMap((x+5)/mapSize,(y+5)/mapSize)==true)
+            if (checkKvadrMap((x+5),(y+5))==true)
             {
                 x-=mapSize;
 
@@ -2010,10 +2014,10 @@ function perimetrObjForPanzer(xx,yy,width,height)
       //  y-=5;
         while (y>yy)
         {
-            if (checkKvadrMap((x+5)/mapSize,(y+5)/mapSize)==true)
+            if (checkKvadrMap((x+5),(y+5))==true)
             {
                 y-=mapSize;
-                if (checkKvadrMap((x+5)/mapSize,(y+5)/mapSize)==true)
+                if (checkKvadrMap((x+5),(y+5))==true)
                 {
                     return 0;
                 }
@@ -2755,8 +2759,8 @@ function checkPointCollisionAll(x,y,noPanzer=false)//попадает ли то�
 }
 function checkKvadrMap(x,y)
 {
-        x=Math.floor(x);
-        y=Math.floor(y);
+        x=Math.floor(x/mapSize);
+        y=Math.floor(y/mapSize);
     
      if (checkPointCollisionAll(x*mapSize+2,y*mapSize+2)==true) return true;
      if (checkPointCollisionAll(x*mapSize+mapSize/2,y*mapSize+2)==true) return true;
@@ -2800,7 +2804,7 @@ function checkCollisionPanz(num,arrPanz)//проверка столкновен�
 {
     for (i=0;i<arrPanz.length;i++)
     {
-        if (num!=i && panzerArr[i].being==true)
+        if (num!=i && arrPanz[i].being==true)
         {
             if (checkCollision(arrPanz[num],arrPanz[i])==true)
 
@@ -2844,11 +2848,11 @@ function checkCollisionArr(obj,arr)// сталкновение обьекта с
     }
     return -1;
 }
-function openGate(color)
+function openGate(color,numGate)
 {
     for (let i=0;i<gateArr.length;i++)
     {
-        if (gateArr[i].color==color && gateArr[i].close==true)
+        if (gateArr[i].color==color && gateArr[i].close==true && numGate==i)
         {
             gateArr[i].close=false;
             for (let j=0;j<gateArr[i].squareDoor.length;j++)
@@ -2922,6 +2926,7 @@ function initShopImage()// инициализировать обьект маг�
         addWallObject(shopImageArr[i].x+mapSize,shopImageArr[i].y+mapSize*2,3,true);
         addWallObject(shopImageArr[i].x+mapSize*3,shopImageArr[i].y+mapSize*2,3,true);
         console.log(shopImageArr);
+        shopImageArr[i].lineArr=calcLineArr(shopImageArr[i]);
     }
    
 }
@@ -2954,7 +2959,9 @@ function initGarageImage()
         addWallObject(garageImageArr[i].x+mapSize*2,garageImageArr[i].y,3,true);
         addWallObject(garageImageArr[i].x+mapSize,garageImageArr[i].y+mapSize,3,true);
         addWallObject(garageImageArr[i].x+mapSize*2,garageImageArr[i].y+mapSize,3,true);
+        garageImageArr[i].lineArr=calcLineArr(garageImageArr[i]);
     }
+   
     console.log(garageImageArr);
 }
 function addWallObject(x,y,type,solid=true)
@@ -3518,6 +3525,7 @@ function initOnePanzer(x,y,GR,type)
         {
             flag=true;
             panzerArr[i]=clone(onePanzer);
+            break;
         }
     }
     if (flag==false)

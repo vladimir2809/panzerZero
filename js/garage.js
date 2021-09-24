@@ -160,7 +160,7 @@ garage={
      //   drawPanzer(context,panzerInGarageArr[n],camera,scale);
         context.drawImage(imageArr.get(panzerInGarageArr[n].bodyNameImage),
                         x+xRect+ widthRect/2-panzerInGarageArr[n].width/2,
-                        y+yRect+ heightRect/2-panzerInGarageArr[n].height/2,);
+                        y+yRect+ heightRect/2-panzerInGarageArr[n].height/2);
         context.drawImage(imageArr.get(panzerInGarageArr[n].towerNameImage),
                         x+xRect+ widthRect/2-panzerInGarageArr[n].width/2+towerX,
                         y+yRect+ heightRect/2-panzerInGarageArr[n].height/2+towerY);
