@@ -2,6 +2,7 @@ var redactOption=[
     [
         {
            type:"wall",
+           numType:0,
            nameImage:'wall',
            tabMenu:0,
            x:20,
@@ -9,6 +10,7 @@ var redactOption=[
         }  ,
         {
            type:"water",
+           numType:1,
            nameImage:'water',
            tabMenu:0,
            x:100,
@@ -16,6 +18,7 @@ var redactOption=[
         }  ,
         {
            type:"brickWall",
+           numType:2,
            nameImage:'brickwall',
            tabMenu:0,
            x:180,
@@ -37,6 +40,8 @@ var redactOption=[
     [
         {
             type:"panzer",
+            numType:0,
+            group:0,
             nameImage:"body10",
             tabMenu:3,
             y:40,
@@ -44,6 +49,8 @@ var redactOption=[
         },
         {
             type:"panzer",
+            numType:1,
+            group:0,
             nameImage:"body11",
             tabMenu:3,
             y:40,
@@ -51,6 +58,8 @@ var redactOption=[
         },
         {
             type:"panzer",
+            numType:2,
+            group:0,
             nameImage:"body12",
             tabMenu:3,
             y:40,
@@ -58,6 +67,8 @@ var redactOption=[
         },
         {
             type:"panzer",
+            numType:3,
+            group:0,
             nameImage:"body13",
             tabMenu:3,
             y:40,
@@ -65,6 +76,8 @@ var redactOption=[
         },
         {
             type:"panzer",
+            numType:4,
+            group:0,
             nameImage:"body14",
             tabMenu:3,
             y:40,
@@ -72,10 +85,67 @@ var redactOption=[
         },
         {
             type:"panzer",
+            numType:5,
+            group:0,
             nameImage:"body15",
             tabMenu:3,
             y:40,
-            x:440,
+            x:420,
+        },
+        
+        {
+            type:"panzer",
+            numType:0,
+            group:1,
+            nameImage:"body20",
+            tabMenu:3,
+            y:100,
+            x:40,
+        },
+        {
+            type:"panzer",
+            numType:1,
+            group:1,
+            nameImage:"body21",
+            tabMenu:3,
+            y:100,
+            x:100,
+        },
+        {
+            type:"panzer",
+            numType:2,
+            group:1,
+            nameImage:"body22",
+            tabMenu:3,
+            y:100,
+            x:180,
+        },
+        {
+            type:"panzer",
+            numType:3,
+            group:1,
+            nameImage:"body23",
+            tabMenu:3,
+            y:100,
+            x:260,
+        },
+        {
+            type:"panzer",
+            numType:4,
+            group:1,
+            nameImage:"body24",
+            tabMenu:3,
+            y:100,
+            x:340,
+        },
+        {
+            type:"panzer",
+            numType:5,
+            group:1,
+            nameImage:"body25",
+            tabMenu:3,
+            y:100,
+            x:420,
         }
         
         

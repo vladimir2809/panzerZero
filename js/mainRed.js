@@ -2,6 +2,7 @@ var mapWidth=2000;
 var mapHeight=2000;
 var screenWidth=800;
 var screenHeight=500;
+var mapSize=40;
 var context;
 var nameImageArr=["body10","body11",'body12','body13','body14','body15',
                 "body101","body111",'body121','body131','body141',
@@ -13,6 +14,10 @@ var nameImageArr=["body10","body11",'body12','body13','body14','body15',
                 'ganIcon','shop',"star",'starContur','gate',"base"];
 var imageArr=new Map();// массив картинок
 var countLoadImage=0;// количество загруженных картинок
+var selectObj={
+    tabMenu:null,
+    numSelect:null,
+}
 camera={// обьект камера
     x:mapWidth/2-screenWidth/2,
     y:mapHeight/2-screenHeight/2,
@@ -93,6 +98,23 @@ var selectInterface={
     widthTab:120,
     coordWall:[{x:20,y:450+40},{x:100,y:450+40},{x:180,y:450+40},],
     tabValues:["препятствия", "двери", "бочки", "танки","бонусы", "гараж", "магазин"],
+    drawImageByNum:function(tabMenu,num,xx=-1,yy=-1)
+    {
+            let nameImage=redactOption[tabMenu][num].nameImage;
+            let x;
+            let y;
+            if (xx==-1 && yy==-1)
+            {
+                x=redactOption[tabMenu][num].x+this.x;
+                y=redactOption[tabMenu][num].y+this.y;
+            }
+            else
+            {
+               x=xx;
+               y=yy;
+            }
+            context.drawImage(imageArr.get(nameImage),x, y);
+    },
     draw:function()
     {
         for(let i=0;i<this.tabValues.length;i++)
@@ -110,23 +132,33 @@ var selectInterface={
             context.fillText(this.tabValues[i],this.widthTab*i+5,this.y+15);
             context.closePath();
         }
-      //  if (this.tabMenu==0)
+        for (let i=0;i<redactOption[this.tabMenu].length;i++)
         {
-            for (let i=0;i<redactOption[this.tabMenu].length;i++)
+//            let nameImage=redactOption[this.tabMenu][i].nameImage;
+            let x=redactOption[this.tabMenu][i].x;
+            let y=redactOption[this.tabMenu][i].y;
+//            context.drawImage(imageArr.get(nameImage),this.x+x, this.y+y);\
+            this.drawImageByNum(this.tabMenu,i);
+            if (selectObj.tabMenu==this.tabMenu && selectObj.numSelect==i)
             {
-                let nameImage=redactOption[this.tabMenu][i].nameImage;
-                let x=redactOption[this.tabMenu][i].x;
-                let y=redactOption[this.tabMenu][i].y;
-                context.drawImage(imageArr.get(nameImage),this.x+x, this.y+y);
-    //            context.drawImage(imageArr.get("water"),this.coordWall[1].x,
-    //                                this.coordWall[1].y);
-    //            context.drawImage(imageArr.get("brickwall"),this.coordWall[2].x,
-    //                                this.coordWall[2].y);
+                context.strokeStyle="#0000FF";
+                context.strokeRect(this.x+x,this.y+y,mapSize,mapSize);
             }
+//            context.drawImage(imageArr.get("water"),this.coordWall[1].x,
+//                                this.coordWall[1].y);
+//            context.drawImage(imageArr.get("brickwall"),this.coordWall[2].x,
+//                                this.coordWall[2].y);
+        }
+        if (mY<this.y &&selectObj.tabMenu!=null && selectObj.numSelect!=null)
+        {
+            let x=Math.floor((mX/*+mapSize/2*/)/mapSize)*mapSize;
+            let y=Math.floor((mY/*+mapSize/2*/)/mapSize)*mapSize;
+            this.drawImageByNum(selectObj.tabMenu,selectObj.numSelect,x,y);
+        }
            
                    
                    
-        }
+        
     },
     update:function()
     {
@@ -148,6 +180,20 @@ var selectInterface={
                     
                 }
             }
+            for (let i=0;i<redactOption[this.tabMenu].length;i++)
+            {
+               
+                let x=redactOption[this.tabMenu][i].x;
+                let y=redactOption[this.tabMenu][i].y;
+                if (mX>this.x+x && mX<this.x+x+mapSize 
+                            && mY>this.y+y && mY<this.y+y+mapSize)
+                {
+                    // alert(555);
+                    selectObj.tabMenu=this.tabMenu;
+                    selectObj.numSelect=i;
+                }
+            }
+            
         }
     },
 }
