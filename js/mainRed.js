@@ -217,15 +217,33 @@ var selectInterface={
         if (mY<this.y &&selectObj.tabMenu!=null && selectObj.numSelect!=null)
         {
         //    rotateXY.x*camera.summMultScalingX+mouseOffsetX
-            bulletArr[i].x*scale-camera.summMultScalingX
-            let x=Math.floor((mX/*+mapSize/2*/)/mapSize)*mapSize*scale-camera.summMultScalingX;//+mouseOffsetX;
-            let y=Math.floor((mY/*+mapSize/2*/)/mapSize)*mapSize*scale-camera.summMultScalingY;//+mouseOffsetY;
-            this.drawImageByNum(selectObj.tabMenu,selectObj.numSelect,x,y);
+            //bulletArr[i].x*scale-camera.summMultScalingX
+//            let x=Math.floor((mX/scale+camera.summMultScalingX/*+mapSize/2*/)/mapSize)*mapSize;//+mouseOffsetX;
+//            let y=Math.floor((mY/scale+camera.summMultScalingY/*+mapSize/2*/)/mapSize)*mapSize;//+mouseOffsetY;
+            let posXY=this.calcXYScaling(mX,mY);
+            this.drawImageByNum(selectObj.tabMenu,selectObj.numSelect,posXY.x,posXY.y);
         }
            
                    
                    
         
+    },
+    calcXYScaling:function(x,y)
+    {
+        let X;
+        let Y;
+        if (scale<=1)
+        {
+            X=Math.floor((mX/scale-camera.summMultScalingX+camera.x)/mapSize)*mapSize;
+            Y=Math.floor((mY/scale-camera.summMultScalingY+camera.y)/mapSize)*mapSize;
+        }
+//        else
+//        {
+//            X=Math.floor((mX/**scale-camera.summMultScalingX*/)/mapSize)*mapSize;
+//            Y=Math.floor((mY/**scale-camera.summMultScalingY*/)/mapSize)*mapSize;
+//        }
+        return {x:X,y:Y}
+          
     },
     update:function()
     {
@@ -268,8 +286,12 @@ var selectInterface={
             if (mY<this.y &&selectObj.tabMenu!=null && selectObj.numSelect!=null)
             {
                 let objOne=clone(redactOption[selectObj.tabMenu][selectObj.numSelect]);
-                objOne.x=Math.floor((mX+camera.x)/mapSize)*mapSize;
-                objOne.y=Math.floor((mY+camera.y)/mapSize)*mapSize;
+                let posXY=this.calcXYScaling(mX,mY);
+                objOne.x=posXY.x;
+                objOne.y=posXY.y;
+//                objOne.x=Math.floor((mX+camera.x)/mapSize)*mapSize;
+//                objOne.y=Math.floor((mY+camera.y)/mapSize)*mapSize;
+
                 if (objMap.checkMapSquad(objOne.x,objOne.y)==true)
                 {
                     objMap.objArr.push(objOne);
@@ -327,7 +349,7 @@ window.addEventListener('load', function () {
         { 
             scale=camera.scaling(-1,scale);
             console.log(scale);
-        }else if (resWhell==1)
+        }else if (resWhell==1 && scale<1)
         {
             scale=camera.scaling(1,scale);
             console.log(scale);
