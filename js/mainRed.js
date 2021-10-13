@@ -1,4 +1,4 @@
-var mapWidth=2000;
+var mapWidth=2400;
 var mapHeight=2000;
 var screenWidth=800;
 var screenHeight=500;
@@ -20,6 +20,19 @@ var map={// обьект карта
     y:0,
     width:mapWidth,//mapSize*30,
     height:mapHeight,//mapSize*30,
+    drawPerimetr:function()
+    {
+        for (let i=0;i<mapWidth/mapSize;i++)
+        {
+            drawSprite(context,imageArr.get("wall"),i*mapSize,0,camera,scale);;
+            drawSprite(context,imageArr.get("wall"),i*mapSize,mapHeight-mapSize,camera,scale);;
+        }
+        for (let i=0;i<mapHeight/mapSize;i++)
+        {
+            drawSprite(context,imageArr.get("wall"),0,i*mapSize,camera,scale);;
+            drawSprite(context,imageArr.get("wall"),mapWidth-mapSize,i*mapSize,camera,scale);;
+        }
+    }
 }
 var selectObj={
     tabMenu:null,
@@ -103,8 +116,8 @@ var objMap={
     y:0,
     lookX:screenWidth/2,
     lookY:screenHeight/2,
-    width:1000*40,
-    height:1000*40,
+    width:mapWidth,
+    height:mapHeight,
     objArr:[],
     draw:function()
     {
@@ -136,13 +149,14 @@ var objMap={
         if (checkPressKey("KeyS")&&this.lookY<=mapHeight)this.lookY+=speed;
         if (checkPressKey("KeyA")&&this.lookX>=0) this.lookX-=speed;
         camera.focusXY(this.lookX,this.lookY,map);
+        //console.log(camera.x+' '+camera.y);
     },
     drawLook:function()
     {
         context.beginPath();
         context.fillStyle="#0000FF";
-        context.moveTo(screenWidth/2,screenHeight/2);    
-        context.arc(screenWidth/2/*this.lookX*/,screenHeight/2/*this.lookY*/,14, Math.PI*2,(Math.PI*2)-0.1,false);
+        context.moveTo(this.lookX-camera.x,this.lookX-camera.y);    
+        context.arc(this.lookX-camera.x,this.lookY-camera.y,14, Math.PI*2,(Math.PI*2)-0.1,false);
         context.fill();
         context.closePath();  
     },
@@ -345,14 +359,17 @@ window.addEventListener('load', function () {
         selectInterface.update();
         objMap.moveCamera();
         let resWhell=checkWheel();
-        if (resWhell==-1) 
+        if (resWhell==-1&&scale>0.05) 
         { 
             scale=camera.scaling(-1,scale);
             console.log(scale);
-        }else if (resWhell==1 && scale<1)
+            console.log(camera.x+' '+camera.y);
+        }
+        else if (resWhell==1 && scale<1)
         {
             scale=camera.scaling(1,scale);
             console.log(scale);
+            console.log(camera.x+' '+camera.y);
         }
     },30);
    // setTimeout(gameLoop,60,1,true);
@@ -392,6 +409,7 @@ function drawAll()
      context.fillRect(0,0,camera.width,camera.height+200);// очистка экрана
      objMap.draw();
      objMap.drawLook();
+     map.drawPerimetr();
      selectInterface.draw();
 }
 function drawSprite(context,image,x,y,camera,scale)// функция вывода спрайта на экран
