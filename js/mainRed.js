@@ -69,13 +69,15 @@ camera={// обьект камера
         }
         if (y<map.y+(this.height/2)/scale) this.y=map.y;
         else if (y>map.x+map.height-this.height/2/scale) this.y=map.y+map.height-this.height/scale;;
-        if (this.height/scale > screenHeight)
+        if (this.height/scale > map.height)
         {
             this.y=0;
+            console.log("YES1");
         }
-        if (this.width/scale > screenWidth)
+        if (this.width/scale > map.width)
         {
             this.x=0;
+            console.log("YES2");
          ///   console.log(this.width/2/scale+"   "+screenWidth);
         }
     },
@@ -98,6 +100,7 @@ camera={// обьект камера
             this.offsetX+=(this.width*k)/(Math.pow(k,this.power)*Math.pow(k,this.countScaling));
             this.offsetY+=(this.height*k)/(Math.pow(k,this.power)*Math.pow(k,this.countScaling)); 
             this.calcSummMultScaling();
+             console.log("Offset "+this.offsetX+' '+this.offsetY);
             return scaleValue*k;
         }
         if (value<0)
@@ -106,16 +109,18 @@ camera={// обьект камера
             this.offsetY-=(this.height*k)/(Math.pow(k,this.power)*Math.pow(k,this.countScaling));  
             this.countScaling--;
             this.calcSummMultScaling();
+             console.log("Offset "+this.offsetX+' '+this.offsetY);
             return scaleValue/k;
         }
+        //console.log("Offset "+this.offsetX+' '+this.offsetY);
         return scaleValue;
     },
 }
 var objMap={
     x:0,
     y:0,
-    lookX:screenWidth/2,
-    lookY:screenHeight/2,
+    lookX:0,
+    lookY:0,
     width:mapWidth,
     height:mapHeight,
     objArr:[],
@@ -145,11 +150,14 @@ var objMap={
     {
         let speed=mapSize/2;
         if (checkPressKey("KeyW")&&this.lookY>=0) this.lookY-=speed;
-        if (checkPressKey("KeyD")&&this.lookX<=mapWidth) this.lookX+=speed;
-        if (checkPressKey("KeyS")&&this.lookY<=mapHeight)this.lookY+=speed;
+        if (checkPressKey("KeyD")&&this.lookX+screenWidth<=mapWidth) this.lookX+=speed;
+        if (checkPressKey("KeyS")&&this.lookY+screenHeight<=mapHeight)this.lookY+=speed;
         if (checkPressKey("KeyA")&&this.lookX>=0) this.lookX-=speed;
-        camera.focusXY(this.lookX,this.lookY,map);
-        //console.log(camera.x+' '+camera.y);
+        camera.x=this.lookX;
+        camera.y=this.lookY;
+        //camera.focusXY(this.lookX,this.lookY,map);
+//        console.log(camera.x+' '+camera.y);
+        console.log(this.lookX+' '+this.lookY);
     },
     drawLook:function()
     {
@@ -408,7 +416,7 @@ function drawAll()
      context.fillStyle='rgb(210,210,210)';
      context.fillRect(0,0,camera.width,camera.height+200);// очистка экрана
      objMap.draw();
-     objMap.drawLook();
+   //  objMap.drawLook();
      map.drawPerimetr();
      selectInterface.draw();
 }
