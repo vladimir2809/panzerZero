@@ -236,6 +236,15 @@ var selectInterface={
 //            context.drawImage(imageArr.get("brickwall"),this.coordWall[2].x,
 //                                this.coordWall[2].y);
         }
+        if (this.tabMenu==1)
+        {
+            mult=2.5;
+            drawGate((this.x+20)*mult,(this.y+50)*mult,1,'#FF0000',1/mult,true);
+            drawGate((this.x+120)*mult,(this.y+50)*mult,3,'#FF0000',1/mult,true);
+            drawGate((this.x+220)*mult,(this.y+50)*mult,2,'#FF0000',1/mult,true);
+            drawGate((this.x+270)*mult,(this.y+50)*mult,4,'#FF0000',1/mult,true);
+        }
+        
         if (mY<this.y &&selectObj.tabMenu!=null && selectObj.numSelect!=null)
         {
         //    rotateXY.x*camera.summMultScalingX+mouseOffsetX
@@ -428,4 +437,105 @@ function drawSprite(context,image,x,y,camera,scale)// функция вывод�
     context.drawImage(image,x-camera.x,y-camera.y);
     context.restore();
 }
-
+function drawGate(x,y,dir,color,scale,flagCam=false)
+{
+   // let dir=gate.direction;
+    let camX,camY;
+    let gateX,gateY,gateAngle;
+    if (flagCam==true)
+    {
+        camX=camera.x;
+        camY=camera.y;
+        camera.x=0;
+        camera.y=0;
+    }
+    context.fillStyle=color;
+    if (dir==1||dir==3)
+    {
+        drawSprite(context,imageArr.get("wall"),
+                                    x,y,camera,scale);
+        drawSprite(context,imageArr.get("wall"),
+                                    x,y+mapSize,camera,scale);
+        drawSprite(context,imageArr.get("wall"),
+                                    x+mapSize*4,y,camera,scale);
+        drawSprite(context,imageArr.get("wall"),
+                                    x+mapSize*4,y+mapSize,camera,scale);
+        
+      //  context.fillRect(gate.x+mapSize,gate.y,mapSize*3,mapSize*2);
+          drawFillRectScale(x+mapSize,y,mapSize*3,mapSize*2,color,scale);
+//        context.fillRect((gate.x+mapSize)*scale-(camera.x*camera.summMultScalingX),//-camera.x,//camera.summMultScalingX,
+//                    gate.y*scale-(camera.y*camera.summMultScalingY),//-camera.y,//camera.summMultScalingY,
+//                            mapSize*3*scale,mapSize*2*scale);
+        
+        if (dir==1)
+        {            
+            gateY=y;    
+        }
+        else if (dir==3)
+        {
+            gateY=y+mapSize;
+        }
+        gateAngle=0;
+        gateX=x+mapSize;
+        
+    }
+    if (dir==2||dir==4)
+    {
+        drawSprite(context,imageArr.get("wall"),
+                                    x,y,camera,scale);
+        drawSprite(context,imageArr.get("wall"),
+                                    x+mapSize,y,camera,scale);
+        drawSprite(context,imageArr.get("wall"),
+                                    x,y+mapSize*4,camera,scale);
+        drawSprite(context,imageArr.get("wall"),
+                                    x+mapSize,y+mapSize*4,camera,scale);
+        //context.fillStyle="orange";
+        drawFillRectScale(x,y+mapSize,mapSize*2,mapSize*3,color,scale);
+//        context.fillRect(gate.x*scale-(camera.x*camera.summMultScalingX),//-camera.x,//camera.summMultScalingX,
+//                    (gate.y+mapSize)*scale-(camera.y*camera.summMultScalingY),//-camera.y,//camera.summMultScalingY,
+//                            mapSize*2*scale,mapSize*3*scale);
+        if (dir==2)
+        {            
+            gateX=x;    
+        }
+        else if (dir==4)
+        {
+            gateX=x-mapSize;
+        }
+        gateAngle=90;
+        gateY=y+mapSize*2;
+       //drawTurnSprite(context,imageArr.get("gate"),gate.x-mapSize,gate.y+mapSize*2,90,60,20,camera,scale);
+    }
+    //if (gate.close==true)
+    {
+        drawTurnSprite(context,imageArr.get("gate"),gateX,gateY,gateAngle,
+                                                  60,20,camera,scale);
+    }
+    if (flagCam==true)
+    {
+        camera.x=camX;
+        camera.y=camY;
+    }
+}
+function drawFillRectScale(x,y,w,h,color,scale=1)
+{
+    context.fillStyle=color;
+    context.fillRect (x*scale-(camera.x*camera.summMultScalingX),
+                        y*scale-(camera.y*camera.summMultScalingY),
+                        w*scale,h*scale);
+}
+function drawTurnSprite(context,image,x,y,angle,x1,y1,camera,scale)// функция вывода повернутого спрайта на экран
+{
+    if(!context || !image) return;
+//    context.save();
+//    context.scale(scale,scale);
+//    context.drawImage(image,x-camera.x,y-camera.y);
+//    context.restore();
+    context.save();
+    context.translate((x+x1-camera.x)*scale,
+                        (y+y1-camera.y)*scale);
+    context.scale(scale,scale);
+    context.rotate(angle*Math.PI/180);
+    context.drawImage(image,-x1,-y1);
+    context.restore();
+}
