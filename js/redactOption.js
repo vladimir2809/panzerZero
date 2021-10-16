@@ -25,9 +25,45 @@ var redactOption=[
            y:40,     
         }  ,
     ],
-    [
+    [    
+        {
+            type:"gate",
+            dir:1,
+            tabMenu:1,
+            y:40,
+            x:20,
+            width:100,
+            height:40,
+        },
+        {
+            type:"gate",
+            dir:3,
+            tabMenu:1,
+            y:40,
+            x:120,
+            width:100,
+            height:40,
+        },
+        {
+            type:"gate",
+            dir:2,
+            tabMenu:1,
+            y:40,
+            x:220,
+            width:40,
+            height:100,
+        },
+        {
+            type:"gate",
+            dir:4,
+            tabMenu:1,
+            y:40,
+            x:270,
+            width:40,
+            height:100,
+        },
         
-    ],
+    ],   
     [
         {
            type:"barrel",
@@ -146,11 +182,10 @@ var redactOption=[
             tabMenu:3,
             y:100,
             x:420,
-        }
-        
-        
-        
-    ]
+        },
+    ],
+    
+    
 ];
 
 

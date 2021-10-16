@@ -116,6 +116,9 @@ camera={// обьект камера
         return scaleValue;
     },
 }
+gates={
+    
+}
 var objMap={
     x:0,
     y:0,
@@ -180,6 +183,7 @@ var selectInterface={
     tabMenu:0,
     widthTab:120,
     coordWall:[{x:20,y:450+40},{x:100,y:450+40},{x:180,y:450+40},],
+    multGate:2.5,
     tabValues:["препятствия", "двери", "бочки", "танки","бонусы", "гараж", "магазин"],
     drawImageByNum:function(tabMenu,num,xx=-1,yy=-1)
     {
@@ -221,29 +225,45 @@ var selectInterface={
         }
         for (let i=0;i<redactOption[this.tabMenu].length;i++)
         {
-//            let nameImage=redactOption[this.tabMenu][i].nameImage;
-            let x=redactOption[this.tabMenu][i].x;
-            let y=redactOption[this.tabMenu][i].y;
-//            context.drawImage(imageArr.get(nameImage),this.x+x, this.y+y);\
-            this.drawImageByNum(this.tabMenu,i);
-            if (selectObj.tabMenu==this.tabMenu && selectObj.numSelect==i)
+//            let nameImage=redactOption[this.tabMenu][i].nameImage;   
+            if (this.tabMenu==1)
             {
-                context.strokeStyle="#0000FF";
-                context.strokeRect(this.x+x,this.y+y,mapSize,mapSize);
+                let  mult=this.multGate; 
+                let x=redactOption[this.tabMenu][i].x;
+                let y=redactOption[this.tabMenu][i].y;
+                let dir=redactOption[this.tabMenu][i].dir;
+                let width=redactOption[this.tabMenu][i].width;
+                let height=redactOption[this.tabMenu][i].height;
+                drawGate((this.x+x)*mult,(this.y+y)*mult,dir,'#FF0000',1/mult,true);
+                if (selectObj.tabMenu==this.tabMenu && selectObj.numSelect==i)
+                {
+                    context.strokeStyle="#0000FF";
+                    context.strokeRect(this.x+x,this.y+y,width,height);
+                }
+//                drawGate((this.x+x)*mult,(this.y+y)*mult,dir,'#FF0000',1/mult,true);
+//                drawGate((this.x+x)*mult,(this.y+y)*mult,dir,'#FF0000',1/mult,true);
+//                drawGate((this.x+x)*mult,(this.y+y)*mult,dir,'#FF0000',1/mult,true);
+            }
+            else
+            {
+                let x=redactOption[this.tabMenu][i].x;
+                let y=redactOption[this.tabMenu][i].y;
+                //            context.drawImage(imageArr.get(nameImage),this.x+x, this.y+y);\
+                this.drawImageByNum(this.tabMenu,i);
+            
+                if (selectObj.tabMenu==this.tabMenu && selectObj.numSelect==i)
+                {
+                    context.strokeStyle="#0000FF";
+                    context.strokeRect(this.x+x,this.y+y,mapSize,mapSize);
+                }
             }
 //            context.drawImage(imageArr.get("water"),this.coordWall[1].x,
 //                                this.coordWall[1].y);
 //            context.drawImage(imageArr.get("brickwall"),this.coordWall[2].x,
-//                                this.coordWall[2].y);
+//                                this.coordWall[2].y);  
+         
         }
-        if (this.tabMenu==1)
-        {
-            mult=2.5;
-            drawGate((this.x+20)*mult,(this.y+50)*mult,1,'#FF0000',1/mult,true);
-            drawGate((this.x+120)*mult,(this.y+50)*mult,3,'#FF0000',1/mult,true);
-            drawGate((this.x+220)*mult,(this.y+50)*mult,2,'#FF0000',1/mult,true);
-            drawGate((this.x+270)*mult,(this.y+50)*mult,4,'#FF0000',1/mult,true);
-        }
+    
         
         if (mY<this.y &&selectObj.tabMenu!=null && selectObj.numSelect!=null)
         {
@@ -301,13 +321,26 @@ var selectInterface={
                
                 let x=redactOption[this.tabMenu][i].x;
                 let y=redactOption[this.tabMenu][i].y;
-                if (mX>this.x+x && mX<this.x+x+mapSize 
-                            && mY>this.y+y && mY<this.y+y+mapSize)
+                let width;
+                let height;
+                if (this.tabMenu==1)
+                {
+                    width=redactOption[this.tabMenu][i].width;
+                    height=redactOption[this.tabMenu][i].height;
+                }
+                else
+                {
+                    width=mapSize;
+                    height=mapSize;
+                }
+                if (mX>this.x+x && mX<this.x+x+width 
+                            && mY>this.y+y && mY<this.y+y+height)
                 {
                     // alert(555);
                     selectObj.tabMenu=this.tabMenu;
                     selectObj.numSelect=i;
                 }
+                
             }
        
             
