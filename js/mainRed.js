@@ -134,8 +134,18 @@ var objMap={
         for(let i=0;i<this.objArr.length;i++)
         {
        //     drawSprite(context,image,x,y,camera,scale)
-            drawSprite(context,imageArr.get(this.objArr[i].nameImage),
-                    this.objArr[i].x,this.objArr[i].y,camera,scale);
+            if (this.objArr[i].type=="gate")
+            {
+                let x=this.objArr[i].x;
+                let y=this.objArr[i].y; 
+                let dir=this.objArr[i].dir;
+                drawGate(x,y,dir,'#FF0000',scale,false);
+            }
+            else
+            {
+                drawSprite(context,imageArr.get(this.objArr[i].nameImage),
+                            this.objArr[i].x,this.objArr[i].y,camera,scale);
+            }
         }
     },
     checkMapSquad:function(x,y)
@@ -184,7 +194,7 @@ var selectInterface={
     widthTab:120,
     coordWall:[{x:20,y:450+40},{x:100,y:450+40},{x:180,y:450+40},],
     multGate:2.5,
-    tabValues:["препятствия", "двери", "бочки", "танки","бонусы", "гараж", "магазин"],
+    tabValues:["препятствия", "двери", "бочки", "танки","бонусы", "здания", "ключи"],
     drawImageByNum:function(tabMenu,num,xx=-1,yy=-1)
     {
             let nameImage=redactOption[tabMenu][num].nameImage;
@@ -244,7 +254,15 @@ var selectInterface={
 //                drawGate((this.x+x)*mult,(this.y+y)*mult,dir,'#FF0000',1/mult,true);
 //                drawGate((this.x+x)*mult,(this.y+y)*mult,dir,'#FF0000',1/mult,true);
             }
-            else
+            else if(this.tabMenu==6)
+            {
+                let keyGate={};
+                keyGate.x=redactOption[this.tabMenu][i].x+this.x;
+                keyGate.y=redactOption[this.tabMenu][i].y+this.y;
+                keyGate.color=redactOption[this.tabMenu][i].color;
+                drawKeyForGate(keyGate,true);
+            }
+            else         
             {
                 let x=redactOption[this.tabMenu][i].x;
                 let y=redactOption[this.tabMenu][i].y;
@@ -267,12 +285,18 @@ var selectInterface={
         
         if (mY<this.y &&selectObj.tabMenu!=null && selectObj.numSelect!=null)
         {
-        //    rotateXY.x*camera.summMultScalingX+mouseOffsetX
-            //bulletArr[i].x*scale-camera.summMultScalingX
-//            let x=Math.floor((mX/scale+camera.summMultScalingX/*+mapSize/2*/)/mapSize)*mapSize;//+mouseOffsetX;
-//            let y=Math.floor((mY/scale+camera.summMultScalingY/*+mapSize/2*/)/mapSize)*mapSize;//+mouseOffsetY;
             let posXY=this.calcXYScaling(mX,mY);
-            this.drawImageByNum(selectObj.tabMenu,selectObj.numSelect,posXY.x,posXY.y);
+            if (selectObj.tabMenu==1)
+            {
+                let dir=redactOption[selectObj.tabMenu][selectObj.numSelect].dir;
+                drawGate(posXY.x,posXY.y,dir,"#FF0000",scale,false);
+                
+            }
+            else
+            {
+                this.drawImageByNum(selectObj.tabMenu,selectObj.numSelect,posXY.x,posXY.y);
+            }
+            
         }
            
                    
@@ -361,6 +385,7 @@ var selectInterface={
                     objMap.objArr.push(objOne);
                     console.log(objMap);
                 }
+                console.log(objMap.objArr);
             }
         }
     },
@@ -571,4 +596,54 @@ function drawTurnSprite(context,image,x,y,angle,x1,y1,camera,scale)// функц
     context.rotate(angle*Math.PI/180);
     context.drawImage(image,-x1,-y1);
     context.restore();
+}
+function drawKeyForGate(keyGate,rect=true,xx=-1,yy=-1)
+{
+    //context.save();
+    //context.closePath();
+    let oldScale;
+    let x;
+    let y;
+    if (rect==true && xx==-1 && yy==-1)
+    {
+        context.strokeStyle="blue";
+        context.strokeRect (keyGate.x*scale-(camera.x*camera.summMultScalingX),
+                        keyGate.y*scale-(camera.y*camera.summMultScalingY),
+                        mapSize*scale,mapSize*scale);
+        x=keyGate.x+12;
+        y=keyGate.y+18;
+        x=x*scale-(camera.x*camera.summMultScalingX);
+        y=y*scale-(camera.y*camera.summMultScalingY);
+    }
+    else 
+    {
+        oldScale=scale;
+        scale=0.8;
+        x=xx;
+        y=yy;
+       // console.log("scale");
+    }
+    
+    context.beginPath();
+    context.fillStyle=keyGate.color;
+    context.arc(x,y, 9*scale, 0, degressToRadian(360));
+    context.fill(); 
+    context.closePath();
+    
+    context.beginPath();
+    context.fillStyle="black";//keyGate.color;
+    context.arc(x, y, 3*scale, 0, degressToRadian(360));
+    context.fill();
+    context.closePath();
+    
+    context.fillStyle=keyGate.color ;
+    context.fillRect(x+6*scale, y-2*scale,17*scale,5*scale);
+    context.fillRect(x+(6+17-4)*scale,y-2*scale+5*scale,4*scale,3*scale);
+    if (rect==false && xx!=-1 && yy!=-1)
+    {
+        scale=oldScale;
+    }
+    //console.log(scale);
+ //   context.strokeRect (keyGate.x,keyGate.y,mapSize,mapSize);
+    //context.stroke();
 }
