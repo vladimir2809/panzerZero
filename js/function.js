@@ -2,6 +2,10 @@ var XR=1;
 var pi=3.1415926;
 var sinArr=[];
 var accuracyArr=[];
+colorsForGate=["rgb(255,0,0)","rgb(0,0,255)","rgb(255,153,51)",
+               "rgb(255,0,255)","rgb(0,255,255)","rgb(255,255,0)",
+               "rgb(128,255,0)","rgb(255,255,255)",
+];
 // функция клонирования обьектов
 function clone(obj) {
     if (null == obj || "object" != typeof obj) return obj;

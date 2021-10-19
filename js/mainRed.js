@@ -134,12 +134,20 @@ var objMap={
         for(let i=0;i<this.objArr.length;i++)
         {
        //     drawSprite(context,image,x,y,camera,scale)
+            let x=this.objArr[i].x;
+            let y=this.objArr[i].y; 
+            let dir=this.objArr[i].dir;
             if (this.objArr[i].type=="gate")
             {
-                let x=this.objArr[i].x;
-                let y=this.objArr[i].y; 
-                let dir=this.objArr[i].dir;
+//                let x=this.objArr[i].x;
+//                let y=this.objArr[i].y; 
+//                let dir=this.objArr[i].dir;
                 drawGate(x,y,dir,'#FF0000',scale,false);
+            }
+            else if(this.objArr[i].type=='keyGate')
+            {
+              let color=this.objArr[i].color;  
+                drawKeyForGate(color,x,y,scale);
             }
             else
             {
@@ -228,6 +236,7 @@ var selectInterface={
             }
            
             context.fillStyle="#00FF00";
+            context.strokeStyle="#00FF00";
             context.font = '18px Arial';
             context.strokeRect(this.widthTab*i,this.y,this.widthTab,20);
             context.fillText(this.tabValues[i],this.widthTab*i+5,this.y+15);
@@ -256,11 +265,17 @@ var selectInterface={
             }
             else if(this.tabMenu==6)
             {
-                let keyGate={};
-                keyGate.x=redactOption[this.tabMenu][i].x+this.x;
-                keyGate.y=redactOption[this.tabMenu][i].y+this.y;
-                keyGate.color=redactOption[this.tabMenu][i].color;
-                drawKeyForGate(keyGate,true);
+                //let keyGate={};
+                x=redactOption[this.tabMenu][i].x+this.x;
+                y=redactOption[this.tabMenu][i].y+this.y;
+                color=redactOption[this.tabMenu][i].color;
+                let colorRect='green';
+                if (selectObj.tabMenu==this.tabMenu && selectObj.numSelect==i)
+                {
+                    colorRect='blue';
+                }
+                
+                drawKeyForGate(color,x,y,1,colorRect);
             }
             else         
             {
@@ -456,7 +471,8 @@ function preload()// функция предзагрузки
     //srand(1);
     let timeNow=new Date().getTime()
     srand(timeNow);
-    loadImageArr();   
+    loadImageArr(); 
+    initKeyGate ();
  //   console.log(option[numOption].typePanzerArrGR0);
 
 }
@@ -597,35 +613,35 @@ function drawTurnSprite(context,image,x,y,angle,x1,y1,camera,scale)// функц
     context.drawImage(image,-x1,-y1);
     context.restore();
 }
-function drawKeyForGate(keyGate,rect=true,xx=-1,yy=-1)
+function drawKeyForGate(color,x,y,scale,colorRect='green')
 {
     //context.save();
     //context.closePath();
-    let oldScale;
-    let x;
-    let y;
-    if (rect==true && xx==-1 && yy==-1)
+//    let oldScale;
+//    let x;
+//    let y;
+//    if (rect==true && xx==-1 && yy==-1)
     {
-        context.strokeStyle="blue";
-        context.strokeRect (keyGate.x*scale-(camera.x*camera.summMultScalingX),
-                        keyGate.y*scale-(camera.y*camera.summMultScalingY),
+        context.strokeStyle=colorRect;
+        context.strokeRect (x*scale-(camera.x*camera.summMultScalingX),
+                        y*scale-(camera.y*camera.summMultScalingY),
                         mapSize*scale,mapSize*scale);
-        x=keyGate.x+12;
-        y=keyGate.y+18;
+        x=x+12;
+        y=y+18;
         x=x*scale-(camera.x*camera.summMultScalingX);
         y=y*scale-(camera.y*camera.summMultScalingY);
     }
-    else 
-    {
-        oldScale=scale;
-        scale=0.8;
-        x=xx;
-        y=yy;
-       // console.log("scale");
-    }
+//    else 
+//    {
+//        oldScale=scale;
+//        scale=0.8;
+//        x=xx;
+//        y=yy;
+//       // console.log("scale");
+//    }
     
     context.beginPath();
-    context.fillStyle=keyGate.color;
+    context.fillStyle=color;
     context.arc(x,y, 9*scale, 0, degressToRadian(360));
     context.fill(); 
     context.closePath();
@@ -636,13 +652,13 @@ function drawKeyForGate(keyGate,rect=true,xx=-1,yy=-1)
     context.fill();
     context.closePath();
     
-    context.fillStyle=keyGate.color ;
+    context.fillStyle=color ;
     context.fillRect(x+6*scale, y-2*scale,17*scale,5*scale);
     context.fillRect(x+(6+17-4)*scale,y-2*scale+5*scale,4*scale,3*scale);
-    if (rect==false && xx!=-1 && yy!=-1)
-    {
-        scale=oldScale;
-    }
+//    if (rect==false && xx!=-1 && yy!=-1)
+//    {
+//        scale=oldScale;
+//    }
     //console.log(scale);
  //   context.strokeRect (keyGate.x,keyGate.y,mapSize,mapSize);
     //context.stroke();

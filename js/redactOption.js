@@ -1,3 +1,6 @@
+//colorsForGate=["rgb(255,0,0)","rgb(0,0,255)","rgb(255,153,51)",
+//               "rgb(255,0,255)","rgb(0,255,255)","rgb(255,255,0)",
+//               "rgb(128,255,0)","rgb(255,255,255)",];
 var redactOption=[
     [
         {
@@ -247,7 +250,7 @@ var redactOption=[
             type:"keyGate",
             numType:0,
            // group:1,
-            color:'#FF0000',
+            color:colorsForGate[0],
             tabMenu:6,
             y:40,
             x:20,
@@ -256,5 +259,17 @@ var redactOption=[
     
     
 ];
+
+function initKeyGate ()
+{
+    
+    for (let i=1;i<8;i++)
+    {
+       let oneKey=clone(redactOption[6][0]); 
+       oneKey.x=i*80;
+       oneKey.color=colorsForGate[i];
+       redactOption[6].push(oneKey);
+    }
+}
 
 
