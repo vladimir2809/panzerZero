@@ -234,6 +234,8 @@ var redactOption=[
             tabMenu:5,
             y:40,
             x:20,
+            width:5*40,
+            height:5*40,
         }, 
         {
             type:"garage",
@@ -242,7 +244,9 @@ var redactOption=[
             nameImage:"garage",
             tabMenu:5,
             y:40,
-            x:220,
+            x:150,
+            width:3*40,
+            height:2*40,
         }, 
     ],
     [

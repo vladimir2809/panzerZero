@@ -156,11 +156,16 @@ var objMap={
             }
         }
     },
-    checkMapSquad:function(x,y)
+    checkMapSquad:function(x,y,width=0,height=0)
     {
         for (let i=0;i<this.objArr.length;i++)
         {
-            if (this.objArr[i].x==x && this.objArr[i].y==y)
+           // if (this.objArr[i].x==x && this.objArr[i].y==y)
+            if (this.objArr[i].x+this.objArr[i].width>x&&
+                this.objArr[i].x<x+width&&    
+                this.objArr[i].y+this.objArr[i].height>y&&
+                this.objArr[i].y<y+height
+                )
             {
                 return false;
             }
@@ -202,6 +207,7 @@ var selectInterface={
     widthTab:120,
     coordWall:[{x:20,y:450+40},{x:100,y:450+40},{x:180,y:450+40},],
     multGate:2.5,
+    multBuilding:2,
     tabValues:["препятствия", "двери", "бочки", "танки","бонусы", "здания", "ключи"],
     drawImageByNum:function(tabMenu,num,xx=-1,yy=-1)
     {
@@ -212,7 +218,21 @@ var selectInterface={
             {
                 x=redactOption[tabMenu][num].x+this.x;
                 y=redactOption[tabMenu][num].y+this.y; 
+                let mult=this.multBuilding;
+                if (tabMenu==5)
+                {
+                    context.save();;
+                    context.scale(1/mult,1/mult);
+                    x*=mult;
+                    y*=mult;
+                    
+                }
                 context.drawImage(imageArr.get(nameImage),x, y);
+                if (tabMenu==5)
+                {
+                    context.restore();
+                    //context.scale(1,1);
+                }
             }
             else
             {
@@ -287,7 +307,17 @@ var selectInterface={
                 if (selectObj.tabMenu==this.tabMenu && selectObj.numSelect==i)
                 {
                     context.strokeStyle="#0000FF";
-                    context.strokeRect(this.x+x,this.y+y,mapSize,mapSize);
+                    if (this.tabMenu==5)
+                    {
+                        let width=redactOption[this.tabMenu][i].width;
+                        let height=redactOption[this.tabMenu][i].height;
+                        let mult=this.multBuilding;
+                        context.strokeRect(this.x+x,this.y+y,width/mult,height/mult);
+                    }
+                    else
+                    {
+                        context.strokeRect(this.x+x,this.y+y,mapSize,mapSize);
+                    }
                 }
             }
 //            context.drawImage(imageArr.get("water"),this.coordWall[1].x,
@@ -362,7 +392,7 @@ var selectInterface={
                 let y=redactOption[this.tabMenu][i].y;
                 let width;
                 let height;
-                if (this.tabMenu==1)
+                if (this.tabMenu==1 || this.tabMenu==5)
                 {
                     width=redactOption[this.tabMenu][i].width;
                     height=redactOption[this.tabMenu][i].height;
@@ -392,10 +422,21 @@ var selectInterface={
                 let posXY=this.calcXYScaling(mX,mY);
                 objOne.x=posXY.x;
                 objOne.y=posXY.y;
+                if (this.tabMenu==5 || this.tabMenu==1)
+                {
+                    objOne.width=redactOption[selectObj.tabMenu][selectObj.numSelect].width;
+                    objOne.height=redactOption[selectObj.tabMenu][selectObj.numSelect].height;
+                }
+                else
+                {
+                    objOne.width=0;
+                    objOne.height=0;
+                }
 //                objOne.x=Math.floor((mX+camera.x)/mapSize)*mapSize;
 //                objOne.y=Math.floor((mY+camera.y)/mapSize)*mapSize;
 
-                if (objMap.checkMapSquad(objOne.x,objOne.y)==true)
+                if (objMap.checkMapSquad(objOne.x,objOne.y,
+                            objOne.width,objOne.height)==true)
                 {
                     objMap.objArr.push(objOne);
                     console.log(objMap);
