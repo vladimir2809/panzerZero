@@ -35,8 +35,8 @@ var redactOption=[
             tabMenu:1,
             y:40,
             x:20,
-            width:80,
-            height:40,
+            width:200,
+            height:80,
         },
         {
             type:"gate",
@@ -44,8 +44,8 @@ var redactOption=[
             tabMenu:1,
             y:40,
             x:120,
-            width:80,
-            height:40,
+            width:200,
+            height:80,
         },
         {
             type:"gate",
@@ -53,8 +53,8 @@ var redactOption=[
             tabMenu:1,
             y:40,
             x:220,
-            width:40,
-            height:80,
+            width:80,
+            height:200,
         },
         {
             type:"gate",
@@ -62,8 +62,8 @@ var redactOption=[
             tabMenu:1,
             y:40,
             x:270,
-            width:40,
-            height:80,
+            width:80,
+            height:200,
         },
         
     ],   
@@ -263,7 +263,24 @@ var redactOption=[
     
     
 ];
-
+colorsObj=[
+    {
+        color:colorsForGate[0],
+        x:340,
+        y:40,
+    },
+];
+function initColors()
+{
+    let x=colorsObj[0].x;
+    for (let i=1;i<8;i++)
+    {
+        let oneColor=clone(colorsObj[0]);
+        oneColor.color=colorsForGate[i];
+        oneColor.x=x+i*50;
+        colorsObj.push(oneColor);
+    }
+}
 function initKeyGate ()
 {
     

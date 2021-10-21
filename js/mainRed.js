@@ -15,6 +15,7 @@ var nameImageArr=["body10","body11",'body12','body13','body14','body15',
                 'ganIcon','shop',"star",'starContur','gate',"base"];
 var imageArr=new Map();// массив картинок
 var countLoadImage=0;// количество загруженных картинок
+selectColor=0;// выбор цвета для дверей
 var map={// обьект карта
     x:0,
     y:0,
@@ -137,12 +138,13 @@ var objMap={
             let x=this.objArr[i].x;
             let y=this.objArr[i].y; 
             let dir=this.objArr[i].dir;
+            let color=this.objArr[i].color;
             if (this.objArr[i].type=="gate")
             {
 //                let x=this.objArr[i].x;
 //                let y=this.objArr[i].y; 
 //                let dir=this.objArr[i].dir;
-                drawGate(x,y,dir,'#FF0000',scale,false);
+                drawGate(x,y,dir,color,scale,false);
             }
             else if(this.objArr[i].type=='keyGate')
             {
@@ -273,11 +275,18 @@ var selectInterface={
                 let dir=redactOption[this.tabMenu][i].dir;
                 let width=redactOption[this.tabMenu][i].width;
                 let height=redactOption[this.tabMenu][i].height;
-                drawGate((this.x+x)*mult,(this.y+y)*mult,dir,'#FF0000',1/mult,true);
+                drawGate((this.x+x)*mult,(this.y+y)*mult,dir,
+                                    colorsForGate[selectColor],1/mult,true);
+                for (let i=0;i<8;i++)
+                {
+                   context.fillStyle=colorsObj[i].color;
+                   context.fillRect(this.x+colorsObj[i].x,this.y+colorsObj[i].y,mapSize,mapSize);
+                }
                 if (selectObj.tabMenu==this.tabMenu && selectObj.numSelect==i)
                 {
                     context.strokeStyle="#0000FF";
-                    context.strokeRect(this.x+x,this.y+y,width,height);
+                    let mult=this.multGate;
+                    context.strokeRect(this.x+x,this.y+y,width/mult,height/mult);
                 }
 //                drawGate((this.x+x)*mult,(this.y+y)*mult,dir,'#FF0000',1/mult,true);
 //                drawGate((this.x+x)*mult,(this.y+y)*mult,dir,'#FF0000',1/mult,true);
@@ -314,6 +323,13 @@ var selectInterface={
                         let mult=this.multBuilding;
                         context.strokeRect(this.x+x,this.y+y,width/mult,height/mult);
                     }
+//                    else if(this.tabMenu==1)
+//                    {
+//                        let width=redactOption[this.tabMenu][i].width;
+//                        let height=redactOption[this.tabMenu][i].height;
+//                        let mult=this.multGate;
+//                        context.strokeRect(this.x+x,this.y+y,width/mult,height/mult);
+//                    }
                     else
                     {
                         context.strokeRect(this.x+x,this.y+y,mapSize,mapSize);
@@ -334,7 +350,7 @@ var selectInterface={
             if (selectObj.tabMenu==1)
             {
                 let dir=redactOption[selectObj.tabMenu][selectObj.numSelect].dir;
-                drawGate(posXY.x,posXY.y,dir,"#FF0000",scale,false);
+                drawGate(posXY.x,posXY.y,dir,colorsForGate[selectColor],scale,false);
                 
             }
             else
@@ -410,6 +426,17 @@ var selectInterface={
                     selectObj.numSelect=i;
                 }
                 
+                
+            }
+            for (let i=0;i<8;i++)
+            {
+                if (mX>this.x+colorsObj[i].x && mX<this.x+colorsObj[i].x+mapSize &&
+                        mY>this.y+colorsObj[i].y && mY<this.y+colorsObj[i].y+mapSize)
+                {
+                    selectColor=i;
+                    console.log(i);
+               //     break;
+                }
             }
        
             
@@ -426,6 +453,10 @@ var selectInterface={
                 {
                     objOne.width=redactOption[selectObj.tabMenu][selectObj.numSelect].width;
                     objOne.height=redactOption[selectObj.tabMenu][selectObj.numSelect].height;
+                    if (this.tabMenu==1)
+                    {
+                        objOne.color=colorsForGate[selectColor];
+                    }
                 }
                 else
                 {
@@ -442,6 +473,8 @@ var selectInterface={
                     console.log(objMap);
                 }
                 console.log(objMap.objArr);
+                
+                
             }
         }
     },
@@ -514,6 +547,7 @@ function preload()// функция предзагрузки
     srand(timeNow);
     loadImageArr(); 
     initKeyGate ();
+    initColors();
  //   console.log(option[numOption].typePanzerArrGR0);
 
 }
