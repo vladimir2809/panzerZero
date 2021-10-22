@@ -73,7 +73,9 @@ var redactOption=[
            nameImage:'barrel',
            tabMenu:2,
            x:20,
-           y:40,     
+           y:40,  
+           width:40,
+           height:40,
         }  ,
     ],
     [
@@ -85,6 +87,8 @@ var redactOption=[
             tabMenu:3,
             y:40,
             x:40,
+            width:40,
+            height:40,
         },
         {
             type:"panzer",
@@ -94,6 +98,8 @@ var redactOption=[
             tabMenu:3,
             y:40,
             x:100,
+            width:40,
+            height:40,
         },
         {
             type:"panzer",
@@ -103,6 +109,8 @@ var redactOption=[
             tabMenu:3,
             y:40,
             x:180,
+            width:40,
+            height:40,
         },
         {
             type:"panzer",
@@ -112,6 +120,8 @@ var redactOption=[
             tabMenu:3,
             y:40,
             x:260,
+            width:40,
+            height:40,
         },
         {
             type:"panzer",
@@ -121,6 +131,8 @@ var redactOption=[
             tabMenu:3,
             y:40,
             x:340,
+            width:40,
+            height:40,
         },
         {
             type:"panzer",
@@ -130,6 +142,8 @@ var redactOption=[
             tabMenu:3,
             y:40,
             x:420,
+            width:40,
+            height:40,
         },
         
         {
@@ -140,6 +154,8 @@ var redactOption=[
             tabMenu:3,
             y:100,
             x:40,
+            width:40,
+            height:40,
         },
         {
             type:"panzer",
@@ -149,6 +165,8 @@ var redactOption=[
             tabMenu:3,
             y:100,
             x:100,
+            width:40,
+            height:40,
         },
         {
             type:"panzer",
@@ -158,6 +176,8 @@ var redactOption=[
             tabMenu:3,
             y:100,
             x:180,
+            width:40,
+            height:40,
         },
         {
             type:"panzer",
@@ -167,6 +187,8 @@ var redactOption=[
             tabMenu:3,
             y:100,
             x:260,
+            width:40,
+            height:40,
         },
         {
             type:"panzer",
@@ -176,6 +198,8 @@ var redactOption=[
             tabMenu:3,
             y:100,
             x:340,
+            width:40,
+            height:40,
         },
         {
             type:"panzer",
@@ -185,6 +209,8 @@ var redactOption=[
             tabMenu:3,
             y:100,
             x:420,
+            width:40,
+            height:40,
         },
     ],
     [
@@ -259,6 +285,17 @@ var redactOption=[
             y:40,
             x:20,
         }, 
+    ],
+    [
+        {
+            type:"delete",
+            numType:0,
+           // group:1,
+            nameImage:"delete",
+            tabMenu:7,
+            y:40,
+            x:20,  
+        },
     ],
     
     

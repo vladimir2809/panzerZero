@@ -12,7 +12,7 @@ var nameImageArr=["body10","body11",'body12','body13','body14','body15',
                 "bonusPatron",'bonusBullet','garage',
                 'wall',"water","brickwall","badbrickwall",'bullet',"rocket",
                 'patron','burst','burstBig','burstSmall','barrel',/*'barrel2',*/
-                'ganIcon','shop',"star",'starContur','gate',"base"];
+                'ganIcon','shop',"star",'starContur','gate',"base",'delete',];
 var imageArr=new Map();// массив картинок
 var countLoadImage=0;// количество загруженных картинок
 selectColor=0;// выбор цвета для дверей
@@ -174,6 +174,26 @@ var objMap={
         }
         return true;
     },
+    numByXY:function(x,y)
+    {
+        for (let i=0;i<this.objArr.length;i++)
+        {
+           // if (this.objArr[i].x==x && this.objArr[i].y==y)
+            if (x<this.objArr[i].x+this.objArr[i].width&&
+                x>this.objArr[i].x&&    
+                y<this.objArr[i].y+this.objArr[i].height&&
+                y>this.objArr[i].y
+                )
+            {
+                return i;
+            }
+        }
+        return -1;  
+    },
+    delElem:function(num)
+    {
+        deleteElemArrToNum(this.objArr,num)
+    },
     moveCamera:function ()
     {
         let speed=mapSize/2;
@@ -206,11 +226,11 @@ var selectInterface={
     heigth:150,
     being:false,
     tabMenu:0,
-    widthTab:120,
+    widthTab:100,
     coordWall:[{x:20,y:450+40},{x:100,y:450+40},{x:180,y:450+40},],
     multGate:2.5,
     multBuilding:2,
-    tabValues:["препятствия", "двери", "бочки", "танки","бонусы", "здания", "ключи"],
+    tabValues:["основы", "двери", "бочки", "танки","бонусы", "здания", "ключи","еще"],
     drawImageByNum:function(tabMenu,num,xx=-1,yy=-1)
     {
             let nameImage=redactOption[tabMenu][num].nameImage;
@@ -353,6 +373,12 @@ var selectInterface={
                 drawGate(posXY.x,posXY.y,dir,colorsForGate[selectColor],scale,false);
                 
             }
+            else if (selectObj.tabMenu==6)
+            {
+                //drawKeyForGate(color,x,y,scale,colorRect='green')
+                let color=redactOption[selectObj.tabMenu][selectObj.numSelect].color;
+                drawKeyForGate(color,posXY.x,posXY.y,scale);
+            }
             else
             {
                 this.drawImageByNum(selectObj.tabMenu,selectObj.numSelect,posXY.x,posXY.y);
@@ -445,36 +471,48 @@ var selectInterface={
         {
             if (mY<this.y &&selectObj.tabMenu!=null && selectObj.numSelect!=null)
             {
-                let objOne=clone(redactOption[selectObj.tabMenu][selectObj.numSelect]);
                 let posXY=this.calcXYScaling(mX,mY);
-                objOne.x=posXY.x;
-                objOne.y=posXY.y;
-                if (this.tabMenu==5 || this.tabMenu==1)
+                if (selectObj.tabMenu!=7 || selectObj.numSelect!=0)
                 {
-                    objOne.width=redactOption[selectObj.tabMenu][selectObj.numSelect].width;
-                    objOne.height=redactOption[selectObj.tabMenu][selectObj.numSelect].height;
-                    if (this.tabMenu==1)
+                    let objOne=clone(redactOption[selectObj.tabMenu][selectObj.numSelect]);
+                   // let posXY=this.calcXYScaling(mX,mY);
+                    objOne.x=posXY.x;
+                    objOne.y=posXY.y;
+                    if (this.tabMenu==5 || this.tabMenu==1)
                     {
-                        objOne.color=colorsForGate[selectColor];
+                        objOne.width=redactOption[selectObj.tabMenu][selectObj.numSelect].width;
+                        objOne.height=redactOption[selectObj.tabMenu][selectObj.numSelect].height;
+                        if (this.tabMenu==1)
+                        {
+                            objOne.color=colorsForGate[selectColor];
+                        }
                     }
+                    else
+                    {
+                        objOne.width=mapSize;
+                        objOne.height=mapSize;
+                    }
+    //                objOne.x=Math.floor((mX+camera.x)/mapSize)*mapSize;
+    //                objOne.y=Math.floor((mY+camera.y)/mapSize)*mapSize;
+
+                    if (objMap.checkMapSquad(objOne.x,objOne.y,
+                                objOne.width,objOne.height)==true)
+                    {
+                        objMap.objArr.push(objOne);
+                        console.log(objMap);
+                    }
+                    console.log(objMap.objArr);
+
                 }
                 else
                 {
-                    objOne.width=0;
-                    objOne.height=0;
+                  // calcXYScaling(mX,mY);
+                   let index=objMap.numByXY(posXY.x+5,posXY.y+5);
+                   if (index!=-1)
+                   {
+                       objMap.delElem(index);
+                   }
                 }
-//                objOne.x=Math.floor((mX+camera.x)/mapSize)*mapSize;
-//                objOne.y=Math.floor((mY+camera.y)/mapSize)*mapSize;
-
-                if (objMap.checkMapSquad(objOne.x,objOne.y,
-                            objOne.width,objOne.height)==true)
-                {
-                    objMap.objArr.push(objOne);
-                    console.log(objMap);
-                }
-                console.log(objMap.objArr);
-                
-                
             }
         }
     },
