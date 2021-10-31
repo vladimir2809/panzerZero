@@ -150,6 +150,11 @@ var objMap={
             {
               let color=this.objArr[i].color;  
                 drawKeyForGate(color,x,y,scale);
+            }else if (this.objArr[i].type=="panzer")
+            {
+                let GR=this.objArr[i].group;
+                let type=this.objArr[i].numType;
+                drawPanzerIcon(x,y,type,GR);
             }
             else
             {
@@ -331,7 +336,21 @@ var selectInterface={
                 let x=redactOption[this.tabMenu][i].x;
                 let y=redactOption[this.tabMenu][i].y;
                 //            context.drawImage(imageArr.get(nameImage),this.x+x, this.y+y);\
-                this.drawImageByNum(this.tabMenu,i);
+                
+                if (this.tabMenu==3)
+                {
+                    let GR=redactOption[this.tabMenu][i].group;
+                    let type=redactOption[this.tabMenu][i].numType;
+                    let width=redactOption[this.tabMenu][i].width;
+                    let height=redactOption[this.tabMenu][i].height;
+                    let centerX=x+mapSize-mapSize/2-width/2;
+                    let centerY=y+mapSize-mapSize/2-height/2;
+                    drawPanzerIcon(this.x+centerX,this.y+centerY,type,GR);
+                }
+                else
+                {
+                    this.drawImageByNum(this.tabMenu,i);
+                }
             
                 if (selectObj.tabMenu==this.tabMenu && selectObj.numSelect==i)
                 {
@@ -379,10 +398,17 @@ var selectInterface={
                 let color=redactOption[selectObj.tabMenu][selectObj.numSelect].color;
                 drawKeyForGate(color,posXY.x,posXY.y,scale);
             }
+            else if (selectObj.tabMenu==3)
+            {
+                let GR=redactOption[selectObj.tabMenu][selectObj.numSelect].group;
+                let type=redactOption[selectObj.tabMenu][selectObj.numSelect].numType;
+                drawPanzerIcon(posXY.x,posXY.y,type,GR);
+            }   
             else
             {
                 this.drawImageByNum(selectObj.tabMenu,selectObj.numSelect,posXY.x,posXY.y);
             }
+            
             
         }
            
@@ -775,4 +801,27 @@ function drawKeyForGate(color,x,y,scale,colorRect='green')
     //console.log(scale);
  //   context.strokeRect (keyGate.x,keyGate.y,mapSize,mapSize);
     //context.stroke();
+}
+function drawPanzerIcon(x,y,type,GR=0,noScaleAndCamera=false)
+{
+    let bodyNameImage=panzerOption[type].bodyNameImage;
+    let towerNameImage=panzerOption[type].towerNameImage;
+    if (GR!=0)
+    {
+       bodyNameImage= bodyNameImage.replace('body1',"body2");
+        //towerNameImage.replace('body1',"body2");
+    } 
+    let towerX=panzerOption[type].mixTowerPosX - panzerOption[type].mixTowerX+x;
+    let towerY=panzerOption[type].mixTowerPosY - panzerOption[type].mixTowerY+y;
+    if (noScaleAndCamera==false)
+    {
+        drawSprite(context,imageArr.get(bodyNameImage),x,y,camera,scale);  
+        drawSprite(context,imageArr.get(towerNameImage),towerX,towerY,camera,scale);
+    }
+    else
+    {
+       context.drawImage(imageArr.get(bodyNameImage),x,y);
+       context.drawImage(imageArr.get(towerNameImage),towerX,towerY); 
+    }
+    
 }
