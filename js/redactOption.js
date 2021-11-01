@@ -81,6 +81,7 @@ var redactOption=[
     [
         {
             type:"panzer",
+            enabled:true,
             numType:0,
             group:0,
             nameImage:"body10",
@@ -92,6 +93,7 @@ var redactOption=[
         },
         {
             type:"panzer",
+            enabled:true,
             numType:1,
             group:0,
             nameImage:"body11",
@@ -105,6 +107,7 @@ var redactOption=[
         },
         {
             type:"panzer",
+            enabled:true,
             numType:2,
             group:0,
             nameImage:"body12",
@@ -118,6 +121,7 @@ var redactOption=[
         },
         {
             type:"panzer",
+            enabled:true,
             numType:3,
             group:0,
             nameImage:"body13",
@@ -131,6 +135,7 @@ var redactOption=[
         },
         {
             type:"panzer",
+            enabled:true,
             numType:4,
             group:0,
             nameImage:"body14",
@@ -144,6 +149,7 @@ var redactOption=[
         },
         {
             type:"panzer",
+            enabled:true,
             numType:5,
             group:0,
             nameImage:"body15",
@@ -158,6 +164,7 @@ var redactOption=[
         
         {
             type:"panzer",
+            enabled:true,
             numType:0,
             group:1,
             nameImage:"body20",
@@ -171,6 +178,7 @@ var redactOption=[
         },
         {
             type:"panzer",
+            enabled:true,
             numType:1,
             group:1,
             nameImage:"body21",
@@ -184,6 +192,7 @@ var redactOption=[
         },
         {
             type:"panzer",
+            enabled:true,
             numType:2,
             group:1,
             nameImage:"body22",
@@ -197,6 +206,7 @@ var redactOption=[
         },
         {
             type:"panzer",
+            enabled:true,
             numType:3,
             group:1,
             nameImage:"body23",
@@ -210,6 +220,7 @@ var redactOption=[
         },
         {
             type:"panzer",
+            enabled:true,
             numType:4,
             group:1,
             nameImage:"body24",
@@ -223,6 +234,7 @@ var redactOption=[
         },
         {
             type:"panzer",
+            enabled:true,
             numType:5,
             group:1,
             nameImage:"body25",
@@ -296,6 +308,15 @@ var redactOption=[
             width:3*40,
             height:2*40,
         }, 
+        {
+          type:'base',
+          numType:0,
+          tabMenu:5,
+          y:40,
+          x:250,
+          width:80,
+          height:80,
+        },
         
     ],
     [

@@ -337,15 +337,22 @@ var selectInterface={
                 let y=redactOption[this.tabMenu][i].y;
                 //            context.drawImage(imageArr.get(nameImage),this.x+x, this.y+y);\
                 
-                if (this.tabMenu==3)
+                if (this.tabMenu==3 )
                 {
-                    let GR=redactOption[this.tabMenu][i].group;
-                    let type=redactOption[this.tabMenu][i].numType;
-                    let width=redactOption[this.tabMenu][i].width;
-                    let height=redactOption[this.tabMenu][i].height;
-                    let centerX=x+mapSize-mapSize/2-width/2;
-                    let centerY=y+mapSize-mapSize/2-height/2;
-                    drawPanzerIcon(this.x+centerX,this.y+centerY,type,GR);
+                    if ( redactOption[this.tabMenu][i].enabled==true)
+                    {
+                        let GR=redactOption[this.tabMenu][i].group;
+                        let type=redactOption[this.tabMenu][i].numType;
+                        let width=redactOption[this.tabMenu][i].width;
+                        let height=redactOption[this.tabMenu][i].height;
+                        let centerX=x+mapSize-mapSize/2-width/2;
+                        let centerY=y+mapSize-mapSize/2-height/2;
+                        drawPanzerIcon(this.x+centerX,this.y+centerY,type,GR);
+                    }
+                }
+                else if (this.tabMenu==5 && i>1)
+                {
+                     drawBase(this.x+x,this.y+y,0)
                 }
                 else
                 {
@@ -359,7 +366,8 @@ var selectInterface={
                     {
                         let width=redactOption[this.tabMenu][i].width;
                         let height=redactOption[this.tabMenu][i].height;
-                        let mult=this.multBuilding;
+                        let mult=1;
+                        if (i<2)  mult=this.multBuilding;
                         context.strokeRect(this.x+x,this.y+y,width/mult,height/mult);
                     }
 //                    else if(this.tabMenu==1)
@@ -455,7 +463,11 @@ var selectInterface={
             }
             for (let i=0;i<redactOption[this.tabMenu].length;i++)
             {
-               
+                if (this.tabMenu==3 && redactOption[this.tabMenu][i].enabled==false)
+                {
+                    
+                    continue;
+                }
                 let x=redactOption[this.tabMenu][i].x;
                 let y=redactOption[this.tabMenu][i].y;
                 let width;
@@ -472,6 +484,7 @@ var selectInterface={
                 }
                 if (mX>this.x+x && mX<this.x+x+width 
                             && mY>this.y+y && mY<this.y+y+height)
+                    
                 {
                     // alert(555);
                     selectObj.tabMenu=this.tabMenu;
@@ -501,6 +514,12 @@ var selectInterface={
                 if (selectObj.tabMenu!=7 || selectObj.numSelect!=0)
                 {
                     let objOne=clone(redactOption[selectObj.tabMenu][selectObj.numSelect]);
+                    if (objOne.type=="panzer" && objOne.group==0)
+                    {
+                        this.changeEnabledPanzerGR0(false);
+                        selectObj.numSelect=Math.floor(redactOption[3].length/2);
+                                   
+                    }
                    // let posXY=this.calcXYScaling(mX,mY);
                     objOne.x=posXY.x;
                     objOne.y=posXY.y;
@@ -528,17 +547,30 @@ var selectInterface={
                         console.log(objMap);
                     }
                     console.log(objMap.objArr);
-
+               
                 }
                 else
                 {
                   // calcXYScaling(mX,mY);
                    let index=objMap.numByXY(posXY.x+5,posXY.y+5);
                    if (index!=-1)
-                   {
-                       objMap.delElem(index);
+                   {    
+                        this.changeEnabledPanzerGR0(true);
+                        objMap.delElem(index);                   
                    }
                 }
+            }
+        }
+    },
+    changeEnabledPanzerGR0:function(value)
+    {
+        for (let i=0;i<redactOption[3].length;i++) 
+        {
+            if (redactOption[3][i].group==0)
+            {
+
+                   redactOption[3][i].enabled=value;
+              //     alert("en true");
             }
         }
     },
@@ -823,5 +855,22 @@ function drawPanzerIcon(x,y,type,GR=0,noScaleAndCamera=false)
        context.drawImage(imageArr.get(bodyNameImage),x,y);
        context.drawImage(imageArr.get(towerNameImage),towerX,towerY); 
     }
+    
+}
+function drawBase(x,y,type)
+{
+    
+    
+        drawSprite(context,imageArr.get("base"),x,y,camera,scale);
+//        drawFillRectScale(base.x,base.y-10,
+//                           base.width*base.HP/base.maxHP,3,"#00FF00");
+//        drawFillRectScale(base.x,base.y-5,
+//                            base.width*base.count/base.maxCount,3,"#0000FF");
+            
+        let width=mapSize*2;
+        let height=mapSize*2;
+        x=(x+width-4-panzerOption[type].width);//*scale-(camera.x*camera.summMultScalingX);            
+        y=(y+height-4-panzerOption[type].height);//*scale-(camera.y*camera.summMultScalingY);            
+        drawPanzerIcon(x,y,type,1);                    
     
 }
