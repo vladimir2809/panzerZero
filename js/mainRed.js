@@ -155,6 +155,10 @@ var objMap={
                 let GR=this.objArr[i].group;
                 let type=this.objArr[i].numType;
                 drawPanzerIcon(x,y,type,GR);
+            }else if(this.objArr[i].type=="base")
+            {
+                let numType=this.objArr[i].numType;
+                drawBase(x,y,numType);
             }
             else
             {
@@ -347,12 +351,13 @@ var selectInterface={
                         let height=redactOption[this.tabMenu][i].height;
                         let centerX=x+mapSize-mapSize/2-width/2;
                         let centerY=y+mapSize-mapSize/2-height/2;
-                        drawPanzerIcon(this.x+centerX,this.y+centerY,type,GR);
+                        drawPanzerIcon(this.x+centerX,this.y+centerY,type,GR,true);
                     }
                 }
                 else if (this.tabMenu==5 && i>1)
                 {
-                     drawBase(this.x+x,this.y+y,0)
+                    let numType=redactOption[this.tabMenu][i].numType;
+                    drawBase(this.x+x,this.y+y,numType,false);
                 }
                 else
                 {
@@ -367,7 +372,10 @@ var selectInterface={
                         let width=redactOption[this.tabMenu][i].width;
                         let height=redactOption[this.tabMenu][i].height;
                         let mult=1;
-                        if (i<2)  mult=this.multBuilding;
+                        if (redactOption[this.tabMenu][i].type!='base')
+                        {
+                            mult=this.multBuilding;
+                        }
                         context.strokeRect(this.x+x,this.y+y,width/mult,height/mult);
                     }
 //                    else if(this.tabMenu==1)
@@ -411,7 +419,11 @@ var selectInterface={
                 let GR=redactOption[selectObj.tabMenu][selectObj.numSelect].group;
                 let type=redactOption[selectObj.tabMenu][selectObj.numSelect].numType;
                 drawPanzerIcon(posXY.x,posXY.y,type,GR);
-            }   
+            }   else if(selectObj.tabMenu==5 && selectObj.numSelect>1)
+            {
+                let numType=redactOption[selectObj.tabMenu][selectObj.numSelect].numType;
+                    drawBase(posXY.x,posXY.y,numType);
+            }
             else
             {
                 this.drawImageByNum(selectObj.tabMenu,selectObj.numSelect,posXY.x,posXY.y);
@@ -517,7 +529,8 @@ var selectInterface={
                     if (objOne.type=="panzer" && objOne.group==0)
                     {
                         this.changeEnabledPanzerGR0(false);
-                        selectObj.numSelect=Math.floor(redactOption[3].length/2);
+                       // selectObj.numSelect=Math.floor(redactOption[3].length/2);
+                        selectObj.numSelect=null;
                                    
                     }
                    // let posXY=this.calcXYScaling(mX,mY);
@@ -560,6 +573,7 @@ var selectInterface={
                    }
                 }
             }
+           console.log(memorySizeOf( objMap,true));
         }
     },
     changeEnabledPanzerGR0:function(value)
@@ -644,6 +658,7 @@ function preload()// функция предзагрузки
     loadImageArr(); 
     initKeyGate ();
     initColors();
+    initBase ();
  //   console.log(option[numOption].typePanzerArrGR0);
 
 }
@@ -857,11 +872,17 @@ function drawPanzerIcon(x,y,type,GR=0,noScaleAndCamera=false)
     }
     
 }
-function drawBase(x,y,type)
+function drawBase(x,y,type,scaleAndCamera=true)
 {
     
-    
-        drawSprite(context,imageArr.get("base"),x,y,camera,scale);
+        if (scaleAndCamera==true)
+        {
+            drawSprite(context,imageArr.get("base"),x,y,camera, scale);
+        }
+        else
+        {
+            context.drawImage(imageArr.get("base"),x,y);
+        }
 //        drawFillRectScale(base.x,base.y-10,
 //                           base.width*base.HP/base.maxHP,3,"#00FF00");
 //        drawFillRectScale(base.x,base.y-5,
@@ -871,6 +892,6 @@ function drawBase(x,y,type)
         let height=mapSize*2;
         x=(x+width-4-panzerOption[type].width);//*scale-(camera.x*camera.summMultScalingX);            
         y=(y+height-4-panzerOption[type].height);//*scale-(camera.y*camera.summMultScalingY);            
-        drawPanzerIcon(x,y,type,1);                    
+        drawPanzerIcon(x,y,type,1,scaleAndCamera==true?false:true);                    
     
 }

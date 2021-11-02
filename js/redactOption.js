@@ -373,5 +373,17 @@ function initKeyGate ()
        redactOption[6].push(oneKey);
     }
 }
+function initBase ()
+{
+    
+    for (let i=2;i<8;i++)
+    {
+       let oneBase=clone(redactOption[5][2]); 
+       oneBase.x=oneBase.x+(i-2)*(7+80);
+       oneBase.numType=i-2;
+       redactOption[5].push(oneBase);
+    }
+}
+
 
 
