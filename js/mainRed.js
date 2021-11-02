@@ -295,8 +295,9 @@ var selectInterface={
         }
         for (let i=0;i<redactOption[this.tabMenu].length;i++)
         {
-//            let nameImage=redactOption[this.tabMenu][i].nameImage;   
-            if (this.tabMenu==1)
+//            let nameImage=redactOption[this.tabMenu][i].nameImage; 
+            let type=redactOption[this.tabMenu][i].type;
+            if (type=='gate')
             {
                 let  mult=this.multGate; 
                 let x=redactOption[this.tabMenu][i].x;
@@ -321,7 +322,7 @@ var selectInterface={
 //                drawGate((this.x+x)*mult,(this.y+y)*mult,dir,'#FF0000',1/mult,true);
 //                drawGate((this.x+x)*mult,(this.y+y)*mult,dir,'#FF0000',1/mult,true);
             }
-            else if(this.tabMenu==6)
+            else if(type=="keyGate")
             {
                 //let keyGate={};
                 x=redactOption[this.tabMenu][i].x+this.x;
@@ -341,20 +342,20 @@ var selectInterface={
                 let y=redactOption[this.tabMenu][i].y;
                 //            context.drawImage(imageArr.get(nameImage),this.x+x, this.y+y);\
                 
-                if (this.tabMenu==3 )
+                if (type=="panzer" )
                 {
                     if ( redactOption[this.tabMenu][i].enabled==true)
                     {
                         let GR=redactOption[this.tabMenu][i].group;
-                        let type=redactOption[this.tabMenu][i].numType;
+                        let numType=redactOption[this.tabMenu][i].numType;
                         let width=redactOption[this.tabMenu][i].width;
                         let height=redactOption[this.tabMenu][i].height;
                         let centerX=x+mapSize-mapSize/2-width/2;
                         let centerY=y+mapSize-mapSize/2-height/2;
-                        drawPanzerIcon(this.x+centerX,this.y+centerY,type,GR,true);
+                        drawPanzerIcon(this.x+centerX,this.y+centerY,numType,GR,true);
                     }
                 }
-                else if (this.tabMenu==5 && i>1)
+                else if (type=="base")
                 {
                     let numType=redactOption[this.tabMenu][i].numType;
                     drawBase(this.x+x,this.y+y,numType,false);
@@ -378,23 +379,12 @@ var selectInterface={
                         }
                         context.strokeRect(this.x+x,this.y+y,width/mult,height/mult);
                     }
-//                    else if(this.tabMenu==1)
-//                    {
-//                        let width=redactOption[this.tabMenu][i].width;
-//                        let height=redactOption[this.tabMenu][i].height;
-//                        let mult=this.multGate;
-//                        context.strokeRect(this.x+x,this.y+y,width/mult,height/mult);
-//                    }
                     else
                     {
                         context.strokeRect(this.x+x,this.y+y,mapSize,mapSize);
                     }
                 }
-            }
-//            context.drawImage(imageArr.get("water"),this.coordWall[1].x,
-//                                this.coordWall[1].y);
-//            context.drawImage(imageArr.get("brickwall"),this.coordWall[2].x,
-//                                this.coordWall[2].y);  
+            } 
          
         }
     
@@ -445,11 +435,6 @@ var selectInterface={
             X=Math.floor((mX/scale-camera.summMultScalingX+camera.x)/mapSize)*mapSize;
             Y=Math.floor((mY/scale-camera.summMultScalingY+camera.y)/mapSize)*mapSize;
         }
-//        else
-//        {
-//            X=Math.floor((mX/**scale-camera.summMultScalingX*/)/mapSize)*mapSize;
-//            Y=Math.floor((mY/**scale-camera.summMultScalingY*/)/mapSize)*mapSize;
-//        }
         return {x:X,y:Y}
           
     },
@@ -467,6 +452,7 @@ var selectInterface={
                 
                 if (mX>this.widthTab*i && mX<this.widthTab*(i+1) && mY>this.y && mY<this.y+20)
                 {
+                    selectObj.numSelect=null;
                     this.tabMenu=i;
                     //alert(i);
                     break;
@@ -475,7 +461,8 @@ var selectInterface={
             }
             for (let i=0;i<redactOption[this.tabMenu].length;i++)
             {
-                if (this.tabMenu==3 && redactOption[this.tabMenu][i].enabled==false)
+                let type=redactOption[this.tabMenu][i].type;
+                if (type=="panzer" && redactOption[this.tabMenu][i].enabled==false)
                 {
                     
                     continue;
@@ -484,8 +471,9 @@ var selectInterface={
                 let y=redactOption[this.tabMenu][i].y;
                 let width;
                 let height;
-                if (this.tabMenu==1 || this.tabMenu==5)
-                {
+                if (/*type=="wall" || type=="water" || type=="brickWall"|| */
+                        type=="shop" || type=="garage" || type=="base"||type=="gate")
+                { 
                     width=redactOption[this.tabMenu][i].width;
                     height=redactOption[this.tabMenu][i].height;
                 }
@@ -505,14 +493,17 @@ var selectInterface={
                 
                 
             }
-            for (let i=0;i<8;i++)
+            if (this.tabMenu==1)
             {
-                if (mX>this.x+colorsObj[i].x && mX<this.x+colorsObj[i].x+mapSize &&
-                        mY>this.y+colorsObj[i].y && mY<this.y+colorsObj[i].y+mapSize)
+                for (let i=0;i<8;i++)
                 {
-                    selectColor=i;
-                    console.log(i);
-               //     break;
+                    if (mX>this.x+colorsObj[i].x && mX<this.x+colorsObj[i].x+mapSize &&
+                            mY>this.y+colorsObj[i].y && mY<this.y+colorsObj[i].y+mapSize)
+                    {
+                        selectColor=i;
+                        console.log(i);
+                   //     break;
+                    }
                 }
             }
        
@@ -520,10 +511,13 @@ var selectInterface={
         }  
         if (checkMouseLeft()==true)
         {
+            
             if (mY<this.y &&selectObj.tabMenu!=null && selectObj.numSelect!=null)
             {
+                let type=redactOption[this.tabMenu][selectObj.numSelect].type;
                 let posXY=this.calcXYScaling(mX,mY);
-                if (selectObj.tabMenu!=7 || selectObj.numSelect!=0)
+               // if (selectObj.tabMenu!=7 || selectObj.numSelect!=0)
+                if (type!='delete')
                 {
                     let objOne=clone(redactOption[selectObj.tabMenu][selectObj.numSelect]);
                     if (objOne.type=="panzer" && objOne.group==0)
@@ -536,11 +530,12 @@ var selectInterface={
                    // let posXY=this.calcXYScaling(mX,mY);
                     objOne.x=posXY.x;
                     objOne.y=posXY.y;
-                    if (this.tabMenu==5 || this.tabMenu==1)
+                    if (type=="shop" || type=="garage" ||
+                                    type=="base"||type=="gate")
                     {
                         objOne.width=redactOption[selectObj.tabMenu][selectObj.numSelect].width;
                         objOne.height=redactOption[selectObj.tabMenu][selectObj.numSelect].height;
-                        if (this.tabMenu==1)
+                        if (type=="gate")
                         {
                             objOne.color=colorsForGate[selectColor];
                         }
@@ -550,9 +545,6 @@ var selectInterface={
                         objOne.width=mapSize;
                         objOne.height=mapSize;
                     }
-    //                objOne.x=Math.floor((mX+camera.x)/mapSize)*mapSize;
-    //                objOne.y=Math.floor((mY+camera.y)/mapSize)*mapSize;
-
                     if (objMap.checkMapSquad(objOne.x,objOne.y,
                                 objOne.width,objOne.height)==true)
                     {
