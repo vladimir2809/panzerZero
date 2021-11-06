@@ -356,10 +356,18 @@ var selectInterface={
                     }
                 }
                 else if (type=="base")
+                
                 {
                     let numType=redactOption[this.tabMenu][i].numType;
                     drawBase(this.x+x,this.y+y,numType,false);
                 }
+                else if(type=='button')
+                {
+                    let width=redactOption[this.tabMenu][i].width;
+                    let height=redactOption[this.tabMenu][i].height;
+                    let text=redactOption[this.tabMenu][i].text;
+                    drawButton(text,this.x+x,this.y+y,width,height)
+                }          
                 else
                 {
                     this.drawImageByNum(this.tabMenu,i);
@@ -885,5 +893,21 @@ function drawBase(x,y,type,scaleAndCamera=true)
         x=(x+width-4-panzerOption[type].width);//*scale-(camera.x*camera.summMultScalingX);            
         y=(y+height-4-panzerOption[type].height);//*scale-(camera.y*camera.summMultScalingY);            
         drawPanzerIcon(x,y,type,1,scaleAndCamera==true?false:true);                    
+    
+}
+function drawButton(text,x,y,width,height)
+{
+    context.strokeStyle="rgb(255,255,0)";
+    context.strokeRect(x,y,width,height);
+    context.fillStyle="rgb(255,0,0)";
+    context.fillRect(x+1,y+1,width-1,height-1);
+    context.fillStyle="#00FF00";
+    //context.strokeStyle="#00FF00";
+    let heightText=18;
+    context.font = heightText+'px Arial';
+    let metrics = context.measureText(text);
+//    context.strokeRect(this.widthTab*i,this.y,this.widthTab,20);
+    context.fillText(text,x+width/2-metrics.width/2,y+23);
+    context.closePath();
     
 }
