@@ -394,7 +394,7 @@ function setText(key,str,fill,x,y)// изменить текс
 }
 // событие загрузки страницы
 window.addEventListener('load', function () {
-    
+    //console.log(localStorage.getItem("gameMap"));
     preload();
     create();
     

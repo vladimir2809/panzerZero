@@ -32,6 +32,7 @@ var redactOption=[
         {
             type:"gate",
             dir:1,
+            numType:0,
             tabMenu:1,
             y:40,
             x:20,
@@ -41,6 +42,7 @@ var redactOption=[
         {
             type:"gate",
             dir:3,
+            numType:1,
             tabMenu:1,
             y:40,
             x:120,
@@ -50,6 +52,7 @@ var redactOption=[
         {
             type:"gate",
             dir:2,
+            numType:2,
             tabMenu:1,
             y:40,
             x:220,
@@ -59,6 +62,7 @@ var redactOption=[
         {
             type:"gate",
             dir:4,
+            numType:3,
             tabMenu:1,
             y:40,
             x:270,
@@ -71,6 +75,7 @@ var redactOption=[
         {
            type:"barrel",
            nameImage:'barrel',
+           numType:0,
            tabMenu:2,
            x:20,
            y:40,  
@@ -413,6 +418,7 @@ function initKeyGate ()
     {
        let oneKey=clone(redactOption[6][0]); 
        oneKey.x=i*80;
+       oneKey.numType=i;
        oneKey.color=colorsForGate[i];
        redactOption[6].push(oneKey);
     }

@@ -128,6 +128,16 @@ var objMap={
     width:mapWidth,
     height:mapHeight,
     objArr:[],
+    sortObjArr:[],
+    dataMap:{width:null,height:null,mapObjArr:[]},
+    toCollectionMap:function()
+    {
+        this.sortByGroupObj();
+        this.dataMap.width=mapWidth/mapSize;
+        this.dataMap.height=mapHeight/mapSize;
+        this.dataMap.mapObjArr=clone(this.sortObjArr);
+        return this.dataMap;
+    },
     draw:function()
     {
         context.fillStyle="#CCCCCC";
@@ -166,6 +176,66 @@ var objMap={
                             this.objArr[i].x,this.objArr[i].y,camera,scale);
             }
         }
+    },
+    sortByGroupObj:function ()
+    {
+        while(this.sortObjArr.length > 0) {
+            this.sortObjArr.pop();
+        }
+        let oldType={};
+       for (let i=0;i<redactOption.length;i++)
+       {
+           for (let j=0;j<redactOption[i].length;j++)
+           {
+                for (let k=0;k<this.objArr.length;k++)
+                { 
+                    let group=undefined;
+                    if (this.objArr[k].group!=undefined)
+                    {
+                        group=redactOption[i][j].group;
+                    }
+                    let typeObj={type:redactOption[i][j].type,
+                            numType:redactOption[i][j].numType,
+                            group:group};
+                    
+                    if (oldType.type!=typeObj.type||
+                            oldType.numType!=typeObj.numType||
+                            oldType.group!=typeObj.group)
+                    {
+                        oldType=clone(typeObj);
+                    }
+                    else
+                    {
+                        typeObj=clone(oldType);
+                    }
+                    if (typeObj.type==this.objArr[k].type && 
+                            typeObj.numType==this.objArr[k].numType&&
+                            typeObj.group==this.objArr[k].group)
+                    {
+                        let objOne={};//=clone(this.objArr[k]);
+                        objOne.type=this.objArr[k].type;
+                        objOne.numType=this.objArr[k].numType;
+                        objOne.x=this.objArr[k].x;
+                        objOne.y=this.objArr[k].y;
+                        if (this.objArr[k].dir!=undefined)
+                        {
+                            objOne.dir=this.objArr[k].dir;
+                        }
+                        if (this.objArr[k].group!=undefined)
+                        {
+                            objOne.group=this.objArr[k].group;
+                        }
+                        if (this.objArr[k].color!=undefined)
+                        {
+                            objOne.color=this.objArr[k].color;
+                        }
+                        this.sortObjArr.push(objOne);
+
+                    }
+                }
+           }
+       }
+       console.log(this.sortObjArr);
     },
     checkMapSquad:function(x,y,width=0,height=0)
     {
@@ -216,15 +286,15 @@ var objMap={
 //        console.log(camera.x+' '+camera.y);
         console.log(this.lookX+' '+this.lookY);
     },
-    drawLook:function()
-    {
-        context.beginPath();
-        context.fillStyle="#0000FF";
-        context.moveTo(this.lookX-camera.x,this.lookX-camera.y);    
-        context.arc(this.lookX-camera.x,this.lookY-camera.y,14, Math.PI*2,(Math.PI*2)-0.1,false);
-        context.fill();
-        context.closePath();  
-    },
+//    drawLook:function()
+//    {
+//        context.beginPath();
+//        context.fillStyle="#0000FF";
+//        context.moveTo(this.lookX-camera.x,this.lookX-camera.y);    
+//        context.arc(this.lookX-camera.x,this.lookY-camera.y,14, Math.PI*2,(Math.PI*2)-0.1,false);
+//        context.fill();
+//        context.closePath();  
+//    },
     
     
 };
@@ -480,7 +550,8 @@ var selectInterface={
                 let width;
                 let height;
                 if (/*type=="wall" || type=="water" || type=="brickWall"|| */
-                        type=="shop" || type=="garage" || type=="base"||type=="gate")
+                        type=="shop" || type=="garage" ||
+                                type=="base"||type=="gate"||type=="button")
                 { 
                     width=redactOption[this.tabMenu][i].width;
                     height=redactOption[this.tabMenu][i].height;
@@ -495,6 +566,19 @@ var selectInterface={
                     
                 {
                     // alert(555);
+                    if (type=='button')
+                    {
+                      // if(redactOption[this.tabMenu][i].numType==1) 
+                       {
+                            alert("good");
+                            //localStorage.clear();
+                            localStorage.removeItem('gameMap')
+                            localStorage.setItem("gameMap",
+                                    JSON.stringify(objMap.toCollectionMap()));
+                            console.log(JSON.parse(localStorage.getItem('gameMap')));
+                            
+                       }
+                    }
                     selectObj.tabMenu=this.tabMenu;
                     selectObj.numSelect=i;
                 }
@@ -629,6 +713,16 @@ window.addEventListener('load', function () {
     
    // audio.play("shot");
     setInterval(drawAll,20);
+    var inputWidth = document.getElementById('textWidth');
+    mapWidth = inputWidth.value*mapSize;
+    var inputHeight = document.getElementById('textHeight');
+    mapHeight = inputHeight.value*mapSize;
+    inputWidth.oninput = function() {
+          mapWidth = inputWidth.value*mapSize;
+    };
+     inputHeight.oninput = function() {
+          mapHeight = inputHeight.value*mapSize;
+    };
     setInterval(function (){
         selectInterface.update();
         objMap.moveCamera();
@@ -644,6 +738,10 @@ window.addEventListener('load', function () {
             scale=camera.scaling(1,scale);
             console.log(scale);
             console.log(camera.x+' '+camera.y);
+        }
+        if (keyUpDuration("KeyL",100))
+        {
+            objMap.sortByGroupObj();
         }
     },30);
    // setTimeout(gameLoop,60,1,true);
