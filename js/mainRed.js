@@ -130,6 +130,45 @@ var objMap={
     objArr:[],
     sortObjArr:[],
     dataMap:{width:null,height:null,mapObjArr:[]},
+    loadMap:function(data)
+    {
+        while(this.objArr.length > 0) {
+            this.objArr.pop();
+        }
+        mapWidth=data.width*mapSize; 
+        mapHeight=data.height*mapSize;
+        var inputWidth=document.getElementById('textWidth');
+        inputWidth.value=data.width;
+        var inputHeight=document.getElementById('textHeight');
+        inputHeight.value=data.height;
+        for (let k=0;k<data.mapObjArr.length;k++)
+        {
+             for (let i=0;i<redactOption.length;i++)
+             {
+                 for (let j=0;j<redactOption[i].length;j++)
+                 {
+                     
+                     if (data.mapObjArr[k].type==redactOption[i][j].type &&
+                             data.mapObjArr[k].numType==redactOption[i][j].numType)
+                     if (data.mapObjArr[k].group==undefined ||
+                            (data.mapObjArr[k].group!=undefined && 
+                             data.mapObjArr[k].group==redactOption[i][j].group)
+                        )
+                     {
+                         let obj=clone(redactOption[i][j]);
+                         obj.x=data.mapObjArr[k].x;
+                         obj.y=data.mapObjArr[k].y;
+                         if (data.mapObjArr[k].color!=undefined)
+                         {
+                             obj.color=data.mapObjArr[k].color;
+                         }
+                         this.objArr.push(obj);
+                     }
+                 }
+            }
+         }
+         console.log(this.objArr);
+    },
     toCollectionMap:function()
     {
         this.sortByGroupObj();
@@ -140,6 +179,7 @@ var objMap={
     },
     draw:function()
     {
+        
         context.fillStyle="#CCCCCC";
         context.fillRect(0,0,camera.width,camera.height);
         for(let i=0;i<this.objArr.length;i++)
@@ -516,10 +556,24 @@ var selectInterface={
         return {x:X,y:Y}
           
     },
+    enabledPanzerGRO:function()
+    {
+        for (let i=0;i<objMap.objArr.length;i++)  
+        {
+            if (objMap.objArr[i].type=="panzer"&&
+                   objMap.objArr[i].group==0)
+           {
+               this.changeEnabledPanzerGR0(false);
+               return 0;
+           }
+        }
+        this.changeEnabledPanzerGR0(true);
+    },
     update:function()
     {
         mX=mouseX-mouseOffsetX;
         mY=mouseY-mouseOffsetY;
+        this.enabledPanzerGRO();
        //this.tabMenu=(this.tabMenu+1)%6;
         if (mouseLeftClick())
         {  
@@ -568,16 +622,24 @@ var selectInterface={
                     // alert(555);
                     if (type=='button')
                     {
-                      // if(redactOption[this.tabMenu][i].numType==1) 
-                       {
-                            alert("good");
-                            //localStorage.clear();
-                            localStorage.removeItem('gameMap')
-                            localStorage.setItem("gameMap",
-                                    JSON.stringify(objMap.toCollectionMap()));
-                            console.log(JSON.parse(localStorage.getItem('gameMap')));
-                            
-                       }
+                        if (redactOption[this.tabMenu][i].numType==0)
+                        {
+                            downloadAsFile(JSON.stringify(objMap.toCollectionMap()),'saveMap')
+                        }
+                        else  if(redactOption[this.tabMenu][i].numType==1) 
+                        {
+                             alert("good");
+                             //localStorage.clear();
+                             localStorage.removeItem('gameMap')
+                             localStorage.setItem("gameMap",
+                                     JSON.stringify(objMap.toCollectionMap()));
+                             console.log(JSON.parse(localStorage.getItem('gameMap')));
+
+                        } 
+                        else if (redactOption[this.tabMenu][i].numType==3)
+                        {
+                             objMap.loadMap(JSON.parse(localStorage.getItem('gameMap')));
+                        }
                     }
                     selectObj.tabMenu=this.tabMenu;
                     selectObj.numSelect=i;
@@ -614,7 +676,7 @@ var selectInterface={
                     let objOne=clone(redactOption[selectObj.tabMenu][selectObj.numSelect]);
                     if (objOne.type=="panzer" && objOne.group==0)
                     {
-                        this.changeEnabledPanzerGR0(false);
+                        //this.changeEnabledPanzerGR0(false);
                        // selectObj.numSelect=Math.floor(redactOption[3].length/2);
                         selectObj.numSelect=null;
                                    
@@ -622,6 +684,10 @@ var selectInterface={
                    // let posXY=this.calcXYScaling(mX,mY);
                     objOne.x=posXY.x;
                     objOne.y=posXY.y;
+//                    if (type=="gate" )
+//                    {
+//                        objOne.
+//                    }
                     if (type=="shop" || type=="garage" ||
                                     type=="base"||type=="gate")
                     {
@@ -652,7 +718,7 @@ var selectInterface={
                    let index=objMap.numByXY(posXY.x+5,posXY.y+5);
                    if (index!=-1)
                    {    
-                        this.changeEnabledPanzerGR0(true);
+                        //this.changeEnabledPanzerGR0(true);
                         objMap.delElem(index);                   
                    }
                 }
@@ -1008,4 +1074,12 @@ function drawButton(text,x,y,width,height)
     context.fillText(text,x+width/2-metrics.width/2,y+23);
     context.closePath();
     
+}
+function downloadAsFile(data,nameFile)
+{
+  let a = document.createElement("a");
+  let file = new Blob([data], {type: 'application/json'});
+  a.href = URL.createObjectURL(file);
+  a.download = nameFile+".txt";
+  a.click();
 }

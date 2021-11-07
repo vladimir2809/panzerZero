@@ -6,7 +6,7 @@ form{
     position: absolute;
     top:1px;
     left:1px;
-    width:100px;
+    width:150px;
     height:200px;
         
     border:1px black solid; 
@@ -16,7 +16,7 @@ p{
    margin-top: 4px;
    margin-bottom: 2px;
 }
-input{
+input.text{
     width:80px;
     
 }
