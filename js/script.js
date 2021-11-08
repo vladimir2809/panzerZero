@@ -530,13 +530,14 @@ function create ()// функция создание обьектов неоюх
                     'ArrowRight','ArrowUp','ArrowDown',"Enter","KeyP","KeyO",'KeyG',"KeyM",
                     "KeyI","KeyK" ]);
         //changeColorImg(context,imageArr.get('body10'),0xb5e61dff,0xdf0d00ff);
-        
+        initMap(JSON.parse(localStorage.getItem('gameMap')));
         calcQuantityPanzer();
         initPanzers();
         initBullet();
         initBurst();
         //initBox();
-        initAllNoMoveObject();
+        
+       // initAllNoMoveObject();
 //        bonusArr=initNoMoveObject(quantityBonus,bonus);
 //        wallArr=initNoMoveObject(quantityWall,wall);
 //        barrelArr=initNoMoveObject(quantityBarrel,barrel);
@@ -2179,9 +2180,18 @@ function controlBullets()// функция управления полетами
                 let flag=false;
                 for (let j=0;j<shopImageArr.length;j++)
                 {
-                    if (checkCollisionArr(bulletArr[i],wallArr)!=-1||// пуля столкнулась со стеной или с магазином
-                        (x>=shopImageArr[j].x && x<=shopImageArr[j].x+shopImageArr[j].width &&
-                         y>=shopImageArr[j].y && y<=shopImageArr[j].y+shopImageArr[j].height))
+                    // если пуля столкнулась с магазином
+                    if (x>=shopImageArr[j].x && x<=shopImageArr[j].x+shopImageArr[j].width &&
+                         y>=shopImageArr[j].y && y<=shopImageArr[j].y+shopImageArr[j].height)
+                    {
+                        flag=true;
+                    }
+                }
+                {
+                    if (checkCollisionArr(bulletArr[i],wallArr)!=-1//||// пуля столкнулась со стеной 
+                        //(x>=shopImageArr[j].x && x<=shopImageArr[j].x+shopImageArr[j].width &&
+                         //y>=shopImageArr[j].y && y<=shopImageArr[j].y+shopImageArr[j].height)
+                                     )
                     {
                         flag=true;
                     }
@@ -3097,13 +3107,21 @@ function initBase(x,y,typePanz=0)
       base.lineArr=calcLineArr(base);
       baseImageArr.push(base);
 }
-function initGate(dir)
+function initGate(dir,xx=-1,yy=-1,color='#000000')
 {
    let gate=JSON.parse(JSON.stringify(gateType));; 
    gate.direction=dir;//randomInteger(1,4);
    gate.being=true;
-   gate.x=(randomInteger(1,mapWidth/mapSize-1-1))*mapSize;
-   gate.y=randomInteger(1,mapHeight/mapSize-1-1)*mapSize;
+   if (xx==-1&&yy==-1)
+   {    
+        gate.x=(randomInteger(1,mapWidth/mapSize-1-1))*mapSize;
+        gate.y=randomInteger(1,mapHeight/mapSize-1-1)*mapSize;
+   }
+   else
+   {
+       gate.x=xx;
+       gate.y=yy;
+   }
    if (gate.direction==1||gate.direction==3)
    {
        gate.width=5*mapSize;
@@ -3164,7 +3182,11 @@ function initGate(dir)
       
    } 
    gate.squareCollision =gate.squareCollision.concat(gate.squareDoor);
-   gate.color=colorsForGate[randomInteger(0,7/*colorsForGate.length-1*/)];
+   for (let i=0;i<gate.squareCollision.length;i++)
+   {
+       addWallObject(gate.squareCollision[i].x,gate.squareCollision[i].y,3,true);
+   }
+   gate.color=(color=="#000000")?(colorsForGate[randomInteger(0,7)]):color;
    gate.close=true;
    return gate;
 }
@@ -3529,6 +3551,60 @@ function initOnePanzer(x,y,GR,type)
     {
         panzerArr.push(onePanzer);
     }  
+}
+function initMap(data)
+{
+    mapWidth=data.width*mapSize;
+    mapHeight=data.height*mapSize;
+    console.log(data.mapObjArr);
+    initNoMoveObject(1,wall,1,80,80);
+    for (let i=0;i<data.mapObjArr.length;i++)
+    {
+        let numType=data.mapObjArr[i].numType;
+        let x=data.mapObjArr[i].x;
+        let y=data.mapObjArr[i].y;
+        //console.log("iiii "+i);
+        switch (data.mapObjArr[i].type)
+        {
+            case 'wall':
+            {
+             //   alert("wall");
+               let objOne=initNoMoveObject(1,wall,numType,x,y);
+               wallArr=wallArr.concat(objOne);
+            }
+            break;
+            case 'water':
+            {
+             //   alert("wall");
+               let objOne=initNoMoveObject(1,wall,numType,x,y);
+               wallArr=wallArr.concat(objOne);
+            }
+            break;
+            case 'brickWall':
+            {
+             //   alert("wall");
+               let objOne=initNoMoveObject(1,wall,numType,x,y);
+               wallArr=wallArr.concat(objOne);
+            }
+            break;
+            case 'gate':
+            {
+             //   alert("wall");
+                let dir=data.mapObjArr[i].dir;
+                let color=data.mapObjArr[i].color;
+                let gateOne=initGate(dir,x,y,color);
+                gateArr.push(gateOne);
+//               let objOne=initNoMoveObject(1,wall,numType,x,y);
+//               wallArr=wallArr.concat(objOne);
+            }
+            break;
+
+//            default:
+//
+//                break;
+        }
+    }
+    console.log (wallArr);
 }
 function initBullet()// функция создания массива пуль
 {

@@ -615,6 +615,7 @@ var selectInterface={
                     width=mapSize;
                     height=mapSize;
                 }
+                
                 if (mX>this.x+x && mX<this.x+x+width 
                             && mY>this.y+y && mY<this.y+y+height)
                     
@@ -636,6 +637,12 @@ var selectInterface={
                              console.log(JSON.parse(localStorage.getItem('gameMap')));
 
                         } 
+                        else  if (redactOption[this.tabMenu][i].numType==2)
+                        {
+                            var formFile=document.getElementById("formFile");
+                            formFile.style.display="block";
+                            
+                        }
                         else if (redactOption[this.tabMenu][i].numType==3)
                         {
                              objMap.loadMap(JSON.parse(localStorage.getItem('gameMap')));
@@ -681,13 +688,29 @@ var selectInterface={
                         selectObj.numSelect=null;
                                    
                     }
-                   // let posXY=this.calcXYScaling(mX,mY);
-                    objOne.x=posXY.x;
-                    objOne.y=posXY.y;
+                   // let posXY=this.calcXYScaling(mX,mY)let centerX=objOne.x+mapSize-mapSize/2-objOne.width/2;
+                    let centerX=0;
+                    let centerY=0;
+                    if (type=='panzer')
+                    {
+                         centerX=posXY.x+mapSize-mapSize/2-objOne.width/2;
+                         centerY=posXY.y+mapSize-mapSize/2-objOne.height/2;
+                         objOne.x=centerX;
+                         objOne.y=centerY;
+                    } 
+                    else
+                    {
+                        objOne.x=posXY.x;
+                        objOne.y=posXY.y;
+                    }
 //                    if (type=="gate" )
 //                    {
 //                        objOne.
 //                    }
+                    if (type=="panzer")
+                    {
+                        console.log(objOne);
+                    }
                     if (type=="shop" || type=="garage" ||
                                     type=="base"||type=="gate")
                     {
@@ -698,7 +721,7 @@ var selectInterface={
                             objOne.color=colorsForGate[selectColor];
                         }
                     }
-                    else
+                    else if (type!="panzer")
                     {
                         objOne.width=mapSize;
                         objOne.height=mapSize;
@@ -767,6 +790,11 @@ function loadImageArr()// загрузить массив изображений
              }
      }  
 }
+
+
+{
+    
+}
 function setOffsetMousePosXY(x,y)// устонавить смешения координаат для прицелевания так как экран начинается не в 0 0
 {
     mouseOffsetX=x;
@@ -776,7 +804,32 @@ window.addEventListener('load', function () {
     
     preload();
     create();
-    
+    const file = document.getElementById('your-files');
+    file.addEventListener("change", handleFiles);
+    function handleFiles()
+    {
+        var form=document.getElementById('formFile');
+        
+        var fileOne=file.files[0];
+        //console.log(fileOne);
+        //objMap.loadMap(JSON.parse(localStorage.getItem('gameMap')));
+     //   alert(readFile(file));
+        var reader = new FileReader();
+        reader.readAsText(fileOne);
+        reader.onload = function() {
+          objMap.loadMap(JSON.parse(reader.result));
+        // alert(reader.result);
+        }
+        reader.onerror = function() {
+        
+            alert('ошибка загрузки карты');
+        }
+        //;
+        file.value="";
+        form.style.display='none';
+   //     this.form.reset;
+    }
+    form=document.getElementById('')
    // audio.play("shot");
     setInterval(drawAll,20);
     var inputWidth = document.getElementById('textWidth');
@@ -1082,4 +1135,14 @@ function downloadAsFile(data,nameFile)
   a.href = URL.createObjectURL(file);
   a.download = nameFile+".txt";
   a.click();
+}
+function readFile(object) {
+  var file = object.files[0]
+  var reader = new FileReader()
+  var res;
+  reader.onload = function() {
+    res = reader.result;
+  }
+  reader.readAsText(file);
+  return res;
 }
