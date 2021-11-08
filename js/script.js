@@ -532,12 +532,12 @@ function create ()// функция создание обьектов неоюх
         //changeColorImg(context,imageArr.get('body10'),0xb5e61dff,0xdf0d00ff);
         initMap(JSON.parse(localStorage.getItem('gameMap')));
         calcQuantityPanzer();
-        initPanzers();
+      //  initPanzers();
         initBullet();
         initBurst();
         //initBox();
         
-       // initAllNoMoveObject();
+        //initAllNoMoveObject();
 //        bonusArr=initNoMoveObject(quantityBonus,bonus);
 //        wallArr=initNoMoveObject(quantityWall,wall);
 //        barrelArr=initNoMoveObject(quantityBarrel,barrel);
@@ -2875,14 +2875,23 @@ function openGate(color,numGate)
         }
     }
 }
-function initShopImage()// инициализировать обьект магазин 
+function initShopImage(xx=-1,yy=-1)// инициализировать обьект магазин 
 {
-    for (let i=0;i<2;i++)
     {
         shopImageArr.push(JSON.parse(JSON.stringify(shopImageType)));;
-        let x=mapWidth/2-shopImageArr[i].width/2+mapSize+shopImageArr[i].width*i+mapSize*2;
-        let y=mapHeight/2-shopImageArr[i].height/2+mapSize+shopImageArr[i].height*i+mapSize*2;
-
+        i=shopImageArr.length-1;
+        let x;
+        let y;
+        if (xx==-1 && yy==-1)
+        {
+            x=mapWidth/2-shopImageArr[i].width/2+mapSize+shopImageArr[i].width*i+mapSize*2;
+            y=mapHeight/2-shopImageArr[i].height/2+mapSize+shopImageArr[i].height*i+mapSize*2;
+        }
+        else
+        {
+            x=xx;
+            y=yy;
+        }
         shopImageArr[i].x=Math.floor(x/mapSize)*mapSize;
         shopImageArr[i].y=Math.floor(y/mapSize)*mapSize;
 //        for (let j=0;j<shopImageArr[i].entranceArr.length;j++ )
@@ -2890,6 +2899,7 @@ function initShopImage()// инициализировать обьект маг�
 //            shopImageArr[i].entranceArr[j].x+= shopImageArr[i].x;
 //            shopImageArr[i].entranceArr[j].y+= shopImageArr[i].y;
 //        }
+        //console.log(lastShop);
 //
 //        for (let j=0;j<shopImageArr[i].entranceArr.length;j++ )
 //        {
@@ -2937,14 +2947,25 @@ function initShopImage()// инициализировать обьект маг�
     }
    
 }
-function initGarageImage()
+function initGarageImage(xx=-1,yy=-1)
 {
     
-    for (let i=0;i<2;i++)
+   // for (let i=0;i<2;i++)
     {
         garageImageArr.push(JSON.parse(JSON.stringify(garageImageType)));;
-        garageImageArr[i].x=200+i*(garageImageArr[i].width+mapSize);
-        garageImageArr[i].y=80;
+        let i=garageImageArr.length-1;
+//        let x;
+//        let y;
+        if (xx==-1||yy==-1)
+        {
+            garageImageArr[i].x=200+i*(garageImageArr[i].width+mapSize);
+            garageImageArr[i].y=80;
+        }
+        else
+        {
+           garageImageArr[i].x=xx;
+           garageImageArr[i].y=yy; 
+        }
 //        for (let j=0;j<garageImageArr[i].entranceArr.length;j++ )
 //        {
 //            garageImageArr[i].entranceArr[j].x+= garageImageArr[i].x;
@@ -3001,6 +3022,16 @@ function addWallObject(x,y,type,solid=true)
         }
     }
     wallArr = wallArr.concat(buffer);
+    
+}
+function initKeyGate(x,y,color)
+{
+    keyGateArr=keyGateArr.concat(initNoMoveObject(1,keyType));
+    let i=keyGateArr.length-1;
+    keyGateArr[i].x=x;
+    keyGateArr[i].y=y;
+    keyGateArr[i].color=color;
+    
     
 }
 function initAllNoMoveObject()
@@ -3557,6 +3588,26 @@ function initMap(data)
     mapWidth=data.width*mapSize;
     mapHeight=data.height*mapSize;
     console.log(data.mapObjArr);
+    for (let i=0;i<mapWidth/mapSize;i++)
+    {
+        let objOne=initNoMoveObject(1,wall,0,i*mapSize,0);
+        wallArr=wallArr.concat(objOne);
+        objOne=initNoMoveObject(1,wall,0,i*mapSize,mapHeight-mapSize);
+        wallArr=wallArr.concat(objOne);
+//        drawSprite(context,imageArr.get("wall"),,camera,scale);;
+//        drawSprite(context,imageArr.get("wall"),i*mapSize,mapHeight-mapSize,camera,scale);;
+    }
+    
+    for (let i=0;i<mapHeight/mapSize;i++)
+    {
+        let objOne=initNoMoveObject(1,wall,0,0,i*mapSize);
+        wallArr=wallArr.concat(objOne);
+        objOne=initNoMoveObject(1,wall,0,mapHeight-mapSize,i*mapSize);
+        wallArr=wallArr.concat(objOne);
+    }
+//        drawSprite(context,imageArr.get("wall"),0,i*mapSize,camera,scale);;
+//        drawSprite(context,imageArr.get("wall"),mapWidth-mapSize,i*mapSize,camera,scale);;
+//    }
     initNoMoveObject(1,wall,1,80,80);
     for (let i=0;i<data.mapObjArr.length;i++)
     {
@@ -3567,19 +3618,7 @@ function initMap(data)
         switch (data.mapObjArr[i].type)
         {
             case 'wall':
-            {
-             //   alert("wall");
-               let objOne=initNoMoveObject(1,wall,numType,x,y);
-               wallArr=wallArr.concat(objOne);
-            }
-            break;
             case 'water':
-            {
-             //   alert("wall");
-               let objOne=initNoMoveObject(1,wall,numType,x,y);
-               wallArr=wallArr.concat(objOne);
-            }
-            break;
             case 'brickWall':
             {
              //   alert("wall");
@@ -3598,13 +3637,57 @@ function initMap(data)
 //               wallArr=wallArr.concat(objOne);
             }
             break;
-
+            case 'barrel':
+            {
+               let objOne=initNoMoveObject(1,barrel,numType,x,y);
+               barrelArr=barrelArr.concat(objOne); 
+            }
+            break;
+            case 'panzer':
+            {
+                let GR=data.mapObjArr[i].group;
+                initOnePanzer(x,y,GR,numType)
+            }
+            break;
+            case 'bonus':
+            {
+               let objOne=initNoMoveObject(1,bonus,numType,x,y);
+               bonusArr=bonusArr.concat(objOne); 
+            }
+            break;
+            case 'shop':
+            {
+                initShopImage(x,y);
+//               let objOne=initNoMoveObject(1,bonus,numType,x,y);
+//               bonusArr=bonusArr.concat(objOne); 
+            }
+            break;
+            case 'garage':
+            {
+                initGarageImage(x,y);
+//               let objOne=initNoMoveObject(1,bonus,numType,x,y);
+//               bonusArr=bonusArr.concat(objOne); 
+            }
+            break;
+            case "base":
+            {
+                initBase(x,y,numType)
+            }
+            break;
+             case 'keyGate':
+            {
+               let color=data.mapObjArr[i].color;
+               initKeyGate(x,y,color);
+               //let objOne=initNoMoveObject(1,keyType,color,x,y);
+              // keyGateArr=keyGateArr.concat(objOne); 
+            }
+            break;
 //            default:
 //
 //                break;
         }
     }
-    console.log (wallArr);
+    console.log (shopImageArr);
 }
 function initBullet()// функция создания массива пуль
 {
