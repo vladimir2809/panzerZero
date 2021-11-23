@@ -77,6 +77,7 @@ var strFile='';
 var panzer={
     id:0,
     numType:null,
+    enabled:false,
     bodyNameImage:null,// имя картинки корпуса
     towerNameImage:null,// имя картинки башни
     speed:2,// скорость
@@ -335,6 +336,7 @@ garageImageType={
 baseImageType={
     x:null,
     y:null,
+    enabled:false,
     being:false,
    // sprite:null,
     maxHP:100,
@@ -531,6 +533,8 @@ function create ()// функция создание обьектов неоюх
                     "KeyI","KeyK" ]);
         //changeColorImg(context,imageArr.get('body10'),0xb5e61dff,0xdf0d00ff);
         initMap(JSON.parse(localStorage.getItem('gameMap')));
+        map.width=mapWidth;
+        map.height=mapHeight;
         calcQuantityPanzer();
       //  initPanzers();
         initBullet();
@@ -1163,7 +1167,8 @@ function gameLoop(mult,visible)// игровой цикл
             for (let i=0;i<panzerArr.length; i++)// тики танков
             {
                 if (panzerArr[i].being==true && pause==false 
-                        && (i!=numPanzer || ( gamePlayer==false || visibleGame==false)))
+                        && (i!=numPanzer || ( gamePlayer==false || visibleGame==false))&&
+                        (controlEnabled(panzerArr[i])==true&&i!=numPanzer))
                 {
                       panzerControll(i);
                    if (countIterationGameLoop>option[numOption].delayBeforeAttack) 
@@ -1218,7 +1223,8 @@ function gameLoop(mult,visible)// игровой цикл
                           //deleteElemArrToNum
                         //    alert(num+" "+panzerArr[numPanzer].id+" "+panzerInGarageArr[0].id);
                             deleteElemArrToNum(panzerInGarageArr,num);
-                            if (panzerInGarageArr.length>0)
+                            if (panzerInGarageArr.length>0 &&
+                                                garageImageArr.length>0)
                             {
                                 if (garage.open==false)garage.start();
                             }
@@ -1226,18 +1232,28 @@ function gameLoop(mult,visible)// игровой цикл
                             {
                                 if (money>=500)
                                 {
-                                    if (shop.open==false)shop.start(0,true); 
+                                    if (shopImageArr.length>0)
+                                    {
+                                        if (shop.open==false)shop.start(0,true); 
+                                    }
+                                    else
+                                    {
+                                        uploadLevel();
+                                        //console.log(panzerArr);
+                                        alert("Game Over");
+                                    }
+                                        
                                     
                                 }
                                 else
                                 {
-                                 //   alert("Game Over");
+                                    alert("Game Over");
                                     uploadLevel();
                                 }
                             }
                         }
                     }
-                    else
+                    else if (killGroupPanzer()==1 && killGroupPanzer()!=-1)
                     {
                         
                         uploadLevel();
@@ -1266,6 +1282,15 @@ function gameLoop(mult,visible)// игровой цикл
         }
     }
     setTimeout(gameLoop,30,option[numOption].speedGame,visibleGame);
+}
+function controlEnabled(obj)
+{
+    if(obj.x+obj.width>camera.x && obj.x<camera.x+camera.width &&
+            obj.y+obj.height>camera.y && obj.y<camera.y+camera.height)
+    {
+        return true;
+    }
+    return false;
 }
 function calibrationAccuracy()
 {
@@ -2044,13 +2069,18 @@ function controlBase()// функция ответственная за то ч�
                 if (data!=0) 
                 {
                     baseImageArr[i].count=0;
-                    initOnePanzer(data.x,data.y,1,baseImageArr[i].typePanzerCreate);
+                    initOnePanzer(data.x+2,data.y+2,1,baseImageArr[i].typePanzerCreate);
+                   // break;
                 }
                 //initOnePanzer(baseImageArr[i].x,baseImageArr[i].y-mapSize,1,0);
                 // alert("count BAse");
                 
             }
-            baseImageArr[i].count++;
+            else
+           // if (controlEnabled(baseImageArr[i])==true)
+            {
+                baseImageArr[i].count++;
+            }
             
         }
     }
@@ -3134,6 +3164,7 @@ function initBase(x,y,typePanz=0)
       base.y=Math.floor(y/mapSize)*mapSize;;
       base.being=true;
       base.typePanzerCreate=typePanz;
+      base.count=0;
       base.maxCount=100+typePanz*40;
       base.lineArr=calcLineArr(base);
       baseImageArr.push(base);
@@ -3602,7 +3633,7 @@ function initMap(data)
     {
         let objOne=initNoMoveObject(1,wall,0,0,i*mapSize);
         wallArr=wallArr.concat(objOne);
-        objOne=initNoMoveObject(1,wall,0,mapHeight-mapSize,i*mapSize);
+        objOne=initNoMoveObject(1,wall,0,mapWidth-mapSize,i*mapSize);
         wallArr=wallArr.concat(objOne);
     }
 //        drawSprite(context,imageArr.get("wall"),0,i*mapSize,camera,scale);;
@@ -3735,6 +3766,7 @@ function restartLevel()
     {
         panzerArr.splice(0,1);
     }
+    clearPressKey();
     initPanzers();
     countIterationGameLoop=0;
     countBeforeUpload=0;
@@ -3797,10 +3829,16 @@ function uploadLevel()// функция обновления уровня пос
     {
         panzerInGarageArr.splice(0,1);
     }
-    
+    while (baseImageArr.length>0)
+    {
+       baseImageArr.splice(0,1);
+    }
+    clearPressKey();
     calcQuantityPanzer();
-    initPanzers();
-    initAllNoMoveObject();
+    initMap(JSON.parse(localStorage.getItem('gameMap')));
+    
+//    initPanzers();
+//    initAllNoMoveObject();
 //    initBox();
 //    initWall();
 //    initBarrel();

@@ -9,7 +9,9 @@ var redactOption=[
            nameImage:'wall',
            tabMenu:0,
            x:20,
-           y:40,     
+           y:40,
+           width:40,
+           height:40,
         }  ,
         {
            type:"water",
@@ -17,7 +19,9 @@ var redactOption=[
            nameImage:'water',
            tabMenu:0,
            x:100,
-           y:40,     
+           y:40, 
+           width:40,
+           height:40,
         }  ,
         {
            type:"brickWall",
@@ -25,7 +29,9 @@ var redactOption=[
            nameImage:'brickwall',
            tabMenu:0,
            x:180,
-           y:40,     
+           y:40,
+           width:40,
+           height:40,
         }  ,
     ],
     [    
@@ -261,6 +267,8 @@ var redactOption=[
             tabMenu:4,
             y:40,
             x:20,
+            width:40,
+            height:40,
         },
         {
             type:"bonus",
@@ -270,6 +278,8 @@ var redactOption=[
             tabMenu:4,
             y:40,
             x:100,
+            width:40,
+            height:40,
         },
             {
             type:"bonus",
@@ -279,6 +289,8 @@ var redactOption=[
             tabMenu:4,
             y:40,
             x:180,
+            width:40,
+            height:40,
         },  
         {
             type:"bonus",
@@ -288,6 +300,8 @@ var redactOption=[
             tabMenu:4,
             y:40,
             x:260,
+            width:40,
+            height:40,
         },  
         {
             type:"bonus",
@@ -297,6 +311,8 @@ var redactOption=[
             tabMenu:4,
             y:40,
             x:340,
+            width:40,
+            height:40,
         },  
     ],
     [
@@ -342,6 +358,8 @@ var redactOption=[
             tabMenu:6,
             y:40,
             x:20,
+            width:40,
+            height:40,
         }, 
     ],
     [
@@ -349,10 +367,12 @@ var redactOption=[
             type:"delete",
             numType:0,
            // group:1,
-            nameImage:"delete",
+            nameImage:"deleteBig",
             tabMenu:7,
             y:40,
             x:20,  
+//            width:40,
+//            height:40,
         },
         {
             type:"button",
@@ -435,7 +455,7 @@ function initKeyGate ()
 function initBase ()
 {
     
-    for (let i=2;i<8;i++)
+    for (let i=3;i<8;i++)
     {
        let oneBase=clone(redactOption[5][2]); 
        oneBase.x=oneBase.x+(i-2)*(7+80);

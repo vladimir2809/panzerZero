@@ -128,6 +128,15 @@ function keyUpDuration(code,time)// была ли нажата определе�
     }
     return false;
 }
+function clearPressKey()
+{
+    while(pressKeyArr.length > 0) 
+    {
+         pressKeyArr.pop();
+    }    
+    mouseLeftPress=false;
+    mouseClick=false;
+}
 function checkPressKey(code)// проверить что кнопка в данный момент нажата
 {
     if(checkElemArr(pressKeyArr,code)==true) return true; else return false;

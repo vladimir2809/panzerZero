@@ -12,7 +12,8 @@ var nameImageArr=["body10","body11",'body12','body13','body14','body15',
                 "bonusPatron",'bonusBullet','garage',
                 'wall',"water","brickwall","badbrickwall",'bullet',"rocket",
                 'patron','burst','burstBig','burstSmall','barrel',/*'barrel2',*/
-                'ganIcon','shop',"star",'starContur','gate',"base",'delete',];
+                'ganIcon','shop',"star",'starContur','gate',"base",
+                'delete','deleteBig',];
 var imageArr=new Map();// массив картинок
 var countLoadImage=0;// количество загруженных картинок
 selectColor=0;// выбор цвета для дверей
@@ -167,15 +168,22 @@ var objMap={
                  }
             }
          }
+         console.log(data/*this.objArr*/);
+         console.log("OBRR");
          console.log(this.objArr);
     },
     toCollectionMap:function()
-    {
+    { 
+        while(this.dataMap.mapObjArr.length > 0) {
+            this.dataMap.mapObjArr.pop();
+        }
         this.sortByGroupObj();
+       
         this.dataMap.width=mapWidth/mapSize;
         this.dataMap.height=mapHeight/mapSize;
         this.dataMap.mapObjArr=clone(this.sortObjArr);
         return this.dataMap;
+        console.log(data/*this.objArr*/);
     },
     draw:function()
     {
@@ -199,7 +207,7 @@ var objMap={
             else if(this.objArr[i].type=='keyGate')
             {
               let color=this.objArr[i].color;  
-                drawKeyForGate(color,x,y,scale);
+                drawKeyForGate(color,x,y,scale,false);
             }else if (this.objArr[i].type=="panzer")
             {
                 let GR=this.objArr[i].group;
@@ -240,7 +248,7 @@ var objMap={
                     
                     if (oldType.type!=typeObj.type||
                             oldType.numType!=typeObj.numType||
-                            oldType.group!=typeObj.group)
+                            ( oldType.group!=typeObj.group))
                     {
                         oldType=clone(typeObj);
                     }
@@ -350,9 +358,17 @@ var selectInterface={
     multGate:2.5,
     multBuilding:2,
     tabValues:["основы", "двери", "бочки", "танки","бонусы", "здания", "ключи","еще"],
-    drawImageByNum:function(tabMenu,num,xx=-1,yy=-1)
+    drawImageByNum:function(tabMenu,num,xx=-1,yy=-1,nameImg="true")
     {
-            let nameImage=redactOption[tabMenu][num].nameImage;
+            let nameImage;
+            if (nameImg=='true')
+            {
+                   nameImage =redactOption[tabMenu][num].nameImage;
+            }
+            else
+            {
+                nameImage=nameImg;
+            }
             let x;
             let y;
             if (xx==-1 && yy==-1)
@@ -435,16 +451,16 @@ var selectInterface={
             else if(type=="keyGate")
             {
                 //let keyGate={};
-                x=redactOption[this.tabMenu][i].x+this.x;
-                y=redactOption[this.tabMenu][i].y+this.y;
-                color=redactOption[this.tabMenu][i].color;
+                let x=redactOption[this.tabMenu][i].x+this.x;
+                let y=redactOption[this.tabMenu][i].y+this.y;
+                let color=redactOption[this.tabMenu][i].color;
                 let colorRect='green';
                 if (selectObj.tabMenu==this.tabMenu && selectObj.numSelect==i)
                 {
                     colorRect='blue';
                 }
                 
-                drawKeyForGate(color,x,y,1,colorRect);
+                drawKeyForGate(color,x,y,1,true,colorRect);
             }
             else         
             {
@@ -520,7 +536,7 @@ var selectInterface={
             {
                 //drawKeyForGate(color,x,y,scale,colorRect='green')
                 let color=redactOption[selectObj.tabMenu][selectObj.numSelect].color;
-                drawKeyForGate(color,posXY.x,posXY.y,scale);
+                drawKeyForGate(color,posXY.x,posXY.y,scale,false);
             }
             else if (selectObj.tabMenu==3)
             {
@@ -531,6 +547,13 @@ var selectInterface={
             {
                 let numType=redactOption[selectObj.tabMenu][selectObj.numSelect].numType;
                     drawBase(posXY.x,posXY.y,numType);
+            }
+            else if (selectObj.tabMenu==7 && selectObj.numSelect==0)
+            {
+                let x=posXY.x+mapSize-mapSize/2-20/2;
+                let y=posXY.y+mapSize-mapSize/2-20/2;
+                this.drawImageByNum(selectObj.tabMenu,selectObj.numSelect,
+                                x,y,'delete');
             }
             else
             {
@@ -727,7 +750,7 @@ var selectInterface={
                         objOne.height=mapSize;
                     }
                     if (objMap.checkMapSquad(objOne.x,objOne.y,
-                                objOne.width,objOne.height)==true)
+                               objOne.width,objOne.height)==true)
                     {
                         objMap.objArr.push(objOne);
                         console.log(objMap);
@@ -738,11 +761,12 @@ var selectInterface={
                 else
                 {
                   // calcXYScaling(mX,mY);
-                   let index=objMap.numByXY(posXY.x+5,posXY.y+5);
+                   let index=objMap.numByXY(posXY.x+mapSize/2,posXY.y+mapSize/2);
                    if (index!=-1)
                    {    
                         //this.changeEnabledPanzerGR0(true);
-                        objMap.delElem(index);                   
+                        objMap.delElem(index);  
+                        console.log(objMap.objArr);
                    }
                 }
             }
@@ -1016,15 +1040,20 @@ function drawTurnSprite(context,image,x,y,angle,x1,y1,camera,scale)// функц
     context.drawImage(image,-x1,-y1);
     context.restore();
 }
-function drawKeyForGate(color,x,y,scale,colorRect='green')
+function drawKeyForGate(color,x,y,scale,camPos=true,colorRect='green')
 {
     //context.save();
     //context.closePath();
-//    let oldScale;
-//    let x;
-//    let y;
-//    if (rect==true && xx==-1 && yy==-1)
+    let oldScale;
+    let camX;
+    let camY;
+    if (camPos==true)
     {
+        camX=camera.x;
+        camY=camera.y;
+        camera.x=1;
+        camera.y=1;
+    }
         context.strokeStyle=colorRect;
         context.strokeRect (x*scale-(camera.x*camera.summMultScalingX),
                         y*scale-(camera.y*camera.summMultScalingY),
@@ -1033,6 +1062,10 @@ function drawKeyForGate(color,x,y,scale,colorRect='green')
         y=y+18;
         x=x*scale-(camera.x*camera.summMultScalingX);
         y=y*scale-(camera.y*camera.summMultScalingY);
+    if (camPos==true)
+    {    
+        camera.x=camX;
+        camera.y=camY;
     }
 //    else 
 //    {
