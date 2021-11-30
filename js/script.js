@@ -401,7 +401,7 @@ window.addEventListener('load', function () {
     create();
     
    // audio.play("shot");
-    setInterval(drawAll,2);
+    setInterval(drawAll,16);
     setTimeout(gameLoop,60,1,true);
     //setTimeout(playSoundTrack,2000);
     
@@ -2077,7 +2077,7 @@ function controlBase()// функция ответственная за то ч�
                 
             }
             else
-           // if (controlEnabled(baseImageArr[i])==true)
+            if (controlEnabled(baseImageArr[i])==true)
             {
                 baseImageArr[i].count++;
             }
@@ -3247,6 +3247,7 @@ function initGate(dir,xx=-1,yy=-1,color='#000000')
    for (let i=0;i<gate.squareCollision.length;i++)
    {
        addWallObject(gate.squareCollision[i].x,gate.squareCollision[i].y,3,true);
+       
    }
    gate.color=(color=="#000000")?(colorsForGate[randomInteger(0,7)]):color;
    gate.close=true;
@@ -3654,6 +3655,14 @@ function initMap(data)
             {
              //   alert("wall");
                let objOne=initNoMoveObject(1,wall,numType,x,y);
+               if (data.mapObjArr[i].type=="water") 
+               {
+                    //console.log(objOne[0].lineArr);
+                   while (objOne[0].lineArr.length>0)
+                   {
+                       objOne[0].lineArr.pop();
+                   }
+               }
                wallArr=wallArr.concat(objOne);
             }
             break;
@@ -3662,7 +3671,7 @@ function initMap(data)
              //   alert("wall");
                 let dir=data.mapObjArr[i].dir;
                 let color=data.mapObjArr[i].color;
-                let gateOne=initGate(dir,x,y,color);
+                let gateOne=initGate(dir,x,y,color,false);
                 gateArr.push(gateOne);
 //               let objOne=initNoMoveObject(1,wall,numType,x,y);
 //               wallArr=wallArr.concat(objOne);
@@ -3718,7 +3727,15 @@ function initMap(data)
 //                break;
         }
     }
-    console.log (shopImageArr);
+    let waterArr=[];
+    for (let i=0;i<wallArr.length;i++)
+    {
+        if (wallArr[i].type==1)
+        {
+            waterArr.push(wallArr[i]);
+        }
+    }
+    console.log (waterArr);
 }
 function initBullet()// функция создания массива пуль
 {
@@ -3908,9 +3925,11 @@ function checkCrossLinePanzerArrObj(arr,num,point,numNeg=-1)
 {
       let pPanz={x:panzerArr[num].x+panzerArr[num].width/2,
                 y:panzerArr[num].y+panzerArr[num].height/2};
+    
     for (let i=0;i<arr.length;i++)
     {
-        if (arr[i].being==true )
+        if (arr[i].lineArr.length==0 )continue; 
+        if ( arr[i].being==true )
         {
             
             ////console.log('true');
