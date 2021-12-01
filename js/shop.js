@@ -228,6 +228,11 @@ shop={
                         }
                     } 
                     panzerArr[numPanzer].being=true;
+                    for (let key in panzerArr[numPanzer].mapUp)
+                    {
+                        panzerArr[numPanzer].mapUp[key].levelUp=0;
+                    }
+                    //panzerArr[numPanzer].mapUp.upSpeed.levelUp=0;
                     panzerArr[numPanzer].id=this.newPanzerId();
                     let copy=copyPanz(panzerArr[numPanzer]);
                     
@@ -272,6 +277,10 @@ shop={
                         }
                     }  
                     onePanz.id=this.newPanzerId();
+                    for (let key in onePanz.mapUp)
+                    {
+                        onePanz.mapUp[key].levelUp=0;
+                    }
                     panzerInGarageArr.push(onePanz);
                 }
                 if (messageBox.response==3)
