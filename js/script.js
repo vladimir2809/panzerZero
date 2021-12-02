@@ -1240,14 +1240,14 @@ function gameLoop(mult,visible)// игровой цикл
                                     {
                                         uploadLevel();
                                         //console.log(panzerArr);
-                                        alert("Game Over");
+                                   //     alert("Game Over");
                                     }
                                         
                                     
                                 }
                                 else
                                 {
-                                    alert("Game Over");
+                                  //  alert("Game Over");
                                     uploadLevel();
                                 }
                             }
@@ -1632,7 +1632,7 @@ function panzerControll(num)// функция автоуправления та�
 {
     var dx=0;
     var dy=0;
-    if (checkMouseLeft()==true && num==numPanzer)// условие выстрела
+    if (checkMouseLeft()==true && num==numPanzer &&panzerArr[num].being==true)// условие выстрела
         {
             calcPanzerShotXY(num);
             if  ((panzerArr[num].countAttack>=maxPanzerTimeAttack(num)&&
@@ -3165,7 +3165,7 @@ function initBase(x,y,typePanz=0)
       base.being=true;
       base.typePanzerCreate=typePanz;
       base.count=0;
-      base.maxCount=100+typePanz*40;
+      base.maxCount=/*option[numOption].maxCountBase[typePanz];*/150+typePanz*40;
       base.lineArr=calcLineArr(base);
       baseImageArr.push(base);
 }

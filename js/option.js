@@ -207,6 +207,7 @@ var option=[
         numPanzer:0,
         visibleGame:true,       
         gamePlayer:true,
+        maxCountBase:[250,375,625,1000,1500,2250],
     },
     {
         mapSize:40,
