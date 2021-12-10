@@ -181,6 +181,36 @@
             upAccuracy:{up:[10,20,25],price:[50,80,110],levelUp:0},
         },
     },
+    {
+        numType:6,
+        bodyNameImage:"body16",
+        towerNameImage:"tower4",
+        width:40,
+        height:40,
+        mixTowerX:8.5,// смешение башни что бы она поворачивалась вокруг опреденлленой точки
+        mixTowerY:18.5,
+        mixTowerPosX:20,// координаты куда должна встать башня у корпуса
+        mixTowerPosY:20,
+//        speed:2,
+//        maxHP:1000,
+//        DMG:1,
+//        attackPatron:false,
+//        timeAttack:1000/50,// время перезарядки
+//        timeAttackPatron:1000/580,// время перезарядки пулемята
+//        hitAttack:15,
+//        hitAttackPatron:1,
+//        maskGan:[1,1,1,1],
+//        speedReaction:100,// скорость реакции при виде врага
+//        timeReaction:1000/this.speedReaction,// время реакции
+//        accuracy:70,// точность//точность
+//        mapUp:{
+//            upHP:{up:[10,20,25],price:[35,50,100],levelUp:0},
+//            upTimeAttack:{up:[10,15,20],price:[50,75,120],levelUp:0},
+//            upHit:{up:[10,15,15],price:[30,50,75],levelUp:0},
+//            upSpeed:{up:[10,20,30],price:[40,80,130],levelUp:0},
+//            upAccuracy:{up:[10,20,25],price:[50,80,110],levelUp:0},
+//        },
+    },
  ];
  
 var option=[

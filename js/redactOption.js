@@ -172,6 +172,20 @@ var redactOption=[
 //            width:40,
 //            height:40,
         },
+        {
+            type:"panzer",
+            enabled:true,
+            numType:6,
+            group:0,
+            nameImage:"body16",
+            tabMenu:3,
+            y:40,
+            x:500,
+            width:40,
+            height:40,
+//            width:40,
+//            height:40,
+        },
         
         {
             type:"panzer",

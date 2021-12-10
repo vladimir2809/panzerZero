@@ -5,7 +5,7 @@ var screenHeight=500;
 var mapSize=40;
 var context;
 var scale=1;
-var nameImageArr=["body10","body11",'body12','body13','body14','body15',
+var nameImageArr=["body10","body11",'body12','body13','body14','body15','body16',
                 "body101","body111",'body121','body131','body141',
                 "body20","body21",'body22','body23','body24','body25',
                 "tower1","tower2","tower3","tower4","box","bonusMoney","bonusXP",

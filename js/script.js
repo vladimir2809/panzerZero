@@ -25,6 +25,7 @@ var money=10000;// деньги игрока
 var addMoney=0;
 var timeAddMoney=0;
 var levelPlayer=1;
+var levelGame=1;
 var levelXPValue=[1000,2500,5000,8000,12000,20000,30000,50000,];
 var XP=0;
 var ganQuantityArr=[130,500,100,100];
@@ -532,7 +533,8 @@ function create ()// функция создание обьектов неоюх
                     'ArrowRight','ArrowUp','ArrowDown',"Enter","KeyP","KeyO",'KeyG',"KeyM",
                     "KeyI","KeyK" ]);
         //changeColorImg(context,imageArr.get('body10'),0xb5e61dff,0xdf0d00ff);
-        initMap(JSON.parse(localStorage.getItem('gameMap')));
+       // initMap(JSON.parse(localStorage.getItem('gameMap')));
+        initMap(levelMap[levelGame-1]);
         map.width=mapWidth;
         map.height=mapHeight;
         calcQuantityPanzer();
@@ -1188,7 +1190,7 @@ function gameLoop(mult,visible)// игровой цикл
                 {
                     visibleGame=!visibleGame;
                     flagPressV=true;
-                    uploadLevel();
+                    uploadLevelOrRestart();
 //                    countIterationGameLoop=0;
 //                    countBeforeUpload=0;
                  }
@@ -1238,7 +1240,7 @@ function gameLoop(mult,visible)// игровой цикл
                                     }
                                     else
                                     {
-                                        uploadLevel();
+                                        uploadLevelOrRestart();
                                         //console.log(panzerArr);
                                    //     alert("Game Over");
                                     }
@@ -1248,7 +1250,7 @@ function gameLoop(mult,visible)// игровой цикл
                                 else
                                 {
                                   //  alert("Game Over");
-                                    uploadLevel();
+                                    uploadLevelOrRestart();
                                 }
                             }
                         }
@@ -1256,7 +1258,7 @@ function gameLoop(mult,visible)// игровой цикл
                     else if (killGroupPanzer()==1 && killGroupPanzer()!=-1)
                     {
                         
-                        uploadLevel();
+                        uploadLevelOrRestart();
                         console.log(panzerArr);
                         alert("YOU WIN!!!");
                     }
@@ -1405,6 +1407,10 @@ function controlHuman()// управление программой челове
     if (keyUpDuration("KeyG",100)) 
     {
         if (garage.open==false)garage.start();
+    }
+    if (keyUpDuration("KeyN",100)) 
+    {
+        uploadLevelOrRestart(false);
     }
     if (keyUpDuration("KeyH",100)) 
     {
@@ -3789,7 +3795,7 @@ function restartLevel()
     countBeforeUpload=0;
     playerGan=nextGan(1);
 }
-function uploadLevel()// функция обновления уровня после того как бой закончен
+function uploadLevelOrRestart(restart=true)// функция обновления уровня после того как бой закончен
 {
 //    for (let i=0;i<panzerArr.length;i++)
 //    {
@@ -3852,7 +3858,9 @@ function uploadLevel()// функция обновления уровня пос
     }
     clearPressKey();
     calcQuantityPanzer();
-    initMap(JSON.parse(localStorage.getItem('gameMap')));
+    //initMap(JSON.parse(localStorage.getItem('gameMap')));
+    if (restart==false && levelGame<levelMap.length) levelGame++;
+    initMap(levelMap[levelGame-1]);
     
 //    initPanzers();
 //    initAllNoMoveObject();
