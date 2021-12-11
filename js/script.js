@@ -3625,6 +3625,8 @@ function initMap(data)
 {
     mapWidth=data.width*mapSize;
     mapHeight=data.height*mapSize;
+    map.width=mapWidth;
+    map.height=mapHeight;
     console.log(data.mapObjArr);
     for (let i=0;i<mapWidth/mapSize;i++)
     {
@@ -3692,7 +3694,10 @@ function initMap(data)
             case 'panzer':
             {
                 let GR=data.mapObjArr[i].group;
-                initOnePanzer(x,y,GR,numType)
+                if (numType!=6)
+                {
+                    initOnePanzer(x,y,GR,numType)
+                }
             }
             break;
             case 'bonus':
@@ -3820,9 +3825,54 @@ function uploadLevelOrRestart(restart=true)// функция обновлени�
     
     
     //let i=0;
-    while (panzerArr.length>0)
+    if (restart==true)
     {
-        panzerArr.splice(0,1);
+        while (panzerArr.length>0)
+        {
+            panzerArr.splice(0,1);
+        }
+    }
+    else
+    {
+        let flag=false;
+        let x=null;
+        let y=null;
+        if (restart==false && levelGame<levelMap.length) levelGame++;
+        for (let i=0;i<levelMap[levelGame-1].mapObjArr.length;i++)
+        {
+            if (levelMap[levelGame-1].mapObjArr[i].type=="panzer" && 
+                    levelMap[levelGame-1].mapObjArr[i].numType==6)
+            {
+                flag=true;
+               // alert("panz6");
+                x=levelMap[levelGame-1].mapObjArr[i].x;
+                y=levelMap[levelGame-1].mapObjArr[i].y;
+                break;
+                
+            }
+        }
+        while (panzerArr.length>0 /*&& (panzerArr.length!=1 && flag==false)*/ )
+        {
+            let len=panzerArr.length-1;
+            //alert("panz");
+            if (flag==true)
+            {
+                if (panzerArr[len].group==1)
+                {    
+                    panzerArr.splice(len,1);
+                }
+                else
+                {
+                    panzerArr[0].x=x;
+                    panzerArr[0].y=y;
+                    break;
+                }
+            }
+            else
+            {
+              panzerArr.splice(0,1);  
+            }
+        } 
     }
     while (bonusArr.length>0)
     {
@@ -3848,10 +3898,27 @@ function uploadLevelOrRestart(restart=true)// функция обновлени�
     {
         garageImageArr.splice(0,1);
     }
-    while (panzerInGarageArr.length>0)
+    if (restart==true)
     {
-        panzerInGarageArr.splice(0,1);
+        while (panzerInGarageArr.length>0)
+        {
+            panzerInGarageArr.splice(0,1);
+        }
     }
+//    else
+//    {
+//        while (panzerInGarageArr.length>0)
+//        {
+//           if (panzerInGarageArr[0].id == panzerArr[numPanzer].id)
+//           {
+//               panzerInGarageArr.splice(0,1);
+//           }
+//           else
+//           {
+//               break;
+//           }
+//        } 
+//    }
     while (baseImageArr.length>0)
     {
        baseImageArr.splice(0,1);
@@ -3859,7 +3926,7 @@ function uploadLevelOrRestart(restart=true)// функция обновлени�
     clearPressKey();
     calcQuantityPanzer();
     //initMap(JSON.parse(localStorage.getItem('gameMap')));
-    if (restart==false && levelGame<levelMap.length) levelGame++;
+    
     initMap(levelMap[levelGame-1]);
     
 //    initPanzers();
@@ -3869,8 +3936,11 @@ function uploadLevelOrRestart(restart=true)// функция обновлени�
 //    initBarrel();
     numPanzer=0;
     panzerArr[numPanzer].id=1;
-    let panz=copyPanz(panzerArr[numPanzer]);
-    panzerInGarageArr.push(panz);
+    if (restart==true)
+    {
+        let panz=copyPanz(panzerArr[numPanzer]);
+        panzerInGarageArr.push(panz);
+    }
     calcBalance(false,true);
     countIterationGameLoop=0;
     countBeforeUpload=0;
@@ -4190,15 +4260,18 @@ function calcMaxParams()
     let maxSpeed=0;
     let maxAccuracy=100;
     for (let i=0;i<panzerOption.length;i++)
+    if(i<6)
     {
         let buffer=panzerOption[i].maxHP;
         for (let j=0;j<3;j++)
         {
+            
             buffer*=1+panzerOption[i].mapUp.upHP.up[j]/100;
         }
         if (buffer>maxHP) maxHP=buffer;
     }
     for (let i=0;i<panzerOption.length;i++)
+    if(i<6)
     {
         let buffer=panzerOption[i].attackPatron==false ?
                             panzerOption[i].hitAttack:
@@ -4210,6 +4283,7 @@ function calcMaxParams()
         if (buffer>maxHit) maxHit=buffer;
     }
     for (let i=0;i<panzerOption.length;i++)
+    if(i<6)
     {
         let buffer=panzerOption[i].speed;
         for (let j=0;j<3;j++)
