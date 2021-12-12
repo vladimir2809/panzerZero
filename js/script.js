@@ -21,10 +21,10 @@ var quantityPanzerGroup1=0;//option[numOption].quantityPanzerGroup1;// коли�
 var visibleGame=option[numOption].visibleGame;// отображение игры
 var gamePlayer=option[numOption].gamePlayer;// играет ли игрок или игра идет автоматически
 var playerGan=0;// номер оружия у танка игрока
-var money=10000;// деньги игрока
+var money=100000;// деньги игрока
 var addMoney=0;
 var timeAddMoney=0;
-var levelPlayer=1;
+var levelPlayer=10;
 var levelGame=1;
 var levelXPValue=[1000,2500,5000,8000,12000,20000,30000,50000,];
 var XP=0;
@@ -65,10 +65,14 @@ var accuracyTest=1;
 var countShot=0;
 var countHits=0;
 var countTestMixShot=0;
+var countNewBonus=0;
 var viewTextInShop=false;
 var viewTextInGate=false;
 var viewTextInGarage=false;
 var lastNumGarage=0;
+var countLoopShot=0;
+var countShot=0;
+var flagShot=false;
 var lastShop={
     numShop:0,
     numEntrance:0,
@@ -212,6 +216,7 @@ var bonus={
     x:null,
     y:null,
     being:false,
+    count:0,
     type:null,
     width:mapSize,
     height:mapSize,
@@ -730,17 +735,17 @@ function drawAll()// нарисовать все
         }
         drawIconGan(playerGan);
         drawHPPlayer();
-        for (let i=0;i<shopImageArr.length;i++)
-        {
-            for (let j=0;j<shopImageArr[i].lineArr.length;j++)
-            {
-                context.beginPath();
-                context.strokeStyle="#00FF00";
-                context.moveTo(shopImageArr[i].lineArr[j].x,shopImageArr[i].lineArr[j].y); //передвигаем перо
-                context.lineTo(shopImageArr[i].lineArr[j].x1,shopImageArr[i].lineArr[j].y1); //рисуем линию
-                context.stroke();
-            }
-        }
+//        for (let i=0;i<shopImageArr.length;i++)
+//        {
+//            for (let j=0;j<shopImageArr[i].lineArr.length;j++)
+//            {
+//                context.beginPath();
+//                context.strokeStyle="#00FF00";
+//                context.moveTo(shopImageArr[i].lineArr[j].x,shopImageArr[i].lineArr[j].y); //передвигаем перо
+//                context.lineTo(shopImageArr[i].lineArr[j].x1,shopImageArr[i].lineArr[j].y1); //рисуем линию
+//                context.stroke();
+//            }
+//        }
         for (let i=0;i<panzerArr[numPanzer].lineArr.length;i++)
         {
             context.beginPath();
@@ -1079,10 +1084,15 @@ function gameLoop(mult,visible)// игровой цикл
         setText('Money',str,"#00FF00",screenWidth-53-str.length*10,95);
        // money++;
        // setText('Balance','HP1: '+panzerArr[0].HP+' HP2: '+panzerArr[1].HP,"#44FF44",10,y+stepY);
-        setText('XP','XP: '+XP+"/"+levelXPValue[levelPlayer-1],
-                                            "#FF0000",10,y+stepY);
-        setText('Balance','Balance: '+calcBalance(false),
-                calcBalance()<0?"#FF0000":"#00FF00",10,y+stepY*2);
+//        setText('XP','XP: '+XP+"/"+levelXPValue[levelPlayer-1],
+//                                            "#FF0000",10,y+stepY);
+//        setText('Balance','Balance: '+calcBalance(false),
+//                calcBalance()<0?"#FF0000":"#00FF00",10,y+stepY*2);
+// сделанно времено для подсчета количства выстрелов
+        setText("XP",'countLoop '+countLoopShot,"#44FF44",10,y+stepY);
+        setText('Balance',"countShoT "+countShot, "#FF0000",10,y+stepY*2);
+//        setText('Balance','Balance: '+calcBalance(false),
+//                calcBalance()<0?"#FF0000":"#00FF00",10,y+stepY*2);
         setText('Time','Time: '+Math.trunc(time),"#0000FF",10,y+stepY*3);
         if (checkInShop(numPanzer).num!=-1)
         {
@@ -1412,6 +1422,10 @@ function controlHuman()// управление программой челове
     {
         uploadLevelOrRestart(false);
     }
+    if (keyUpDuration("KeyL",100)) 
+    {
+        uploadLevelOrRestart(false,true);
+    }
     if (keyUpDuration("KeyH",100)) 
     {
         if (messageBox.open==false)messageBox.start("Выбирете что нужно сделать?","сесть","в гараж","отмена");
@@ -1638,6 +1652,22 @@ function panzerControll(num)// функция автоуправления та�
 {
     var dx=0;
     var dy=0;
+ //   var flagShot=false;
+    if (option[numOption].calcShotTime==true)
+    {
+        if (countLoopShot>0) 
+        {
+           countLoopShot--;
+           if (countLoopShot==0) 
+           {
+              flagShot=true; 
+              // alert('выстрелов за 100 тактов: '+countShot);
+              // countShot=0;
+           }
+        }
+    }
+    if (checkMouseLeft()==false) flagShot=false; 
+    if (flagShot==false)
     if (checkMouseLeft()==true && num==numPanzer &&panzerArr[num].being==true)// условие выстрела
         {
             calcPanzerShotXY(num);
@@ -1647,7 +1677,19 @@ function panzerControll(num)// функция автоуправления та�
                       mouseY-mouseOffsetY+camera.y,true))==false||playerGan!=3)
                     )
             {
-                
+                if (option[numOption].calcShotTime==true)
+                {
+                    if (countLoopShot==0)
+                    {
+                        countLoopShot=100;
+                        countShot=1;
+                    }
+                    else
+                    {
+                       // countLoopShot--;
+                        countShot++;
+                    }
+                }
                 shot(panzerArr[num].shotX,panzerArr[num].shotY,
                         panzerArr[num].angleTower+
                                 ((playerGan>=2)? 0:
@@ -2367,8 +2409,11 @@ function killPanzer(num)// убить танк
             case 4: XP+=750;break;
             case 5: XP+=1000;break;
         }
+        let x=Math.floor(panzerArr[num].x/mapSize)*mapSize;
+        let y=Math.floor(panzerArr[num].y/mapSize)*mapSize;
+        newBonus(x,y,randomInteger(1,4));
+        
     }
-    
 }
 function killBullet(num)// убить пулю
 {
@@ -3559,16 +3604,38 @@ function initPanzers()// функция инициализации танков
 }
 function bonusAppearance()
 {
-    for (let i=0;i<bonusArr.length;i++)
+//    for (let i=0;i<bonusArr.length;i++)
+//    {
+//        if (bonusArr[i].being==false)
+//        {
+//            bonusArr[i].count++;
+//            if (bonusArr[i].count>=option[numOption].maxCountBonus)
+//            {
+//                bonusArr[i].count=0;
+//                bonusOne=initNoMoveObject(1,bonus)[0];
+//                bonusOne.type=2;
+//                bonusArr[i]=bonusOne;
+//            }
+//        }
+//    }
+    countNewBonus++;
+    if (countNewBonus>=option[numOption].maxCountBonus)
     {
-        if (bonusArr[i].being==false)
-        {
-            bonusOne=initNoMoveObject(1,bonus)[0];
-            bonusOne.type=randomInteger(0,4);
-            bonusArr[i]=bonusOne;
-        }
+        countNewBonus=0;
+        bonusOne=initNoMoveObject(1,bonus)[0];
+        bonusOne.type=2;
+        bonusArr.push(bonusOne);
     }
    // console.log(bonusArr);
+}
+function newBonus(x,y,type)
+{
+    onusOne=initNoMoveObject(1,bonus)[0];
+    bonusOne.type=type;
+    bonusOne.x=x;
+    bonusOne.y=y;
+    
+    bonusArr.push(bonusOne);
 }
 function initOnePanzer(x,y,GR,type)
 {
@@ -3800,7 +3867,7 @@ function restartLevel()
     countBeforeUpload=0;
     playerGan=nextGan(1);
 }
-function uploadLevelOrRestart(restart=true)// функция обновления уровня после того как бой закончен
+function uploadLevelOrRestart(restart=true,loadBrowser=false)// функция обновления уровня после того как бой закончен
 {
 //    for (let i=0;i<panzerArr.length;i++)
 //    {
@@ -3825,7 +3892,7 @@ function uploadLevelOrRestart(restart=true)// функция обновлени�
     
     
     //let i=0;
-    if (restart==true)
+    if (restart==true||loadBrowser==true)
     {
         while (panzerArr.length>0)
         {
@@ -3925,10 +3992,15 @@ function uploadLevelOrRestart(restart=true)// функция обновлени�
     }
     clearPressKey();
     calcQuantityPanzer();
-    //initMap(JSON.parse(localStorage.getItem('gameMap')));
-    
-    initMap(levelMap[levelGame-1]);
-    
+    if (loadBrowser==true)
+    {
+        initMap(JSON.parse(localStorage.getItem('gameMap')));
+        playerGan=nextGan(1);
+    }
+    else
+    {
+        initMap(levelMap[levelGame-1]);
+    }
 //    initPanzers();
 //    initAllNoMoveObject();
 //    initBox();

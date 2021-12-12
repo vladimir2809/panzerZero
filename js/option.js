@@ -47,7 +47,7 @@
         attackPatron:false,
         timeAttack:1000/50,// время перезарядки
         timeAttackPatron:1000/580,// время перезарядки пулемята
-        hitAttack:10,
+        hitAttack:40,
         hitAttackPatron:1,
         maskGan:[1,0,0,0],
         speedReaction:60,// скорость реакции при виде врага
@@ -238,6 +238,8 @@ var option=[
         visibleGame:true,       
         gamePlayer:true,
         maxCountBase:[250,375,625,1000,1500,2250],
+        maxCountBonus:300,
+        calcShotTime:false,
     },
     {
         mapSize:40,
