@@ -691,26 +691,49 @@ shop={
                 {
                     listProduct[i].select=true;
                     let levelUp=panzerArr[numPanzer].mapUp[listProduct[i].id].levelUp;
+                    let levelOpen;
                     if (levelUp<3)
                     {
-                        this.labelText="Улучшить "+listProduct[i].text+
-                            " на "+
-                            panzerArr[numPanzer].mapUp[listProduct[i].id].up[levelUp]+
-                            ' процентов за '+
-                            panzerArr[numPanzer].mapUp[listProduct[i].id].price[levelUp]+
-                            "$.";
-                        //if (this.noMoneyLabel==true)
-                        if (money<panzerArr[numPanzer].mapUp[listProduct[i].id].price[levelUp])
-                        {
-                          this.labelText+=" Недостачно средств!";  
-                        }
+                        levelOpen=panzerArr[numPanzer].mapUp[listProduct[i].id].levelOpen[levelUp];
                     }
                     else
                     {
-                        this.labelText="Этот параметр нельзя больше увеличить";
+                        levelOpen=3;
                     }
+//                    if (levelOpen<=levelPlayer)
+//                    {
+                        if (levelUp<3 && levelOpen<=levelPlayer)
+                        {
+                            this.labelText="Улучшить "+listProduct[i].text+
+                                " на "+
+                                panzerArr[numPanzer].mapUp[listProduct[i].id].up[levelUp]+
+                                ' процентов за '+
+                                panzerArr[numPanzer].mapUp[listProduct[i].id].price[levelUp]+
+                                "$.";
+                            //if (this.noMoneyLabel==true)
+                            if (money<panzerArr[numPanzer].mapUp[listProduct[i].id].price[levelUp])
+                            {
+                              this.labelText+=" Недостачно средств!";  
+                            }
+                        }
+                        else if (levelUp>=3)
+                        {
+                            this.labelText="Этот параметр нельзя больше увеличить";
+                        }
+                        else if (levelOpen>levelPlayer)
+                        {
+                            this.labelText="Для того что бы увеличить этот "+
+                             "параметр достигнете уровня: "+levelOpen;
+                        }
+//                        else
+//                        {
+//                            this.labelText="Этот параметр нельзя больше увеличить";
+//                        }
+                   // }
                     if (mouseLeftClick())
-                    if (panzerArr[numPanzer].mapUp[listProduct[i].id].levelUp<3)
+                    if (panzerArr[numPanzer].mapUp[listProduct[i].id].levelUp<3 &&
+                            levelOpen<=levelPlayer
+                    )
                     {
                         let id=listProduct[i].id;
                         let levelUp=panzerArr[numPanzer].mapUp[id].levelUp;

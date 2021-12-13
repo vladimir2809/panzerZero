@@ -1083,14 +1083,20 @@ function gameLoop(mult,visible)// игровой цикл
         let str=money+"$";
         setText('Money',str,"#00FF00",screenWidth-53-str.length*10,95);
        // money++;
+       
        // setText('Balance','HP1: '+panzerArr[0].HP+' HP2: '+panzerArr[1].HP,"#44FF44",10,y+stepY);
-//        setText('XP','XP: '+XP+"/"+levelXPValue[levelPlayer-1],
-//                                            "#FF0000",10,y+stepY);
-//        setText('Balance','Balance: '+calcBalance(false),
-//                calcBalance()<0?"#FF0000":"#00FF00",10,y+stepY*2);
-// сделанно времено для подсчета количства выстрелов
-        setText("XP",'countLoop '+countLoopShot,"#44FF44",10,y+stepY);
-        setText('Balance',"countShoT "+countShot, "#FF0000",10,y+stepY*2);
+        if (option[numOption].calcShotTime==false)
+        {
+            setText('XP','XP: '+XP+"/"+levelXPValue[levelPlayer-1],
+                                                "#FF0000",10,y+stepY);
+            setText('Balance','Balance: '+calcBalance(false),
+                    calcBalance()<0?"#FF0000":"#00FF00",10,y+stepY*2);
+        }
+        else
+        {
+            setText("XP",'countLoop '+countLoopShot,"#44FF44",10,y+stepY);
+            setText('Balance',"countShoT "+countShot, "#FF0000",10,y+stepY*2);
+        }
 //        setText('Balance','Balance: '+calcBalance(false),
 //                calcBalance()<0?"#FF0000":"#00FF00",10,y+stepY*2);
         setText('Time','Time: '+Math.trunc(time),"#0000FF",10,y+stepY*3);
@@ -1282,7 +1288,11 @@ function gameLoop(mult,visible)// игровой цикл
             if (pause==false)
             {
                 controlBullets();
-                bonusAppearance();
+                if (( checkPressKey("KeyA")||checkPressKey("KeyS")||
+                    checkPressKey("KeyD")||checkPressKey("KeyW")))
+                {
+                 bonusAppearance();
+                }
                 burstService();
                 controlBase();
                 collisionPanzerKeyGate();

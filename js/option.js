@@ -11,24 +11,24 @@
         mixTowerY:7.5,
         mixTowerPosX:11,// координаты куда должна встать башня у корпуса
         mixTowerPosY:11,
-        speed:4,
+        speed:3,
         maxHP:100,
         DMG:1,
         attackPatron:true,
         timeAttack:1000/500,// время перезарядки
-        timeAttackPatron:1000/580,// время перезарядки пулемята
+        timeAttackPatron:1000/250,// время перезарядки пулемята
         hitAttack:10,
-        hitAttackPatron:1,
+        hitAttackPatron:2,
         maskGan:[0,1,0,0],
         speedReaction:70,// скорость реакции при виде врага
         timeReaction:1000/this.speedReaction,// время реакции
-        accuracy:85,// точность//точность
+        accuracy:84,// точность//точность
         mapUp:{
-            upHP:{up:[10,20,25],price:[35,50,100],levelUp:0},
-            upTimeAttack:{up:[10,15,20],price:[50,75,120],levelUp:0},
-            upHit:{up:[10,15,15],price:[30,50,75],levelUp:0},
-            upSpeed:{up:[10,20,30],price:[40,80,130],levelUp:0},
-            upAccuracy:{up:[10,20,25],price:[50,80,110],levelUp:0},
+            upHP:{up:[10,20,25],price:[35,50,100],levelOpen:[2,1,1],levelUp:0},
+            upTimeAttack:{up:[10,15,20],price:[50,75,120],levelOpen:[1,1,1],levelUp:0},
+            upHit:{up:[10,15,15],price:[30,50,75],levelOpen:[1,1,1],levelUp:0},
+            upSpeed:{up:[10,20,30],price:[40,80,130],levelOpen:[1,1,1],levelUp:0},
+            upAccuracy:{up:[10,20,25],price:[50,80,110],levelOpen:[1,1,1],levelUp:0},
         },
     },
     {
@@ -42,23 +42,23 @@
         mixTowerPosX:11,// координаты куда должна встать башня у корпуса
         mixTowerPosY:11,
         speed:3,
-        maxHP:150,
+        maxHP:100,
         DMG:1,
         attackPatron:false,
-        timeAttack:1000/50,// время перезарядки
+        timeAttack:1000/30,// время перезарядки
         timeAttackPatron:1000/580,// время перезарядки пулемята
-        hitAttack:40,
+        hitAttack:25,
         hitAttackPatron:1,
         maskGan:[1,0,0,0],
         speedReaction:60,// скорость реакции при виде врага
         timeReaction:1000/this.speedReaction,// время реакции
-        accuracy:100,// точность//точность
+        accuracy:85,// точность//точность
         mapUp:{
-            upHP:{up:[10,20,25],price:[35,50,100],levelUp:0},
-            upTimeAttack:{up:[10,15,20],price:[50,75,120],levelUp:0},
-            upHit:{up:[10,15,15],price:[30,50,75],levelUp:0},
-            upSpeed:{up:[10,20,30],price:[40,80,130],levelUp:0},
-            upAccuracy:{up:[10,20,25],price:[50,80,110],levelUp:0},
+            upHP:{up:[10,20,25],price:[35,50,100],levelOpen:[1,1,1],levelUp:0},
+            upTimeAttack:{up:[10,15,20],price:[50,75,120],levelOpen:[1,1,1],levelUp:0},
+            upHit:{up:[10,15,15],price:[30,50,75],levelOpen:[1,1,1],levelUp:0},
+            upSpeed:{up:[10,20,30],price:[40,80,130],levelOpen:[1,1,1],levelUp:0},
+            upAccuracy:{up:[10,20,25],price:[50,80,110],levelOpen:[1,1,1],levelUp:0},
         },
     },
     {
@@ -71,24 +71,24 @@
         mixTowerY:7.5,
         mixTowerPosX:13,// координаты куда должна встать башня у корпуса
         mixTowerPosY:13,
-        speed:8,
-        maxHP:200,
+        speed:5,
+        maxHP:140,
         DMG:1,
         attackPatron:true,
         timeAttack:1000/50,// время перезарядки
-        timeAttackPatron:1000/1000,// время перезарядки пулемята
+        timeAttackPatron:1000/500,// время перезарядки пулемята
         hitAttack:10,
-        hitAttackPatron:1,
+        hitAttackPatron:2,
         maskGan:[0,1,0,0],
         speedReaction:100,// скорость реакции при виде врага
         timeReaction:1000/this.speedReaction,// время реакции
-        accuracy:90,// точность//точность
+        accuracy:72,// точность//точность
         mapUp:{
-            upHP:{up:[10,20,25],price:[35,50,100],levelUp:0},
-            upTimeAttack:{up:[10,15,20],price:[50,75,120],levelUp:0},
-            upHit:{up:[10,15,15],price:[30,50,75],levelUp:0},
-            upSpeed:{up:[10,20,30],price:[40,80,130],levelUp:0},
-            upAccuracy:{up:[10,20,25],price:[50,80,110],levelUp:0},
+            upHP:{up:[10,20,25],price:[35,50,100],levelOpen:[1,1,1],levelUp:0},
+            upTimeAttack:{up:[10,15,20],price:[50,75,120],levelOpen:[1,1,1],levelUp:0},
+            upHit:{up:[10,15,15],price:[30,50,75],levelOpen:[1,1,1],levelUp:0},
+            upSpeed:{up:[10,20,30],price:[40,80,130],levelOpen:[1,1,1],levelUp:0},
+            upAccuracy:{up:[10,20,25],price:[50,80,110],levelOpen:[1,1,1],levelUp:0},
         },
     },
     {
@@ -102,23 +102,23 @@
         mixTowerPosX:14.5,// координаты куда должна встать башня у корпуса
         mixTowerPosY:14.5,
         speed:2,
-        maxHP:300,
+        maxHP:200,
         DMG:1,
         attackPatron:false,
-        timeAttack:1000/100,// время перезарядки
-        timeAttackPatron:1000/580,// время перезарядки пулемята
-        hitAttack:10,
-        hitAttackPatron:1,
+        timeAttack:1000/30,// время перезарядки
+        timeAttackPatron:1000/250,/// время перезарядки пулемята
+        hitAttack:35,
+        hitAttackPatron:2,
         maskGan:[1,1,0,0],
         speedReaction:100,// скорость реакции при виде врага
         timeReaction:1000/this.speedReaction,// время реакции
         accuracy:100,// точность//точность
         mapUp:{
-            upHP:{up:[10,20,25],price:[35,50,100],levelUp:0},
-            upTimeAttack:{up:[10,15,20],price:[50,75,120],levelUp:0},
-            upHit:{up:[10,15,15],price:[30,50,75],levelUp:0},
-            upSpeed:{up:[10,20,30],price:[40,80,130],levelUp:0},
-            upAccuracy:{up:[10,20,25],price:[50,80,110],levelUp:0},
+            upHP:{up:[10,20,25],price:[35,50,100],levelOpen:[1,1,1],levelUp:0},
+            upTimeAttack:{up:[10,15,20],price:[50,75,120],levelOpen:[1,1,1],levelUp:0},
+            upHit:{up:[10,15,15],price:[30,50,75],levelOpen:[1,1,1],levelUp:0},
+            upSpeed:{up:[10,20,30],price:[40,80,130],levelOpen:[1,1,1],levelUp:0},
+            upAccuracy:{up:[10,20,25],price:[50,80,110],levelOpen:[1,1,1],levelUp:0},
         },
     },
     {
@@ -132,23 +132,23 @@
         mixTowerPosX:17,// координаты куда должна встать башня у корпуса
         mixTowerPosY:17,
         speed:2,
-        maxHP:300,
+        maxHP:250,
         DMG:1,
         attackPatron:false,
-        timeAttack:1000/200,// время перезарядки
-        timeAttackPatron:1000/580,// время перезарядки пулемята
-        hitAttack:5,
+        timeAttack:1000/60,// время перезарядки
+        timeAttackPatron:1000/250,// время перезарядки пулемята
+        hitAttack:35,
         hitAttackPatron:1,
         maskGan:[1,0,0,0],
         speedReaction:100,// скорость реакции при виде врага
         timeReaction:1000/this.speedReaction,// время реакции
         accuracy:82,// точность//точность
         mapUp:{
-            upHP:{up:[10,20,25],price:[35,50,100],levelUp:0},
-            upTimeAttack:{up:[10,15,20],price:[50,75,120],levelUp:0},
-            upHit:{up:[10,15,15],price:[30,50,75],levelUp:0},
-            upSpeed:{up:[10,20,30],price:[40,80,130],levelUp:0},
-            upAccuracy:{up:[10,20,25],price:[50,80,110],levelUp:0},
+            upHP:{up:[10,20,25],price:[35,50,100],levelOpen:[1,1,1],levelUp:0},
+            upTimeAttack:{up:[10,15,20],price:[50,75,120],levelOpen:[1,1,1],levelUp:0},
+            upHit:{up:[10,15,15],price:[30,50,75],levelOpen:[1,1,1],levelUp:0},
+            upSpeed:{up:[10,20,30],price:[40,80,130],levelOpen:[1,1,1],levelUp:0},
+            upAccuracy:{up:[10,20,25],price:[50,80,110],levelOpen:[1,1,1],levelUp:0},
         },
     },
     {
@@ -162,23 +162,23 @@
         mixTowerPosX:17,// координаты куда должна встать башня у корпуса
         mixTowerPosY:17,
         speed:2,
-        maxHP:1000,
+        maxHP:350,
         DMG:1,
         attackPatron:false,
-        timeAttack:1000/50,// время перезарядки
-        timeAttackPatron:1000/580,// время перезарядки пулемята
-        hitAttack:15,
-        hitAttackPatron:1,
+        timeAttack:1000/30,// время перезарядки
+        timeAttackPatron:1000/250,// время перезарядки пулемята
+        hitAttack:100,
+        hitAttackPatron:2,
         maskGan:[1,1,1,1],
         speedReaction:100,// скорость реакции при виде врага
         timeReaction:1000/this.speedReaction,// время реакции
-        accuracy:70,// точность//точность
+        accuracy:85,// точность//точность
         mapUp:{
-            upHP:{up:[10,20,25],price:[35,50,100],levelUp:0},
-            upTimeAttack:{up:[10,15,20],price:[50,75,120],levelUp:0},
-            upHit:{up:[10,15,15],price:[30,50,75],levelUp:0},
-            upSpeed:{up:[10,20,30],price:[40,80,130],levelUp:0},
-            upAccuracy:{up:[10,20,25],price:[50,80,110],levelUp:0},
+            upHP:{up:[10,20,25],price:[35,50,100],levelOpen:[1,1,1],levelUp:0},
+            upTimeAttack:{up:[10,15,20],price:[50,75,120],levelOpen:[1,1,1],levelUp:0},
+            upHit:{up:[10,15,15],price:[30,50,75],levelOpen:[1,1,1],levelUp:0},
+            upSpeed:{up:[10,20,30],price:[40,80,130],levelOpen:[1,1,1],levelUp:0},
+            upAccuracy:{up:[10,20,25],price:[50,80,110],levelOpen:[1,1,1],levelUp:0},
         },
     },
     {
@@ -239,7 +239,7 @@ var option=[
         gamePlayer:true,
         maxCountBase:[250,375,625,1000,1500,2250],
         maxCountBonus:300,
-        calcShotTime:false,
+        calcShotTime:true,
     },
     {
         mapSize:40,
