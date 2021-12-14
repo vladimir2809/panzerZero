@@ -1274,7 +1274,7 @@ function gameLoop(mult,visible)// игровой цикл
                     else if (killGroupPanzer()==1 && killGroupPanzer()!=-1)
                     {
                         
-                        uploadLevelOrRestart();
+                        uploadLevelOrRestart(false);
                         console.log(panzerArr);
                         alert("YOU WIN!!!");
                     }
@@ -1422,7 +1422,8 @@ function controlHuman()// управление программой челове
     }
     if (keyUpDuration("KeyI",100)) 
     {
-        informationOfPanzer(numPanzer);
+      //  informationOfPanzer(numPanzer);
+        console.log(panzerArr);
     }
     if (keyUpDuration("KeyG",100)) 
     {
@@ -1436,6 +1437,10 @@ function controlHuman()// управление программой челове
     {
         uploadLevelOrRestart(false,true);
     }
+//    if (keyUpDuration("KeyI",100)) 
+//    {
+//        console.log(panzerArr);
+//    }
     if (keyUpDuration("KeyH",100)) 
     {
         if (messageBox.open==false)messageBox.start("Выбирете что нужно сделать?","сесть","в гараж","отмена");
@@ -3632,7 +3637,7 @@ function bonusAppearance()
     if (countNewBonus>=option[numOption].maxCountBonus)
     {
         countNewBonus=0;
-        bonusOne=initNoMoveObject(1,bonus)[0];
+        let  bonusOne=initNoMoveObject(1,bonus)[0];
         bonusOne.type=2;
         bonusArr.push(bonusOne);
     }
@@ -3640,7 +3645,7 @@ function bonusAppearance()
 }
 function newBonus(x,y,type)
 {
-    onusOne=initNoMoveObject(1,bonus)[0];
+    let bonusOne=initNoMoveObject(1,bonus)[0];
     bonusOne.type=type;
     bonusOne.x=x;
     bonusOne.y=y;
@@ -3670,7 +3675,7 @@ function initOnePanzer(x,y,GR,type)
         onePanzer.bodyNameImage=str.replace('body1','body2');;
     }           
     onePanzer.being=true;
-    onePanzer.maxHP=onePanzer.HP;
+    onePanzer.HP=onePanzer.maxHP;
     onePanzer.stopMove=false;
     onePanzer.angleTower=0;
     onePanzer.angleBody=0;
@@ -3966,6 +3971,10 @@ function uploadLevelOrRestart(restart=true,loadBrowser=false)// функция �
     while (gateArr.length>0)
     {
         gateArr.splice(0,1);
+    }
+    while (keyInStokArr.length>0)
+    {
+        keyInStokArr.splice(0,1);
     }
     while (shopImageArr.length>0)
     {
@@ -4334,7 +4343,7 @@ function calcBalance(absolute=true,maxPower=false)
     //return Math.trunc(powerGroup0-powerGroup1);
 
 }
-function calcMaxParams()
+function calcMaxParams(flag=false)
 {
     let maxHP=0;
     let maxTimeAttack=100;
@@ -4374,7 +4383,14 @@ function calcMaxParams()
         }
         if (buffer>maxSpeed) maxSpeed=buffer;
     }
-    return [maxHP,maxTimeAttack,maxHit,maxSpeed,maxAccuracy];
+    if (flag==false)
+    {
+        return [maxHP,maxTimeAttack,maxHit,maxSpeed,maxAccuracy];
+    }
+    else
+    {
+        return [maxHP,maxHit,maxSpeed,maxAccuracy];
+    }
 }
 function drawListProgressBar(valuesParam,arrMaxValuesParam,x,y,ofsX,ofsY,dy)
 {

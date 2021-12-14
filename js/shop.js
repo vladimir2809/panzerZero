@@ -27,6 +27,7 @@ shop={
     startI:0,
     sellPanzer:false,
     arrMaxValuesParam:[500,100,20,5,100],
+    arrMaxValuesParamTwo:[],
     valuesParam:[],
     labelCoord:{x:20,y:220,width:535,height:130},
     buttonPayPanz:{x:400,y:180,width:100,height:30,text:"Купить!"},
@@ -55,11 +56,15 @@ shop={
         {
             attackPatron=panzerArr[numPanz].attackPatron;
         }
-        let arrValuesName=["maxHP",attackPatron==false?"timeAttack":"timeAttackPatron",
-                                attackPatron==false?"hitAttack":"hitAttackPatron","speed",
-                                "accuracy"];
+        let arrValuesName;
+        arrValuesName=["maxHP",attackPatron==false?"timeAttack":"timeAttackPatron",
+                            attackPatron==false?"hitAttack":"hitAttackPatron","speed",
+                            "accuracy"];
+        
         if (numPanz==-1)
         {
+            
+       
             for (let i=0;i<arrValuesName.length;i++)
             {
                 for (let attr in listProduct[startI].option)
@@ -84,13 +89,31 @@ shop={
         }
         else if(numPanz!=-1)
         {
-            for (let i=0;i<arrValuesName.length;i++)
+//            if ((panzerArr[numPanz].numType==0||
+//                    panzerArr[numPanz].numType==2)&&
+//                    attr=='u'    
+//                    )
+            if (( panzerArr[numPanz].numType==0 ||  panzerArr[numPanz].numType==2))
             {
+                arrValuesName=["maxHP",attackPatron==false?"hitAttack":"hitAttackPatron",
+                    "speed",    "accuracy"];
+            }
+            for (let i=0;i<arrValuesName.length;i++)
+            { 
+//                if  ( ( panzerArr[numPanz].numType==0 ||  panzerArr[numPanz].numType==2)&&
+//                          (arrValuesName[i]=="timeAttack"||arrValuesName[i]=="timeAttackPatron")
+//                        )
+//                {
+//                    continue;
+//                }
                 for (let attr in panzerArr[numPanz])
                 {
+                   
                     if (""+attr===arrValuesName[i] && arrValuesName[i].length==""+attr.length)
                     {
+                      
                         if (arrValuesName[i]=="timeAttack"||arrValuesName[i]=="timeAttackPatron")
+                           
                         {             
                                 this.valuesParam.push(100/panzerArr[numPanz][attr]);   
                         }
@@ -106,6 +129,7 @@ shop={
                 }
             }
         }
+        //console.log(this.valuesParam);
 //        console.log(numPanz);
 //        console.log(this.valuesParam);
     },
@@ -132,6 +156,7 @@ shop={
         //this.clearListProduct();
         this.startNumProduct=0;
         this.arrMaxValuesParam=calcMaxParams();
+        this.arrMaxValuesParamTwo=calcMaxParams(true);
         
         this.createListProduct();
       //  this.calcValuesParam(0);
@@ -377,7 +402,14 @@ shop={
 //                             this.x+180+j*20,this.y+48+(25+8)*i,camera,scale);
                 }
                 this.calcValuesParam(2,numPanzer);
-                drawListProgressBar(this.valuesParam,this.arrMaxValuesParam,this.x,this.y,350,50,33);
+                if (( panzerArr[numPanzer].numType==0 ||  panzerArr[numPanzer].numType==2))
+                {
+                    drawListProgressBar(this.valuesParam,this.arrMaxValuesParamTwo,this.x,this.y,350,50,33);
+                }
+                else
+                {    
+                    drawListProgressBar(this.valuesParam,this.arrMaxValuesParam,this.x,this.y,350,50,33);
+                }
 //                if (listProduct[i].select==true)
 //                {
 //                    this.labelText="Улучшить";
@@ -1006,6 +1038,14 @@ shop={
         {
             if (shopProduct[i].category==this.tabMenu)         
             {
+                if (this.tabMenu==2 &&
+                    ( panzerArr[numPanzer].numType==0||
+                      panzerArr[numPanzer].numType==2)&&
+                      shopProduct[i].id=="upTimeAttack"  
+                    )
+                {
+                    continue;
+                }
                 if (this.tabMenu==0)
                 {
                     let flag=false;

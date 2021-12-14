@@ -239,7 +239,7 @@ var option=[
         gamePlayer:true,
         maxCountBase:[250,375,625,1000,1500,2250],
         maxCountBonus:300,
-        calcShotTime:true,
+        calcShotTime:false,
     },
     {
         mapSize:40,
