@@ -21,10 +21,10 @@ var quantityPanzerGroup1=0;//option[numOption].quantityPanzerGroup1;// коли�
 var visibleGame=option[numOption].visibleGame;// отображение игры
 var gamePlayer=option[numOption].gamePlayer;// играет ли игрок или игра идет автоматически
 var playerGan=0;// номер оружия у танка игрока
-var money=100000;// деньги игрока
+var money=option[numOption].startMoney;// деньги игрока
 var addMoney=0;
 var timeAddMoney=0;
-var levelPlayer=10;
+var levelPlayer=2;
 var levelGame=1;
 var levelXPValue=[1000,2500,5000,8000,12000,20000,30000,50000,];
 var XP=0;
@@ -480,6 +480,7 @@ function preload()// функция предзагрузки
     let timeNow=new Date().getTime()
     srand(timeNow);
     loadImageArr();   
+   // getDataGoogleSheets();
     console.log(option[numOption].typePanzerArrGR0);
     addText('QuantityGan',"12px Arial","#0000FFAA","win",635,110);
     //addText('Shot/Hits',"18px Arial","#00FF00","win",100,100);
@@ -492,7 +493,7 @@ function preload()// функция предзагрузки
     //Howler.autoUnlock = false;
     audio = new Howl({
         src: ['sound/sound.mp3'],
-        volume: 1,
+        volume: 0.4,
         sprite:{
             patron:[1,1418],
             shot: [5000,1613],
@@ -1062,6 +1063,7 @@ function gameLoop(mult,visible)// игровой цикл
     let countUpload=1000;
     let countIter=visible==true?mult:mult*(countUpload/mult)*multIter;
     let countBreak=0;
+    timeOld=new Date().getTime();
 //    if (imageLoad==true && countIterationGameLoop==0 ) 
 //    {
 //        console.log('good');
@@ -1196,29 +1198,30 @@ function gameLoop(mult,visible)// игровой цикл
             }
            // calibrationAccuracy();
 
-            if (keyUpDuration('KeyP',300))
-            {
-                restartLevel();
-            }
-            if (keyUpDuration('KeyV',300)) // вкл\выкл отображение игры
-            {
-                if (flagPressV==false)
+//            if (keyUpDuration('KeyP',300))
+//            {
+//                restartLevel();
+//            }
+            if (false)
+            {    
+                if (keyUpDuration('KeyV',300)) // вкл\выкл отображение игры
                 {
-                    visibleGame=!visibleGame;
-                    flagPressV=true;
-                    uploadLevelOrRestart();
-//                    countIterationGameLoop=0;
-//                    countBeforeUpload=0;
-                 }
+                    if (flagPressV==false)
+                    {
+                        visibleGame=!visibleGame;
+                        flagPressV=true;
+                        uploadLevelOrRestart();
+        //                    countIterationGameLoop=0;
+        //                    countBeforeUpload=0;
+                     }
+                }
+                else
+                {
+                    flagPressV=false;
+                }
             }
-            else
-            {
-                flagPressV=false;
-            }
-            timeNow=new Date().getTime();
-            time=timeNow-timeOld;
             if (shop.open==false && boxWindowSelect.open==false) timeAddMoney+=time;
-            timeOld=new Date().getTime();
+            
            //if (countIterationGameLoop>countUpload) // условия обновления уровня       
             if (killGroupPanzer()!=-1)
             {
@@ -1271,7 +1274,9 @@ function gameLoop(mult,visible)// игровой цикл
                             }
                         }
                     }
-                    else if (killGroupPanzer()==1 && killGroupPanzer()!=-1)
+                    else if (killGroupPanzer()==1 && killGroupPanzer()!=-1&&
+                            checkKillBaseAll()==true
+                            )
                     {
                         
                         uploadLevelOrRestart(false);
@@ -1303,7 +1308,10 @@ function gameLoop(mult,visible)// игровой цикл
 
         }
     }
-    setTimeout(gameLoop,30,option[numOption].speedGame,visibleGame);
+    timeNow=new Date().getTime();
+    time=timeNow-timeOld;
+    let timeLoop=16;
+    setTimeout(gameLoop,time<timeLoop?timeLoop-time:1,option[numOption].speedGame,visibleGame);
 }
 function controlEnabled(obj)
 {
@@ -1415,48 +1423,10 @@ function controlHuman()// управление программой челове
         }
               
     }  
-        //    console.log("sosiska");
-    if (keyUpDuration("KeyK",100))
-    {
-        panzerArr[numPanzer].being=false;
-    }
-    if (keyUpDuration("KeyI",100)) 
-    {
-      //  informationOfPanzer(numPanzer);
-        console.log(panzerArr);
-    }
     if (keyUpDuration("KeyG",100)) 
     {
         if (garage.open==false)garage.start();
-    }
-    if (keyUpDuration("KeyN",100)) 
-    {
-        uploadLevelOrRestart(false);
-    }
-    if (keyUpDuration("KeyL",100)) 
-    {
-        uploadLevelOrRestart(false,true);
-    }
-//    if (keyUpDuration("KeyI",100)) 
-//    {
-//        console.log(panzerArr);
-//    }
-    if (keyUpDuration("KeyH",100)) 
-    {
-        if (messageBox.open==false)messageBox.start("Выбирете что нужно сделать?","сесть","в гараж","отмена");
-    }
-    if (keyUpDuration("Space",100)) 
-    {
-        nextNumPanzer(true);
-    }
-    if (keyUpDuration("NumpadSubtract",100)) 
-    {
-        scale=camera.scaling(-1,scale);
-    }
-    if (keyUpDuration("NumpadAdd",100)) 
-    {
-        scale=camera.scaling(1,scale);
-    }
+    }//    console.log("sosiska");
     if (keyUpDuration("Digit2",100)) 
     {
         playerGan=0;
@@ -1465,35 +1435,16 @@ function controlHuman()// управление программой челове
     {
         playerGan=1;
     }
-     if (keyUpDuration("Numpad1",100)) 
-    {
-        option[numOption].speedGame=1;
-    }
-    if (keyUpDuration("Numpad2",100)) 
-    {
-        option[numOption].speedGame=12;
-    }
-    if (keyUpDuration("Numpad3",100)) 
-    {
-        option[numOption].speedGame=100;
-    }
     if (shop.open==false && checkPressKey("KeyM")) 
     {
           shop.start(0);
     }
-    if (boxWindowSelect.open==false && checkPressKey("KeyB")) 
-    {
-         boxWindowSelect.start();
-    }
     let resWhell=checkWheel();
     if (resWhell==-1) 
-    {    //                      attackPatron
+    {    
         if (panzerArr[numPanzer].attackPatron==false)
         {
             playerGan=nextGan(-1);
-//            playerGan--;
-//            if (playerGan==-1) playerGan=1;
-         //    playerGan%=2;
         }
         else
         {
@@ -1503,18 +1454,70 @@ function controlHuman()// управление программой челове
     }
     if (resWhell==1) // если сработало колесико мыши
     {
-       // if (panzerArr[numPanzer].attackPatron==false)
-        {
-//            playerGan++;
-//            playerGan%=4;
             playerGan=nextGan(1);
-        }
-      //  else
+    }
+    if (keyUpDuration("KeyN",100)) 
         {
-       ///     playerGan=1;
+            uploadLevelOrRestart(false);
+        }
+    if (keyUpDuration("KeyK",100))
+        {
+            panzerArr[numPanzer].being=false;
+        }
+    if (false)
+    {
+        
+        if (keyUpDuration("KeyI",100)) 
+        {
+          //  informationOfPanzer(numPanzer);
+            console.log(panzerArr);
         }
 
+        
+        if (keyUpDuration("KeyL",100)) 
+        {
+            uploadLevelOrRestart(false,true);
+        }
+    //    if (keyUpDuration("KeyI",100)) 
+    //    {
+    //        console.log(panzerArr);
+    //    }
+        if (keyUpDuration("KeyH",100)) 
+        {
+            if (messageBox.open==false)messageBox.start("Выбирете что нужно сделать?","сесть","в гараж","отмена");
+        }
+        if (keyUpDuration("Space",100)) 
+        {
+            nextNumPanzer(true);
+        }
+        if (keyUpDuration("NumpadSubtract",100)) 
+        {
+            scale=camera.scaling(-1,scale);
+        }
+        if (keyUpDuration("NumpadAdd",100)) 
+        {
+            scale=camera.scaling(1,scale);
+        }
+
+         if (keyUpDuration("Numpad1",100)) 
+        {
+            option[numOption].speedGame=1;
+        }
+        if (keyUpDuration("Numpad2",100)) 
+        {
+            option[numOption].speedGame=12;
+        }
+        if (keyUpDuration("Numpad3",100)) 
+        {
+            option[numOption].speedGame=100;
+        }
+
+        if (boxWindowSelect.open==false && checkPressKey("KeyB")) 
+        {
+             boxWindowSelect.start();
+        }
     }
+    
    
 }
 function nextGan(dir)
@@ -2480,7 +2483,7 @@ function attackPanzerBigBurst(x,y,hitBurst,distBurst)
                 if(panzerArr[i].HP<=0 /*&& j!=0*/) 
                 {
                     killPanzer(i);
-                    if  (i==numPanzer)   nextNumPanzer();
+                   // if  (i==numPanzer)   nextNumPanzer();
                 }
             }
         }
@@ -2765,8 +2768,11 @@ function collisionPanzerBonus(num)// столкновения танка с ящ
             switch (bonusArr[index].type)
             {
                 case 0: boxWindowSelect.start();break;
-                case 1: XP+=randomInteger(1,10)*100;break
-                case 2: money+=randomInteger(1,10)*100;break;
+                case 1: XP+=option[numOption].addBonusXP;
+                // XP+=randomInteger(1,10)*100;
+                break
+                case 2: money+=option[numOption].addBonusMoney;//randomInteger(1,10)*100;
+                    break;
                 case 3: ganQuantityArr[1]+=randomInteger(1,50);break;
                 case 4: ganQuantityArr[0]+=randomInteger(1,5);break;
                     
@@ -4018,7 +4024,9 @@ function uploadLevelOrRestart(restart=true,loadBrowser=false)// функция �
     }
     else
     {
+        if (restart==true) levelGame=1;
         initMap(levelMap[levelGame-1]);
+        if (levelGame==1) money=option[numOption].startMoney;
     }
 //    initPanzers();
 //    initAllNoMoveObject();
@@ -4026,7 +4034,7 @@ function uploadLevelOrRestart(restart=true,loadBrowser=false)// функция �
 //    initWall();
 //    initBarrel();
     numPanzer=0;
-    panzerArr[numPanzer].id=1;
+//    panzerArr[numPanzer].id=1;
     if (restart==true)
     {
         let panz=copyPanz(panzerArr[numPanzer]);
@@ -4349,7 +4357,7 @@ function calcMaxParams(flag=false)
     let maxTimeAttack=100;
     let maxHit=0;
     let maxSpeed=0;
-    let maxAccuracy=100;
+    let maxAccuracy=0;
     for (let i=0;i<panzerOption.length;i++)
     if(i<6)
     {
@@ -4383,6 +4391,19 @@ function calcMaxParams(flag=false)
         }
         if (buffer>maxSpeed) maxSpeed=buffer;
     }
+    for (let i=0;i<panzerOption.length;i++)
+    if(i<6)
+    {
+        let buffer=panzerOption[i].accuracy;
+        for (let j=0;j<3;j++)
+        {
+            let value=panzerOption[i].mapUp.upAccuracy.up[j]/100;
+            buffer/=100;
+            buffer=(buffer+value)-buffer*value;
+            buffer*=100;
+        }
+        if (buffer>maxAccuracy) maxAccuracy=buffer;
+    }
     if (flag==false)
     {
         return [maxHP,maxTimeAttack,maxHit,maxSpeed,maxAccuracy];
@@ -4404,6 +4425,15 @@ function drawListProgressBar(valuesParam,arrMaxValuesParam,x,y,ofsX,ofsY,dy)
 
     }    
 }
+function checkKillBaseAll()
+{
+    for (let i=0;i<baseImageArr.length;i++)
+    {
+        if(baseImageArr[i].being==true) return false;
+    }
+    return true;
+}
+
 function killGroupPanzer()// вычесление какая группа танков убита
 {
     let countGroup0=0;

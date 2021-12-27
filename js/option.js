@@ -24,11 +24,11 @@
         timeReaction:1000/this.speedReaction,// время реакции
         accuracy:84,// точность//точность
         mapUp:{
-            upHP:{up:[10,20,25],price:[35,50,100],levelOpen:[2,1,1],levelUp:0},
-            upTimeAttack:{up:[10,15,20],price:[50,75,120],levelOpen:[1,1,1],levelUp:0},
-            upHit:{up:[10,15,15],price:[30,50,75],levelOpen:[1,1,1],levelUp:0},
-            upSpeed:{up:[10,20,30],price:[40,80,130],levelOpen:[1,1,1],levelUp:0},
-            upAccuracy:{up:[10,20,25],price:[50,80,110],levelOpen:[1,1,1],levelUp:0},
+            upHP:{up:[5,10,15],price:[25,80,165],levelOpen:[2,3,4],levelUp:0},
+            upTimeAttack:{up:[5,10,15],price:[25,80,165],levelOpen:[2,3,4],levelUp:0},
+            upHit:{up:[5,10,15],price:[25,80,165],levelOpen:[2,3,4],levelUp:0},
+            upSpeed:{up:[5,10,15],price:[25,80,165],levelOpen:[2,3,4],levelUp:0},
+            upAccuracy:{up:[10,20,30],price:[25,80,165],levelOpen:[2,3,4],levelUp:0},
         },
     },
     {
@@ -54,11 +54,11 @@
         timeReaction:1000/this.speedReaction,// время реакции
         accuracy:85,// точность//точность
         mapUp:{
-            upHP:{up:[10,20,25],price:[35,50,100],levelOpen:[1,1,1],levelUp:0},
-            upTimeAttack:{up:[10,15,20],price:[50,75,120],levelOpen:[1,1,1],levelUp:0},
-            upHit:{up:[10,15,15],price:[30,50,75],levelOpen:[1,1,1],levelUp:0},
-            upSpeed:{up:[10,20,30],price:[40,80,130],levelOpen:[1,1,1],levelUp:0},
-            upAccuracy:{up:[10,20,25],price:[50,80,110],levelOpen:[1,1,1],levelUp:0},
+            upHP:{up:[5,10,15],price:[40,120,250],levelOpen:[3,4,5],levelUp:0},
+            upTimeAttack:{up:[5,10,15],price:[40,120,250],levelOpen:[3,4,5],levelUp:0},
+            upHit:{up:[5,10,15],price:[40,120,250],levelOpen:[3,4,5],levelUp:0},
+            upSpeed:{up:[5,10,15],price:[40,120,250],levelOpen:[3,4,5],levelUp:0},
+            upAccuracy:{up:[10,20,30],price:[40,120,250],levelOpen:[3,4,5],levelUp:0},
         },
     },
     {
@@ -84,11 +84,11 @@
         timeReaction:1000/this.speedReaction,// время реакции
         accuracy:72,// точность//точность
         mapUp:{
-            upHP:{up:[10,20,25],price:[35,50,100],levelOpen:[1,1,1],levelUp:0},
-            upTimeAttack:{up:[10,15,20],price:[50,75,120],levelOpen:[1,1,1],levelUp:0},
-            upHit:{up:[10,15,15],price:[30,50,75],levelOpen:[1,1,1],levelUp:0},
-            upSpeed:{up:[10,20,30],price:[40,80,130],levelOpen:[1,1,1],levelUp:0},
-            upAccuracy:{up:[10,20,25],price:[50,80,110],levelOpen:[1,1,1],levelUp:0},
+            upHP:{up:[5,10,15],price:[60,200,400],levelOpen:[4,5,6],levelUp:0},
+            upTimeAttack:{up:[5,10,15],price:[60,200,400],levelOpen:[4,5,6],levelUp:0},
+            upHit:{up:[5,10,15],price:[60,200,400],levelOpen:[4,5,6],levelUp:0},
+            upSpeed:{up:[5,10,15],price:[60,200,400],levelOpen:[4,5,6],levelUp:0},
+            upAccuracy:{up:[10,20,30],price:[60,200,400],levelOpen:[4,5,6],levelUp:0},
         },
     },
     {
@@ -114,11 +114,11 @@
         timeReaction:1000/this.speedReaction,// время реакции
         accuracy:100,// точность//точность
         mapUp:{
-            upHP:{up:[10,20,25],price:[35,50,100],levelOpen:[1,1,1],levelUp:0},
-            upTimeAttack:{up:[10,15,20],price:[50,75,120],levelOpen:[1,1,1],levelUp:0},
-            upHit:{up:[10,15,15],price:[30,50,75],levelOpen:[1,1,1],levelUp:0},
-            upSpeed:{up:[10,20,30],price:[40,80,130],levelOpen:[1,1,1],levelUp:0},
-            upAccuracy:{up:[10,20,25],price:[50,80,110],levelOpen:[1,1,1],levelUp:0},
+            upHP:{up:[5,10,15],price:[100,300,650],levelOpen:[5,6,7],levelUp:0},
+            upTimeAttack:{up:[5,10,15],price:[100,300,650],levelOpen:[5,6,7],levelUp:0},
+            upHit:{up:[5,10,15],price:[100,300,650],levelOpen:[5,6,7],levelUp:0},
+            upSpeed:{up:[5,10,15],price:[100,300,650],levelOpen:[5,6,7],levelUp:0},
+            upAccuracy:{up:[10,20,30],price:[100,300,650],levelOpen:[5,6,7],levelUp:0},
         },
     },
     {
@@ -144,11 +144,11 @@
         timeReaction:1000/this.speedReaction,// время реакции
         accuracy:82,// точность//точность
         mapUp:{
-            upHP:{up:[10,20,25],price:[35,50,100],levelOpen:[1,1,1],levelUp:0},
-            upTimeAttack:{up:[10,15,20],price:[50,75,120],levelOpen:[1,1,1],levelUp:0},
-            upHit:{up:[10,15,15],price:[30,50,75],levelOpen:[1,1,1],levelUp:0},
-            upSpeed:{up:[10,20,30],price:[40,80,130],levelOpen:[1,1,1],levelUp:0},
-            upAccuracy:{up:[10,20,25],price:[50,80,110],levelOpen:[1,1,1],levelUp:0},
+            upHP:{up:[5,10,15],price:[150,460,1000],levelOpen:[6,7,8],levelUp:0},
+            upTimeAttack:{up:[5,10,15],price:[150,460,1000],levelOpen:[6,7,8],levelUp:0},
+            upHit:{up:[5,10,15],price:[150,460,1000],levelOpen:[6,7,8],levelUp:0},
+            upSpeed:{up:[5,10,15],price:[150,460,1000],levelOpen:[6,7,8],levelUp:0},
+            upAccuracy:{up:[10,20,30],price:[150,460,1000],levelOpen:[6,7,8],levelUp:0},
         },
     },
     {
@@ -174,11 +174,11 @@
         timeReaction:1000/this.speedReaction,// время реакции
         accuracy:85,// точность//точность
         mapUp:{
-            upHP:{up:[10,20,25],price:[35,50,100],levelOpen:[1,1,1],levelUp:0},
-            upTimeAttack:{up:[10,15,20],price:[50,75,120],levelOpen:[1,1,1],levelUp:0},
-            upHit:{up:[10,15,15],price:[30,50,75],levelOpen:[1,1,1],levelUp:0},
-            upSpeed:{up:[10,20,30],price:[40,80,130],levelOpen:[1,1,1],levelUp:0},
-            upAccuracy:{up:[10,20,25],price:[50,80,110],levelOpen:[1,1,1],levelUp:0},
+            upHP:{up:[5,10,15],price:[250,775,1500],levelOpen:[7,8,9],levelUp:0},
+            upTimeAttack:{up:[5,10,15],price:[250,775,1500],levelOpen:[7,8,9],levelUp:0},
+            upHit:{up:[5,10,15],price:[250,775,1500],levelOpen:[7,8,9],levelUp:0},
+            upSpeed:{up:[5,10,15],price:[250,775,1500],levelOpen:[7,8,9],levelUp:0},
+            upAccuracy:{up:[10,20,30],price:[250,775,1500],levelOpen:[7,8,9],levelUp:0},
         },
     },
     {
@@ -237,6 +237,11 @@ var option=[
         numPanzer:0,
         visibleGame:true,       
         gamePlayer:true,
+        startXP:0,
+        startMoney:1000,
+        
+        addBonusXP:100,
+        addBonusMoney:50,
         maxCountBase:[250,375,625,1000,1500,2250],
         maxCountBonus:300,
         calcShotTime:false,

@@ -807,15 +807,22 @@ shop={
                                 break;
                                 case "upAccuracy":
                                 {
-                                    //let value=panzerArr[numPanzer].mapUp[id].up[levelUp];
-                                    if (panzerArr[numPanzer].accuracy*(1+value/100)<100)
-                                    {
-                                        panzerArr[numPanzer].accuracy*=1+value/100;
-                                    }
-                                    else
-                                    {
-                                        panzerArr[numPanzer].accuracy=100;
-                                    }    
+                                    let value=panzerArr[numPanzer].mapUp[id].up[levelUp];
+                                    let buffer=panzerArr[numPanzer].accuracy
+                                    value/=100;
+                                    //let value=panzerOption[i].mapUp.upAccuracy.up[j]/100;
+                                    buffer/=100;
+                                    buffer=(buffer+value)-buffer*value;
+                                    buffer*=100;
+                                    panzerArr[numPanzer].accuracy=buffer;
+//                                    if (panzerArr[numPanzer].accuracy*(1+value/100)<100)
+//                                    {
+//                                        panzerArr[numPanzer].accuracy*=1+value/100;
+//                                    }
+//                                    else
+//                                    {
+//                                        panzerArr[numPanzer].accuracy=100;
+//                                    }    
                                 }
                                 break;
                                 

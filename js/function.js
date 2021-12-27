@@ -232,3 +232,15 @@ function downloadAsFile(data)
       a.download = "example.txt";
       a.click();
     }
+function getDataGoogleSheets()
+{
+    jQuery(document).ready(function() {
+
+
+        $.getJSON(
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vRR-7IEcj5J9Cpg5PunkAnOrhOOMuHTgF9zN8C-UxCJsJF54Gsp0yJ8TP2hfREgtxO_RrrdsbXfbVoU/pubhtml",
+        function(data)        {
+            console.log(data);
+        });
+  });
+}
