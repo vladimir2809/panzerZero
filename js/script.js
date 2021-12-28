@@ -24,7 +24,7 @@ var playerGan=0;// номер оружия у танка игрока
 var money=option[numOption].startMoney;// деньги игрока
 var addMoney=0;
 var timeAddMoney=0;
-var levelPlayer=2;
+var levelPlayer=1;
 var levelGame=1;
 var levelXPValue=[1000,2500,5000,8000,12000,20000,30000,50000,];
 var XP=0;
@@ -373,7 +373,15 @@ text={
     str:'',
     font:'',
 }
-
+bigText={
+    being:false,
+    count:0,
+    maxCount:0,
+    str:'',
+    color:"#FF0000",
+    value:null,
+    
+}
 bonusArr=[];//массив яшиков
 wallArr=[];// массив стен
 gateArr=[];//массив дверей
@@ -557,8 +565,10 @@ function create ()// функция создание обьектов неоюх
         //initBarrel();
         numPanzer=0;
         playerGan=nextGan(1);
-        panzerArr[numPanzer].id=1;
+       // panzerArr[numPanzer].id=1;
         let panz=copyPanz(panzerArr[numPanzer]);
+        console.log("panz start");
+        console.log(panz);
         panzerInGarageArr.push(panz);
         loadLevel=true;
        // alert(panzerArr[numPanzer].id);
@@ -727,6 +737,15 @@ function drawAll()// нарисовать все
                    drawKeyForGate(keyInStokArr[i],false,20,50+20*i);
                 }
                 
+            }
+            if (bigText.being==true)
+            {
+                context.font = "38px Arial";
+                context.fillStyle=bigText.color;
+                
+                let widthText=context.measureText(bigText.str).width+10;
+                let x=screenWidth/2-widthText/2;
+                context.fillText(bigText.str,x,280);
             }
         }
         for (key in textArr)
@@ -1051,6 +1070,35 @@ function drawKeyForGate(keyGate,rect=true,xx=-1,yy=-1)
     //context.stroke();
 }
 //function playSoundTrack
+function initBigText(str,color,maxCount,value)
+{
+    bigText.being=true;
+    bigText.str=str;
+    bigText.color=color;
+    bigText.maxCount=maxCount;
+    bigText.value=value;
+    pause=true;
+    
+}
+function controlBigText()
+{
+    if (bigText.being==true)
+    {
+        bigText.count++;
+       // pause=true;
+        if (bigText.count>=bigText.maxCount)
+        {
+            bigText.being=false;
+            pause=false;
+            bigText.count=0;
+            switch (bigText.value)
+            {
+                case 1: uploadLevelOrRestart(false);break;
+                case 2: uploadLevelOrRestart(); break;
+            }
+        }
+    }
+}
 function messageCenterScreen(str)
 {
     let countPix=context.measureText(str).width;
@@ -1183,7 +1231,7 @@ function gameLoop(mult,visible)// игровой цикл
                 panzerArr[numPanzer].y+panzerArr[numPanzer].mixTowerPosY,map);
         for (let k=0;k<countIter;k++ )// цикл в котором может несколько раз произоити игровые действия
         {
-           
+            controlBigText();
             for (let i=0;i<panzerArr.length; i++)// тики танков
             {
                 if (panzerArr[i].being==true && pause==false 
@@ -1243,7 +1291,9 @@ function gameLoop(mult,visible)// игровой цикл
                                                                 panzerInGarageArr);
                           //deleteElemArrToNum
                         //    alert(num+" "+panzerArr[numPanzer].id+" "+panzerInGarageArr[0].id);
+                        //    alert (num);
                             deleteElemArrToNum(panzerInGarageArr,num);
+                            let flag=false;
                             if (panzerInGarageArr.length>0 &&
                                                 garageImageArr.length>0)
                             {
@@ -1259,7 +1309,9 @@ function gameLoop(mult,visible)// игровой цикл
                                     }
                                     else
                                     {
-                                        uploadLevelOrRestart();
+                                       // uploadLevelOrRestart();
+                                       flag=true;
+                                       // 
                                         //console.log(panzerArr);
                                    //     alert("Game Over");
                                     }
@@ -1269,7 +1321,12 @@ function gameLoop(mult,visible)// игровой цикл
                                 else
                                 {
                                   //  alert("Game Over");
-                                    uploadLevelOrRestart();
+                                 //   uploadLevelOrRestart();
+                                    flag=true;
+                                }
+                                if (flag==true)
+                                {
+                                    initBigText("Вы проиграли","#FF0000",130,2);
                                 }
                             }
                         }
@@ -1278,10 +1335,11 @@ function gameLoop(mult,visible)// игровой цикл
                             checkKillBaseAll()==true
                             )
                     {
+                        initBigText("Уровень пройден","#00FF00",130,1);
                         
-                        uploadLevelOrRestart(false);
                         console.log(panzerArr);
-                        alert("YOU WIN!!!");
+                        
+//                        alert("YOU WIN!!!");
                     }
 //                    countIterationGameLoop=0;
 //                    countBeforeUpload=0;
@@ -1303,6 +1361,7 @@ function gameLoop(mult,visible)// игровой цикл
                 collisionPanzerKeyGate();
                 countIterationGameLoop++;
             }
+            
             
 
 

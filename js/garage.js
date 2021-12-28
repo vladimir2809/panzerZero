@@ -33,6 +33,9 @@ garage={
         pause=true;
         resetMouseLeft();
         this.open=true;
+        this.numPanz=0;
+        //this.numPanz++;
+        //this.numPanz%=panzerInGarageArr.length;
 //       if (panzerInGarageArr.length==0)
 //        {
 ////            panzerInGarageArr.push(panzerArr[numPanzer]);
