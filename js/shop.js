@@ -16,7 +16,7 @@ shop={
     widthProduct:500,
     heightProduct:30,
     startNumProduct:0,
-    tabText:["Амуниция","Ремонт","Улучшения","Танки","Доход"],
+    tabText:["Амуниция","Ремонт","Улучшения","Танки"/*,"Доход"*/],
     countProductList:4,
     maxI:0,
     quantityTab:null,
@@ -324,7 +324,7 @@ shop={
         context.font = "20px serif";
         let widthTab=this.widthTab;
         let heightTab=this.heightTab;
-        for (let i=0;i<5;i++)
+        for (let i=0;i<this.tabText.length;i++)
         {
            /// context.fillStyle="rgb("+randomInteger(0,255)+","+randomInteger(0,255)+","
            //         +randomInteger(0,255)+")";
@@ -625,6 +625,11 @@ shop={
                                 this.labelText+=" Количество ваших ракет: "+ganQuantityArr[3];
                             }
                             break;
+//                            case "income":
+//                            {
+//                                this.labelText+=" Количество ваших ракет: "+ganQuantityArr[3];
+//                            }
+//                            break;
                         }
                     }
                     if (this.tabMenu==1)

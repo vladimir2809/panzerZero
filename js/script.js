@@ -43,7 +43,7 @@ var timeOld=0;// старое время перед боем
 var quantityPanzer=quantityPanzerGroup0+quantityPanzerGroup1;// количесво такнов игре
 
 var numPanzer=option[numOption].numPanzer;// номер танка которым можно управлять
-var pause=false;// пауза игры
+var pause=true;// пауза игры
 var countIterationGameLoop=0;// счетчик игровых циклов
 // массив имен картинок для загрузки 
 var nameImageArr=["body10","body11",'body12','body13','body14','body15',
@@ -345,8 +345,8 @@ baseImageType={
     enabled:false,
     being:false,
    // sprite:null,
-    maxHP:100,
-    HP:100,
+    maxHP:250,
+    HP:250,
     width:80,
     height:80,
     maxCount:250,
@@ -571,6 +571,7 @@ function create ()// функция создание обьектов неоюх
         console.log(panz);
         panzerInGarageArr.push(panz);
         loadLevel=true;
+        startScreen.start();
        // alert(panzerArr[numPanzer].id);
        
 
@@ -581,6 +582,11 @@ function drawAll()// нарисовать все
     if (imageLoad==true)// если изображения загружены
     {
         //context.clearRect(0,0,camera.width,camera.height);// очистка экрана
+        if (startScreen.being==true)
+        {
+            startScreen.draw();
+        }    
+        
         if (shop.open==true)
         {
             shop.draw();
@@ -602,7 +608,8 @@ function drawAll()// нарисовать все
           //  return 0;
         }
         if (shop.open==true || boxWindowSelect.open==true || 
-                garage.open==true ||   messageBox.open==true )
+                garage.open==true ||   messageBox.open==true ||
+                startScreen.being==true )
         {
            return 0;   
         }
@@ -1084,7 +1091,7 @@ function controlBigText()
 {
     if (bigText.being==true)
     {
-        bigText.count++;
+        if (bigText.maxCount!=0)bigText.count++;
        // pause=true;
         if (bigText.count>=bigText.maxCount)
         {
@@ -1268,7 +1275,14 @@ function gameLoop(mult,visible)// игровой цикл
                     flagPressV=false;
                 }
             }
-            if (shop.open==false && boxWindowSelect.open==false) timeAddMoney+=time;
+            if (shop.open==false && boxWindowSelect.open==false && garage.open==false)
+            {
+                if ( checkPressKey("KeyA")||checkPressKey("KeyS")||
+                        checkPressKey("KeyD")||checkPressKey("KeyW"))
+                {
+                    timeAddMoney+=time!=0?time:1;
+                }
+            }
             
            //if (countIterationGameLoop>countUpload) // условия обновления уровня       
             if (killGroupPanzer()!=-1)
@@ -1335,8 +1349,15 @@ function gameLoop(mult,visible)// игровой цикл
                             checkKillBaseAll()==true
                             )
                     {
-                        initBigText("Уровень пройден","#00FF00",130,1);
                         
+                        if (levelGame>=levelMap.length)
+                        {
+                            initBigText("Поздравляем вы прошли игру!!!","#00FF00",0,3);
+                        }
+                        else
+                        {
+                           initBigText("Уровень пройден","#00FF00",130,1); 
+                        }
                         console.log(panzerArr);
                         
 //                        alert("YOU WIN!!!");
@@ -2354,27 +2375,51 @@ function controlBullets()// функция управления полетами
                 if (flag==true)
                 if (checkWater(bulletArr[i].x,bulletArr[i].y)==false) 
                 {
-                    if (bulletArr[i].type==0)
+                   // if (bulletArr[i].type==0)
                     {
-                        newBurst(bulletArr[i].x,bulletArr[i].y); 
+                        //newBurst(bulletArr[i].x,bulletArr[i].y); 
                         
                         let numWall=searchNumWall(bulletArr[i].x,bulletArr[i].y);
                         if (numWall!=-1)
                         {
                             if (wallArr[numWall].type==2)
                             {
-                                wallArr[numWall].HP-=20;
+                                if (bulletArr[i].type==0)
+                                {
+                                    wallArr[numWall].HP-=20;
+                                    newBurst(bulletArr[i].x,bulletArr[i].y,0)
+                                }
+                                else if (bulletArr[i].type==1)
+                                {
+                                    wallArr[numWall].HP-=2;
+                                    newBurst(bulletArr[i].x,bulletArr[i].y,2)
+                                }
+                                
                                 if (wallArr[numWall].HP<=50) wallArr[numWall].state=1;
                                 if (wallArr[numWall].HP<=0)
                                 {
                                     wallArr[numWall].being=false;
                                 }
-}
+                            }
+                            else
+                            {
+                                if (bulletArr[i].type==0)
+                                {
+                                   
+                                    newBurst(bulletArr[i].x,bulletArr[i].y,0)
+                                }
+                                else if (bulletArr[i].type==1)
+                                {
+                                    
+                                    newBurst(bulletArr[i].x,bulletArr[i].y,2)
+                                }
+                             //  newBurst(bulletArr[i].x,bulletArr[i].y); 
+                            }
                         }
                     }
-                    else
+                   // else
                     {
-                        newBurst(bulletArr[i].x,bulletArr[i].y,2);
+                        //newBurst(bulletArr[i].x,bulletArr[i].y,2);
                     }  
                 
                     killBullet(i);
@@ -3296,7 +3341,7 @@ function initBase(x,y,typePanz=0)
       base.being=true;
       base.typePanzerCreate=typePanz;
       base.count=0;
-      base.maxCount=/*option[numOption].maxCountBase[typePanz];*/150+typePanz*40;
+      base.maxCount=/*option[numOption].maxCountBase[typePanz];*/300+typePanz*80;
       base.lineArr=calcLineArr(base);
       baseImageArr.push(base);
 }
@@ -4036,6 +4081,10 @@ function uploadLevelOrRestart(restart=true,loadBrowser=false)// функция �
     while (gateArr.length>0)
     {
         gateArr.splice(0,1);
+    }
+    while (keyGateArr.length>0)
+    {
+        keyGateArr.splice(0,1);
     }
     while (keyInStokArr.length>0)
     {
