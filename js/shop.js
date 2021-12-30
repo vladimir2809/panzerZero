@@ -172,14 +172,7 @@ shop={
                 }
                 console.log("shop");
             }
-        },50);
-//        this.timerIdResponse=setInterval(function(){
-//            shop.select();
-//        },50);
-        
-    //  do{
-    //          
-    //  } while(keyUpDuration("Escape",100)==false);  
+        },50);  
     },
     newPanzerId:function()
     {
@@ -201,121 +194,72 @@ shop={
     },
     select:function ()
     {
-//        if (messageBox.open==true || this.open==true)
-//        {
-//            pause=true;
-//        }else
-//        {
-//            pause=false;
-//        }
-//        if (messageBox.open==true)
-//        {
-//            this.blockMouseLeft=true;
-//        }
-//        else
-//        {
-//            this.blockMouseLeft=false;
-//        }
-//        if (messageBox.open==false)
-//        {
-//            if (messageBox.response!=0)
-//            {
-             //   messageBox.draw();
-//                copyPanz=function(panz)
-//                {
-//                    let onePanz=clone(panzer);
-//                    for (var attr1 in onePanz)
-//                    {
-//                        for (var attr2 in panz)
-//                        {
-//                            //console.log(listProduct[this.startI].option[attr2]);
-//                            if (attr1==attr2) 
-//                            {
-//                                onePanz[attr1]=panz[attr2];
-//                            }
-//                        }
-//                    }
-//                    return onePanz;
-//                }
-                if (messageBox.response==1)
+        if (messageBox.response==1)
+        {
+            console.log("RESPONSE 1");
+            money-=listProduct[this.startI].price;
+            for (var attr1 in panzerArr[numPanzer])
+            {
+                for (var attr2 in listProduct[this.startI].option)
                 {
-                    console.log("RESPONSE 1");
-                    money-=listProduct[this.startI].price;
-                    for (var attr1 in panzerArr[numPanzer])
+                    console.log(listProduct[this.startI].option[attr2]);
+                    if (attr1==attr2) 
                     {
-                        for (var attr2 in listProduct[this.startI].option)
-                        {
-                            console.log(listProduct[this.startI].option[attr2]);
-                            if (attr1==attr2) 
-                            {
-                                panzerArr[numPanzer][attr1]=listProduct[this.startI].option[attr2];
-                            }
-                        }
-                    } 
-                    panzerArr[numPanzer].being=true;
-                    for (let key in panzerArr[numPanzer].mapUp)
-                    {
-                        panzerArr[numPanzer].mapUp[key].levelUp=0;
+                        panzerArr[numPanzer][attr1]=listProduct[this.startI].option[attr2];
                     }
-                    //panzerArr[numPanzer].mapUp.upSpeed.levelUp=0;
-                    panzerArr[numPanzer].id=this.newPanzerId();
-                    let copy=copyPanz(panzerArr[numPanzer]);
-                    
-                    panzerInGarageArr.push(copy);
-                    
-                    playerGan=nextGan(1);
-                    let num=lastShop.numShop;
-                    let entr=lastShop.numEntrance;
-                    let x=shopImageArr[num].entranceArr[entr].x+shopImageArr[num].x;
-                    let y=shopImageArr[num].entranceArr[entr].y+shopImageArr[num].y;
-                    x+=mapSize/2-panzerArr[numPanzer].width/2;
-                    y+=mapSize/2-panzerArr[numPanzer].height/2;
-                    panzerArr[numPanzer].x=x;
-                    panzerArr[numPanzer].y=y;
-                    panzerArr[numPanzer].HP=panzerArr[numPanzer].maxHP;
-                    if (this.sellPanzer) this.close();
-//                    for (let i=0;i<panzerArr[0].maskGan;i++)
-//                    {
-//                        if (panzerArr[0].maskGan[i]==1)
-//                        {
-//                            playerGan=i;
-//                            break;
-//                        }
-//                        
-//                    }
-                 //  panzerArr[0]=listProduct[startI].option;
-                   // clearInterval(this.timerIdResponse);
                 }
-                if (messageBox.response==2)
+            } 
+            panzerArr[numPanzer].being=true;
+            for (let key in panzerArr[numPanzer].mapUp)
+            {
+                panzerArr[numPanzer].mapUp[key].levelUp=0;
+            }
+            //panzerArr[numPanzer].mapUp.upSpeed.levelUp=0;
+            panzerArr[numPanzer].id=this.newPanzerId();
+            let copy=copyPanz(panzerArr[numPanzer]);
+
+            panzerInGarageArr.push(copy);
+
+            playerGan=nextGan(1);
+            let num=lastShop.numShop;
+            let entr=lastShop.numEntrance;
+            let x=shopImageArr[num].entranceArr[entr].x+shopImageArr[num].x;
+            let y=shopImageArr[num].entranceArr[entr].y+shopImageArr[num].y;
+            x+=mapSize/2-panzerArr[numPanzer].width/2;
+            y+=mapSize/2-panzerArr[numPanzer].height/2;
+            panzerArr[numPanzer].x=x;
+            panzerArr[numPanzer].y=y;
+            panzerArr[numPanzer].HP=panzerArr[numPanzer].maxHP;
+            if (this.sellPanzer) this.close();
+        }
+        if (messageBox.response==2)
+        {
+            money-=listProduct[this.startI].price;
+            let onePanz=clone(panzer);
+            for (var attr1 in onePanz)
+            {
+                for (var attr2 in listProduct[this.startI].option)
                 {
-                    money-=listProduct[this.startI].price;
-                    let onePanz=clone(panzer);
-                    for (var attr1 in onePanz)
+                    //console.log(listProduct[this.startI].option[attr2]);
+                    if (attr1==attr2) 
                     {
-                        for (var attr2 in listProduct[this.startI].option)
-                        {
-                            //console.log(listProduct[this.startI].option[attr2]);
-                            if (attr1==attr2) 
-                            {
-                                onePanz[attr1]=listProduct[this.startI].option[attr2];
-                            }
-                        }
-                    }  
-                    onePanz.id=this.newPanzerId();
-                    for (let key in onePanz.mapUp)
-                    {
-                        onePanz.mapUp[key].levelUp=0;
+                        onePanz[attr1]=listProduct[this.startI].option[attr2];
                     }
-                    panzerInGarageArr.push(onePanz);
                 }
-                if (messageBox.response==3)
-                {
-                }
-                messageBox.close();
-                messageBox.response=0;
-           //     this.start();
-//            }
-//        }
+            }  
+            onePanz.id=this.newPanzerId();
+            for (let key in onePanz.mapUp)
+            {
+                onePanz.mapUp[key].levelUp=0;
+            }
+            panzerInGarageArr.push(onePanz);
+        }
+        if (messageBox.response==3)
+        {
+        }
+        messageBox.close();
+        messageBox.response=0;
+
     },
     draw:function()
     {
@@ -396,10 +340,6 @@ shop={
                     imageArr.get("star"):imageArr.get("starContur"),
                     this.x+180+j*20,this.y+48+(25+8)*i);
                     
-//                    drawSprite(context,
-//                    j<panzerArr[numPanzer].mapUp[listProduct[i].id].levelUp?
-//                    imageArr.get("star"):imageArr.get("starContur"),
-//                             this.x+180+j*20,this.y+48+(25+8)*i,camera,scale);
                 }
                 this.calcValuesParam(2,numPanzer);
                 if (( panzerArr[numPanzer].numType==0 ||  panzerArr[numPanzer].numType==2))
@@ -410,18 +350,10 @@ shop={
                 {    
                     drawListProgressBar(this.valuesParam,this.arrMaxValuesParam,this.x,this.y,350,50,33);
                 }
-//                if (listProduct[i].select==true)
-//                {
-//                    this.labelText="Улучшить";
-//                }
             }
         }
         else if(this.tabMenu==3)
         {
-           // console.log(listProduct.length);
-          //  this.countProductList=1;
-           // for (let i=0;i<this.maxI;i++)
-          //  context.fillStyle=="#AAAAAA";
             context.fillStyle="#AAAAAA";
             context.fillRect(this.x+20,this.y+50,80,80);
             context.strokeStyle="#00FF00";
@@ -434,13 +366,6 @@ shop={
             let heightPanz=listProduct[startI].option.height;
             drawPanzerIcon(centerRectX-widthPanz/2,
                         centerRectY-heightPanz/2,startI,0,true);
-//            context.drawImage(imageArr.get(listProduct[startI].option.bodyNameImage),
-//                                centerRectX-widthPanz/2,centerRectY-heightPanz/2);
-//            let towerX=listProduct[startI].option.mixTowerPosX-listProduct[startI].option.mixTowerX;
-//            let towerY=listProduct[startI].option.mixTowerPosY-listProduct[startI].option.mixTowerY;
-//            context.drawImage(imageArr.get(listProduct[startI].option.towerNameImage),
-//                                centerRectX-widthPanz/2+towerX,
-//                                centerRectY-heightPanz/2+towerY);
             let dy=25;
             context.fillStyle="#FF0000";
             context.fillText("Броня", this.x+130,this.y+63+dy*0);
@@ -448,51 +373,8 @@ shop={
             context.fillText("Урон", this.x+130,this.y+63+dy*2);
             context.fillText("Скорость", this.x+130,this.y+63+dy*3);
             context.fillText("Точность", this.x+130,this.y+63+dy*4);
-//            let attackPatron=listProduct[startI].option.attackPatron;
-            
-           
-           // let valuesParam=[];
-//            for (let i=0;i<arrValuesName.length;i++)
-//            {
-//                for (let attr in listProduct[startI].option)
-//                {
-//                
-//                    if (""+attr===arrValuesName[i] && arrValuesName[i].length==""+attr.length)
-//                    {
-//                        if (arrValuesName[i]=="timeAttack"||arrValuesName[i]=="timeAttackPatron")
-//                        {
-//                            valuesParam.push(100/listProduct[startI].option[attr])
-//                        }
-//                        else
-//                        {
-//                            valuesParam.push(listProduct[startI].option[attr])
-//                        }
-//                        
-//                        
-//                        //console.log(attr+" "+listProduct[startI].option[attr]);
-//                       // break;
-//                    }
-//                }
-//            }
             this.calcValuesParam(startI);
-            drawListProgressBar(this.valuesParam,this.arrMaxValuesParam,this.x,this.y,350,50,dy);
-//            for (let i=0;i<valuesParam.length;i++)
-//            {
-//                context.fillStyle="#AAAAAA";
-//                context.fillRect(this.x+350,this.y+50+dy*i,100,15);
-//                context.fillStyle="#FF0000";
-//                context.fillRect(this.x+350,this.y+50+dy*i,valuesParam[i]/arrMaxValuesParam[i]*100,15);
-//                if (keyUpDuration("KeyV",100)) 
-//                {
-//                //    shop.start();
-//                    for (let j=0;j<valuesParam.length;j++)
-//                    {
-//                       // console.log(listProduct[startI].option);
-//                         console.log(valuesParam[j]);
-//                    }
-//                }
-//            }
-            
+            drawListProgressBar(this.valuesParam,this.arrMaxValuesParam,this.x,this.y,350,50,dy);           
             context.fillStyle="#FF0000";
             context.fillText("Цена: "+listProduct[startI].price, this.x+20,this.y+200);
             context.fillStyle="#FFFF00";
@@ -579,12 +461,6 @@ shop={
             }
          // alert('kln');
         }
-//        let heightProduct=this.heightProduct,widthProduct =this.widthProduct;
-//        if (this.tabMenu==0)
-//        {
-//          heightProduct=heightProduct;
-//          widthProduct=widthProduct;
-//        }
         let startI=this.startNumProduct;
         if (this.tabMenu==0||this.tabMenu==1||this.tabMenu==4)
         {
@@ -819,15 +695,7 @@ shop={
                                     buffer/=100;
                                     buffer=(buffer+value)-buffer*value;
                                     buffer*=100;
-                                    panzerArr[numPanzer].accuracy=buffer;
-//                                    if (panzerArr[numPanzer].accuracy*(1+value/100)<100)
-//                                    {
-//                                        panzerArr[numPanzer].accuracy*=1+value/100;
-//                                    }
-//                                    else
-//                                    {
-//                                        panzerArr[numPanzer].accuracy=100;
-//                                    }    
+                                    panzerArr[numPanzer].accuracy=buffer;    
                                 }
                                 break;
                                 
@@ -860,17 +728,7 @@ shop={
 //                            console.log("accuracy "+panzerArr[numPanzer].accuracy);
                             
                         }
-                        else
-                        {
-                            //this.labelText+='. Недостачно средств';
-                          //  this.noMoneyLabel=true;
-                            //this.countNoMoney=0;
-                        }
                     }
-                //this.x+20,this.y+45+(dy+8)*i,300,dy);
-                //
-                //(this.x+this.width-heightTab,this.y+heightTab+10,
-                    //heightTab,/*heightProduct**/this.countProductList*38)
                 }
                 else
                 {
@@ -919,54 +777,6 @@ shop={
                         this.startI=startI;
                        // this.close();
                         this.pauseShop=true;
-//                        money-=listProduct[startI].price;
-//                        let index=this.numShopImage;
-//                        let x=shopImageArr[index].x;
-//                        let y=shopImageArr[index].y-mapSize;
-//                        for (let i=0;i<shopImageArr[index].width/mapSize;i++)
-//                        {
-//                            if (checkKvadrMap((x+5)/mapSize,(y+5)/mapSize)==true)
-//                            {
-//                                x+=mapSize;
-//
-//                            }
-//                            else 
-//                            {
-//                               break;
-//                            }
-//                        }
-//                        if (x>shopImageArr[index].x)
-//                        {
-//                            for (let i=0;i<shopImageArr[index].height/mapSize+1;i++)
-//                            {
-//                                if (checkKvadrMap((x+5)/mapSize,(y+5)/mapSize)==true)
-//                                {
-//                                    y+=mapSize;
-//
-//                                }
-//                                else 
-//                                {
-//                                   break;
-//                                }
-//                            } 
-//                        }
-//                        if (y>shopImageArr[index].y)
-//                        {
-//                            y-=5;
-//                            for (let i=0;i<shopImageArr[index].height/mapSize;i++)
-//                            {
-//                                if (checkKvadrMap((x+5)/mapSize,(y+5)/mapSize)==true)
-//                                {
-//                                    x-=mapSize;
-//
-//                                }
-//                                else 
-//                                {
-//                                   break;
-//                                }
-//                            } 
-//                        }
-//                        initOnePanzer(x,y,0,startI);
                     }
                 }   
             }
@@ -1079,54 +889,4 @@ shop={
         }
         this.maxI=this.countProductList<=listProduct.length?this.countProductList:listProduct.length;
     },
-//    calcMaxParams: function()
-//    {
-//        let maxHP=0;
-//        let maxTimeAttack=100;
-//        let maxHit=0;
-//        let maxSpeed=0;
-//        let maxAccuracy=100;
-//        for (let i=0;i<panzerOption.length;i++)
-//        {
-//            let buffer=panzerOption[i].HP;
-//            for (let j=0;j<3;j++)
-//            {
-//                buffer*=1+panzerOption[i].mapUp.upHP.up[j]/100;
-//            }
-//            if (buffer>maxHP) maxHP=buffer;
-//        }
-//        for (let i=0;i<panzerOption.length;i++)
-//        {
-//            let buffer=panzerOption[i].attackPatron==false ?
-//                                panzerOption[i].hitAttack:
-//                                panzerOption[i].hitAttackPatron;
-//            for (let j=0;j<3;j++)
-//            {
-//                buffer*=1+panzerOption[i].mapUp.upHit.up[j]/100;
-//            }
-//            if (buffer>maxHit) maxHit=buffer;
-//        }
-//        for (let i=0;i<panzerOption.length;i++)
-//        {
-//            let buffer=panzerOption[i].speed;
-//            for (let j=0;j<3;j++)
-//            {
-//                buffer*=1+panzerOption[i].mapUp.upSpeed.up[j]/100;
-//            }
-//            if (buffer>maxSpeed) maxSpeed=buffer;
-//        }
-//        return [maxHP,maxTimeAttack,maxHit,maxSpeed,maxAccuracy];
-//    }
 }
-//function drawListProgressBar(valuesParam,arrMaxValuesParam,x,y,ofsX,ofsY,dy)
-//{
-//    let width=150;
-//    for (let i=0;i<valuesParam.length;i++)
-//    {
-//        context.fillStyle="#AAAAAA";
-//        context.fillRect(x+ofsX,y+ofsY+dy*i,width,15);
-//        context.fillStyle="#FF0000";
-//        context.fillRect(x+ofsX,y+ofsY+dy*i,valuesParam[i]/arrMaxValuesParam[i]*width,15);
-//
-//    }    
-//}

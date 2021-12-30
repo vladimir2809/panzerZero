@@ -34,17 +34,6 @@ garage={
         resetMouseLeft();
         this.open=true;
         this.numPanz=0;
-        //this.numPanz++;
-        //this.numPanz%=panzerInGarageArr.length;
-//       if (panzerInGarageArr.length==0)
-//        {
-////            panzerInGarageArr.push(panzerArr[numPanzer]);
-////                    }
-//            let panz=copyPanz(panzerArr[numPanzer]);
-//            panzerInGarageArr.push(panz);
-//            this.numPanzerPlayer=panzerInGarageArr.length-1;
-//            
-//        }
         if (this.open==true)  this.timerId=setInterval(function(){
             if (garage.pauseGarage==false)   garage.update();
             if (garage.open==true)
@@ -58,16 +47,11 @@ garage={
             }
         },50);
         console.log(panzerInGarageArr);
-//        this.timerIdResponse=setInterval(function(){
-//            garage.select();
-//        },50);
         
     }, 
     close:function()
     {
         clearInterval(this.timerId);
-       // clearInterval(this.timerIdResponse);
-        //deleteElemArrToNum(panzerInGarageArr,this.numPanzerPlayer);
         pause=false;
         this.open=false;
     },
@@ -85,62 +69,51 @@ garage={
     },
     select:function ()
     {
-//        if (messageBox.open==true || this.open==true)
-//        {
-//            pause=true;
-//        }else
-//        {
-//            pause=false;
-//        }
-//        if (messageBox.open==false)
-//        {
-//            if (messageBox.response!=0)
-//            {
-             //   messageBox.draw(); messageBox.close();
-                if (garage.pauseGarage==true)
-                {
-                    if (messageBox.response==1)
-                    {
-                        let flag=false;
-                        if (panzerInGarageArr[this.numPanz].id=panzerArr[numPanzer].id)
-                        {
-                            flag=true;
-                        }
-                        deleteElemArrToNum(panzerInGarageArr,this.numPanz);
-                        money+=this.price;
-                        console.log(panzerInGarageArr);
-                        this.numPanz=this.numPanz<=0?0:this.numPanz-1;
-                        if (flag==true)
-                        {
-                            for (var attr1 in panzerArr[numPanzer])
-                            {
-                                for (var attr2 in panzerInGarageArr[this.numPanz])
-                                {
-                                    //console.log(listProduct[this.startI].option[attr2]);
-                                    if (attr1==attr2) 
-                                    {
-                                       console.log(attr1);
-                                       if (attr1!='x' && attr1!='y')
-                                       {
-                                           panzerArr[numPanzer][attr1]=panzerInGarageArr[this.numPanz][attr2];
-                                       }
-                                    }
-                                }
-                            }  
-                            playerGan=nextGan(1);
-                            
-                        }
-                        panzerArr[numPanzer].HP=panzerArr[numPanzer].maxHP;
-                       // clearInterval(this.timerIdResponse);
-                    }
-                    if (messageBox.response==2)
-                    {
 
-                    }  
-                  //  garage.pauseGarage=false;
+        if (garage.pauseGarage==true)
+        {
+            if (messageBox.response==1)
+            {
+                let flag=false;
+                if (panzerInGarageArr[this.numPanz].id=panzerArr[numPanzer].id)
+                {
+                    flag=true;
                 }
-                messageBox.close();
-                messageBox.response=0;
+                deleteElemArrToNum(panzerInGarageArr,this.numPanz);
+                money+=this.price;
+                console.log(panzerInGarageArr);
+                this.numPanz=this.numPanz<=0?0:this.numPanz-1;
+                if (flag==true)
+                {
+                    for (var attr1 in panzerArr[numPanzer])
+                    {
+                        for (var attr2 in panzerInGarageArr[this.numPanz])
+                        {
+                            //console.log(listProduct[this.startI].option[attr2]);
+                            if (attr1==attr2) 
+                            {
+                               console.log(attr1);
+                               if (attr1!='x' && attr1!='y')
+                               {
+                                   panzerArr[numPanzer][attr1]=panzerInGarageArr[this.numPanz][attr2];
+                               }
+                            }
+                        }
+                    }  
+                    playerGan=nextGan(1);
+
+                }
+                panzerArr[numPanzer].HP=panzerArr[numPanzer].maxHP;
+               // clearInterval(this.timerIdResponse);
+            }
+            if (messageBox.response==2)
+            {
+
+            }  
+          //  garage.pauseGarage=false;
+        }
+        messageBox.close();
+        messageBox.response=0;
                // this.start();
 //            }
 //        }
@@ -158,9 +131,6 @@ garage={
         
         context.fillStyle="#888888";
         context.fillRect(x+xRect,y+yRect,40,40);
-      //  panzerInGarageArr[n].x=x+widthRect/2-panzerAiGarage[n].width/2;
-      //  panzerInGarageArr[n].y=y+heightRect/2-panzerAiGarage[n].height/2;
-     //   drawPanzer(context,panzerInGarageArr[n],camera,scale);
         context.drawImage(imageArr.get(panzerInGarageArr[n].bodyNameImage),
                         x+xRect+ widthRect/2-panzerInGarageArr[n].width/2,
                         y+yRect+ heightRect/2-panzerInGarageArr[n].height/2);
@@ -210,9 +180,6 @@ garage={
         let yy=dir==0?this.buttonArrows.left.y:this.buttonArrows.right.y;
         let width=dir==0?this.buttonArrows.left.width:this.buttonArrows.right.width;
         let height=dir==0?this.buttonArrows.left.height:this.buttonArrows.right.height;
-//        let yy=this.buttonArrows.y;
-//        let width=this.buttonArrows.width;
-//        let height=this.buttonArrows.height;
         context.beginPath();
         context.fillStyle="#FFFF00";       
         context.moveTo(this.x+xx,this.y+yy);
@@ -243,30 +210,6 @@ garage={
         arr[4]=panzerInGarageArr[num].accuracy;
         return arr;
     },
-//    assignPanzer:function(assignPanz,panz)
-//    {
-//        for (var attr1 in panzerArr[numPanzer])
-//         {
-//             for (var attr2 in panzerInGarageArr[this.numPanz])
-//             {
-//                 //console.log(listProduct[this.startI].option[attr2]);
-//                 if (attr1==attr2) 
-//                 {
-//                    console.log(attr1);
-//                    if (attr1!='x' && attr1!='y')
-//                    {
-//                        panzerArr[numPanzer][attr1]=panzerInGarageArr[this.numPanz][attr2];
-//                    }
-//                 }
-//             }
-//             //if (this.numPanz==this.numPanzerPlayer)
-//             {
-//                 //deleteElemArrToNum(panzerInGarageArr,this.numPanz);
-//             }
-//             playerGan=nextGan(1);
-//             this.close();
-//         }
-//    },
     update: function()
     {
         let x=this.x;

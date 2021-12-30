@@ -112,9 +112,7 @@ var redactOption=[
             y:40,
             x:100,
             width:panzerOption[1].width,
-            height:panzerOption[1].height,
-//            width:21,
-//            height:21,
+
         },
         {
             type:"panzer",
@@ -127,8 +125,6 @@ var redactOption=[
             x:180,
             width:panzerOption[2].width,
             height:panzerOption[2].height,
-//            width:25,
-//            height:26,
         },
         {
             type:"panzer",
@@ -141,8 +137,7 @@ var redactOption=[
             x:260,
             width:panzerOption[3].width,
             height:panzerOption[3].height,
-//            width:40,
-//            height:40,
+
         },
         {
             type:"panzer",
@@ -155,8 +150,7 @@ var redactOption=[
             x:340,
             width:panzerOption[4].width,
             height:panzerOption[4].height,
-//            width:40,
-//            height:40,
+
         },
         {
             type:"panzer",
@@ -169,8 +163,6 @@ var redactOption=[
             x:420,
             width:panzerOption[5].width,
             height:panzerOption[5].height,
-//            width:40,
-//            height:40,
         },
         {
             type:"panzer",
@@ -183,8 +175,6 @@ var redactOption=[
             x:500,
             width:40,
             height:40,
-//            width:40,
-//            height:40,
         },
         
         {
@@ -198,8 +188,6 @@ var redactOption=[
             x:40,
             width:panzerOption[0].width,
             height:panzerOption[0].height,
-//            width:40,
-//            height:40,
         },
         {
             type:"panzer",
@@ -212,8 +200,6 @@ var redactOption=[
             x:100,
             width:panzerOption[1].width,
             height:panzerOption[1].height,
-//            width:40,
-//            height:40,
         },
         {
             type:"panzer",
@@ -226,8 +212,6 @@ var redactOption=[
             x:180,
             width:panzerOption[2].width,
             height:panzerOption[2].height,
-//            width:40,
-//            height:40,
         },
         {
             type:"panzer",
@@ -240,8 +224,6 @@ var redactOption=[
             x:260,
             width:panzerOption[3].width,
             height:panzerOption[3].height,
-//            width:40,
-//            height:40,
         },
         {
             type:"panzer",
@@ -254,8 +236,7 @@ var redactOption=[
             x:340,
             width:panzerOption[4].width,
             height:panzerOption[4].height,
-//            width:40,
-//            height:40,
+
         },
         {
             type:"panzer",
@@ -268,8 +249,6 @@ var redactOption=[
             x:420,
             width:panzerOption[5].width,
             height:panzerOption[5].height,
-//            width:40,
-//            height:40,
         },
     ],
     [
@@ -385,8 +364,6 @@ var redactOption=[
             tabMenu:7,
             y:40,
             x:20,  
-//            width:40,
-//            height:40,
         },
         {
             type:"button",

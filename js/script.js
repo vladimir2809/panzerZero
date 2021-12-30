@@ -494,9 +494,9 @@ function preload()// функция предзагрузки
     //addText('Shot/Hits',"18px Arial","#00FF00","win",100,100);
     addText('Level',"18px Arial","#00FF00","win",100,100);
     addText('Money',"18px Arial","#00FF00","win",100,100);
-    addText('Balance',"18px Arial","#00FF00","win",100,150);
+    addText('Balance',"18px Arial","#00FF00","",100,150);
     addText('XP',"18px Arial","#00FF00","win",100,200);
-    addText('Time',"18px Arial","#0000FF","win",100,250);
+//    addText('Time',"18px Arial","#0000FF","win",100,250);
     addText('MessageText',"24px font-family","#00FF00","",250,600);
     //Howler.autoUnlock = false;
     audio = new Howl({
@@ -751,8 +751,96 @@ function drawAll()// нарисовать все
                 context.fillStyle=bigText.color;
                 
                 let widthText=context.measureText(bigText.str).width+10;
-                let x=screenWidth/2-widthText/2;
-                context.fillText(bigText.str,x,280);
+                    let x=screenWidth/2-widthText/2;
+                    context.fillText(bigText.str,x,280);
+            }
+            addText('QuantityGan',"13px Arial","#0000FF",+ganQuantityArr[playerGan],
+                        labelGanXY.x+35,labelGanXY.y+12/*+30*/);
+            let str=money+"$";
+            setText('Money',str,"#00FF00",screenWidth-53-str.length*10,95);
+            let y=475
+            let stepY=25;
+    //        setText('Shot/Hits','Test:'+countTestMixShot+' HP1: '+panzerArr[0].HP+
+    //                '  HP2:'+panzerArr[1].HP,"#44FF44",10,y-stepY);
+            setText('Level','Уровень: '+levelPlayer,"#44FF44",10,y);
+            
+           // money++;
+
+           // setText('Balance','HP1: '+panzerArr[0].HP+' HP2: '+panzerArr[1].HP,"#44FF44",10,y+stepY);
+            if (option[numOption].calcShotTime==false)
+            {
+                setText('XP','XP: '+XP+"/"+levelXPValue[levelPlayer-1],
+                                                    "#FF0000",10,y+stepY);
+//                setText('Balance','Balance: '+calcBalance(false),
+//                        calcBalance()<0?"#FF0000":"#00FF00",10,y+stepY*2);
+            }
+            else
+            {
+                setText("XP",'countLoop '+countLoopShot,"#44FF44",10,y+stepY);
+                setText('Balance',"countShoT "+countShot, "#FF0000",10,y+stepY*2);
+            }
+    //        setText('Balance','Balance: '+calcBalance(false),
+    //                calcBalance()<0?"#FF0000":"#00FF00",10,y+stepY*2);
+           // setText('Time','Time: '+Math.trunc(time),"#0000FF",10,y+stepY*3);
+            if (checkInShop(numPanzer).num!=-1)
+            {
+                if (viewTextInShop==false)
+                {
+                    setText('MessageText',"нажмите R для того что бы войти в магазин","#00FF00",(screenWidth/2)-210,400);
+                  //  messageCenterScreen("нажмите R для того что бы войти в магазин","#00FF00");
+                    viewTextInShop=true;
+                }
+            }
+            else
+            {
+                if (viewTextInShop==true)
+                {
+                    setText('MessageText',"","#FFFFFF00",(screenWidth/2)-210,400);
+                   // messageCenterScreen("нажмите R для того что бы войти в магазин","#FFFFFF00");
+                    viewTextInShop=false;
+                }
+            }
+            let index=checkInGate(numPanzer);
+            if (index!=-1 && gateArr[index].close==true)
+            {
+                if (viewTextInGate==false)
+                {
+                    if (checkColorInStokKey(gateArr[index].color)==true)
+                    {
+                        setText('MessageText',"нажмите R для того что бы открыть дверь","#00FF00",(screenWidth/2)-190,400);
+                    }
+                    else
+                    {
+                        setText('MessageText',"У вас нет подходяшего ключа для этой двери","#00FF00",(screenWidth/2)-240,400);
+                    }
+                    viewTextInGate=true;
+                }
+            }
+            else
+            {
+                if (viewTextInGate==true)
+                {
+                    setText('MessageText',"нажмите R для того что бы открыть дверь","#FFFFFF00",(screenWidth/2)-240,400);
+                    viewTextInGate=false;
+                }
+            }
+            if (checkInGarage(numPanzer)!=-1)
+            {
+                if (viewTextInGarage==false)
+                {
+                    setText('MessageText',"нажмите R для того что бы войти в гараж","#00FF00",(screenWidth/2)-210,400);
+                  //  messageCenterScreen("нажмите R для того что бы войти в магазин","#00FF00");
+                    viewTextInGarage=true;
+                }
+            }
+            else
+            {
+                if (viewTextInGarage==true)
+                {
+                    setText('MessageText',"","#FFFFFF00",(screenWidth/2)-210,400);
+                   // messageCenterScreen("нажмите R для того что бы войти в магазин","#FFFFFF00");
+                    viewTextInGarage=false;
+                }
             }
         }
         for (key in textArr)
@@ -1130,93 +1218,7 @@ function gameLoop(mult,visible)// игровой цикл
     
        // playSoundTrack();
         //обновим текст
-        addText('QuantityGan',"13px Arial","#0000FF",+ganQuantityArr[playerGan],
-                    labelGanXY.x+35,labelGanXY.y+12/*+30*/);
-        let y=450;
-        let stepY=25;
-//        setText('Shot/Hits','Test:'+countTestMixShot+' HP1: '+panzerArr[0].HP+
-//                '  HP2:'+panzerArr[1].HP,"#44FF44",10,y-stepY);
-        setText('Level','Уровень: '+levelPlayer,"#44FF44",10,y);
-        let str=money+"$";
-        setText('Money',str,"#00FF00",screenWidth-53-str.length*10,95);
-       // money++;
-       
-       // setText('Balance','HP1: '+panzerArr[0].HP+' HP2: '+panzerArr[1].HP,"#44FF44",10,y+stepY);
-        if (option[numOption].calcShotTime==false)
-        {
-            setText('XP','XP: '+XP+"/"+levelXPValue[levelPlayer-1],
-                                                "#FF0000",10,y+stepY);
-            setText('Balance','Balance: '+calcBalance(false),
-                    calcBalance()<0?"#FF0000":"#00FF00",10,y+stepY*2);
-        }
-        else
-        {
-            setText("XP",'countLoop '+countLoopShot,"#44FF44",10,y+stepY);
-            setText('Balance',"countShoT "+countShot, "#FF0000",10,y+stepY*2);
-        }
-//        setText('Balance','Balance: '+calcBalance(false),
-//                calcBalance()<0?"#FF0000":"#00FF00",10,y+stepY*2);
-        setText('Time','Time: '+Math.trunc(time),"#0000FF",10,y+stepY*3);
-        if (checkInShop(numPanzer).num!=-1)
-        {
-            if (viewTextInShop==false)
-            {
-                setText('MessageText',"нажмите R для того что бы войти в магазин","#00FF00",(screenWidth/2)-210,400);
-              //  messageCenterScreen("нажмите R для того что бы войти в магазин","#00FF00");
-                viewTextInShop=true;
-            }
-        }
-        else
-        {
-            if (viewTextInShop==true)
-            {
-                setText('MessageText',"","#FFFFFF00",(screenWidth/2)-210,400);
-               // messageCenterScreen("нажмите R для того что бы войти в магазин","#FFFFFF00");
-                viewTextInShop=false;
-            }
-        }
-        let index=checkInGate(numPanzer);
-        if (index!=-1 && gateArr[index].close==true)
-        {
-            if (viewTextInGate==false)
-            {
-                if (checkColorInStokKey(gateArr[index].color)==true)
-                {
-                    setText('MessageText',"нажмите R для того что бы открыть дверь","#00FF00",(screenWidth/2)-190,400);
-                }
-                else
-                {
-                    setText('MessageText',"У вас нет подходяшего ключа для этой двери","#00FF00",(screenWidth/2)-240,400);
-                }
-                viewTextInGate=true;
-            }
-        }
-        else
-        {
-            if (viewTextInGate==true)
-            {
-                setText('MessageText',"нажмите R для того что бы открыть дверь","#FFFFFF00",(screenWidth/2)-240,400);
-                viewTextInGate=false;
-            }
-        }
-        if (checkInGarage(numPanzer)!=-1)
-        {
-            if (viewTextInGarage==false)
-            {
-                setText('MessageText',"нажмите R для того что бы войти в гараж","#00FF00",(screenWidth/2)-210,400);
-              //  messageCenterScreen("нажмите R для того что бы войти в магазин","#00FF00");
-                viewTextInGarage=true;
-            }
-        }
-        else
-        {
-            if (viewTextInGarage==true)
-            {
-                setText('MessageText',"","#FFFFFF00",(screenWidth/2)-210,400);
-               // messageCenterScreen("нажмите R для того что бы войти в магазин","#FFFFFF00");
-                viewTextInGarage=false;
-            }
-        }
+        
 //        if (checkInGarage(numPanzer)!=-1)
 //        {
 //            setText('MessageText',"нажмите R для того что бы открыть дверь","#FFFFFF00",(screenWidth/2)-240,400);
@@ -1238,7 +1240,7 @@ function gameLoop(mult,visible)// игровой цикл
                 panzerArr[numPanzer].y+panzerArr[numPanzer].mixTowerPosY,map);
         for (let k=0;k<countIter;k++ )// цикл в котором может несколько раз произоити игровые действия
         {
-            controlBigText();
+            
             for (let i=0;i<panzerArr.length; i++)// тики танков
             {
                 if (panzerArr[i].being==true && pause==false 
@@ -1275,6 +1277,7 @@ function gameLoop(mult,visible)// игровой цикл
                     flagPressV=false;
                 }
             }
+            controlBigText();
             if (shop.open==false && boxWindowSelect.open==false && garage.open==false)
             {
                 if ( checkPressKey("KeyA")||checkPressKey("KeyS")||
@@ -1285,7 +1288,9 @@ function gameLoop(mult,visible)// игровой цикл
             }
             
            //if (countIterationGameLoop>countUpload) // условия обновления уровня       
-            if (killGroupPanzer()!=-1)
+            if (killGroupPanzer()==0 ||
+                    (killGroupPanzer()==1 && checkKillBaseAll()==true)
+                )
             {
 //               timeNow=new Date().getTime();
 //                time=timeNow-timeOld;
@@ -1383,6 +1388,7 @@ function gameLoop(mult,visible)// игровой цикл
                 countIterationGameLoop++;
             }
             
+            //controlBigText();
             
 
 
@@ -1503,7 +1509,7 @@ function controlHuman()// управление программой челове
         }
               
     }  
-    if (keyUpDuration("KeyG",100)) 
+    if (keyUpDuration("KeyG",100) && pause==false) 
     {
         if (garage.open==false)garage.start();
     }//    console.log("sosiska");
@@ -1515,7 +1521,7 @@ function controlHuman()// управление программой челове
     {
         playerGan=1;
     }
-    if (shop.open==false && checkPressKey("KeyM")) 
+    if (shop.open==false && checkPressKey("KeyM") && pause==false) 
     {
           shop.start(0);
     }
@@ -1536,17 +1542,23 @@ function controlHuman()// управление программой челове
     {
             playerGan=nextGan(1);
     }
-    if (keyUpDuration("KeyN",100)) 
-        {
-            uploadLevelOrRestart(false);
-        }
-    if (keyUpDuration("KeyK",100))
-        {
-            panzerArr[numPanzer].being=false;
-        }
+  
     if (false)
     {
         
+        if (keyUpDuration("KeyN",100)) 
+        {
+            uploadLevelOrRestart(false);
+        }
+        if (keyUpDuration("KeyK",100))
+        {
+            panzerArr[numPanzer].being=false;
+        } 
+
+        if (keyUpDuration("KeyL",100)) 
+        {
+            uploadLevelOrRestart(false,true);
+        }
         if (keyUpDuration("KeyI",100)) 
         {
           //  informationOfPanzer(numPanzer);
@@ -1554,10 +1566,7 @@ function controlHuman()// управление программой челове
         }
 
         
-        if (keyUpDuration("KeyL",100)) 
-        {
-            uploadLevelOrRestart(false,true);
-        }
+      
     //    if (keyUpDuration("KeyI",100)) 
     //    {
     //        console.log(panzerArr);
@@ -1610,23 +1619,6 @@ function nextGan(dir)
         if (dir>0) num++; else num--;
         if (num<0) num=ganQuantityArr.length-1;
         num=num%ganQuantityArr.length;
-//        let flag=false;
-//        
-//        for (let i=0;i<ganQuantityArr.length;i++)
-//        {
-//            if (ganQuantityArr[i]>0) flag=true;
-//        }
-//        if (flag==false)
-//        {
-//            for (let i=0;i<panzerArr[numPanzer].maskGan.length;i++)
-//            {
-//                if (panzerArr[numPanzer].maskGan[i]==1)
-//                {
-//                    return i;
-//                    break;
-//                }
-//            }
-//        }
         if (/*ganQuantityArr[num]>0 &&*/
                 panzerArr[numPanzer].maskGan[num]==1)
         {
@@ -1650,102 +1642,6 @@ function calcPanzerShotXY(num)// расчитать точку в которой
              Math.cos(pi * (panzerArr[num].angleTower -90) / 180)+
              panzerArr[num].x+panzerArr[num].mixTowerPosX ;
 }
-//function movePanzerKeyboard(num)// управление танком игрока человеком
-//{
-//    if (panzerArr[numPanzer].being==true)
-//    {
-//        if (checkMouseLeft()==true )// условие выстрела
-//        {
-//           calcPanzerShotXY(num);//            if  (/*  playerGan==0 &&*/ panzerArr[num].countAttack>=maxPanzerTimeAttack(num)&&
-//                    ganQuantityArr[playerGan]>0)
-//            {
-//                
-//                shot(panzerArr[num].shotX,panzerArr[num].shotY,
-//                        panzerArr[num].angleTower+
-//                                ((playerGan>=2)? 0:
-//                        mixingShot(panzerArr[num].accuracy)),
-//                        panzerArr[num].hitAttack,playerGan,
-//                        playerGan==3?(mouseX-mouseOffsetX+camera.x):-1,
-//                        playerGan==3?(mouseY-mouseOffsetY+camera.y):-1);
-//                panzerArr[num].countAttack=0;
-//                ganQuantityArr[playerGan]--;
-//                console.log(panzerArr[num].x+' '+panzerArr[num].x+' '+
-//                        ' '+panzerArr[num].shotX+" "+panzerArr[num].shotY+
-//                        " "+mouseX+' '+mouseY);
-//            }
-////            if ( playerGan==1 && panzerArr[num].countAttack>=maxPanzerTimeAttack(num))
-////            {
-////                shot(panzerArr[num].shotX,panzerArr[num].shotY,
-////                        panzerArr[numPanzer].angleTower+
-////                        mixingShot(panzerArr[num].accuracy),panzerArr[num].hitAttackPatron,
-////                        1);
-////                panzerArr[num].countAttack=0;
-////            }
-//        }
-//        var dx=0;
-//        var dy=0;
-//        // управление движением танка клавиатурой
-//        if (checkPressKey("KeyW") && panzerArr[num].direction==1){
-//            dx=0;
-//            dy=-panzerArr[num].speed; 
-//        }
-//
-//         if (checkPressKey("KeyD") && panzerArr[num].direction==2){
-//            dx=panzerArr[num].speed;
-//            dy=0; 
-//        }
-//
-//         if (checkPressKey("KeyS") && panzerArr[num].direction==3){
-//            dx=0;
-//            dy=panzerArr[num].speed;
-//        }
-//        if (checkPressKey("KeyA") && panzerArr[num].direction==4){
-//            dx=-panzerArr[num].speed;
-//            dy=0;
-//        }
-//        // прибовляем смешение при движении
-//        panzerArr[num].x+=dx;
-//        panzerArr[num].y+=dy;
-//        if (collissionPanzerSolid(num))// если танк столкнулся с твердым предметом
-//        {
-//            panzerArr[num].x-=dx;
-//            panzerArr[num].y-=dy;
-//        }
-//        collisionPanzerBonus(num);
-//        // поворот танка перед началом движения
-//        if (checkPressKey("KeyW")) {
-//            panzerArr[num].direction=1;
-//            panzerArr[num].angleBody=0;
-//        }
-//        if (checkPressKey("KeyD")){
-//            panzerArr[num].direction=2;
-//            panzerArr[num].angleBody=90;
-//        }
-//        if (checkPressKey("KeyS")){
-//            panzerArr[num].direction=3;
-//            panzerArr[num].angleBody=180;
-//        }
-//        if (checkPressKey("KeyA")){
-//            panzerArr[num].direction=4;
-//            panzerArr[num].angleBody=270;
-//        }
-//// расчитаем точку выстрела с разными положением камеры относительно края карты
-//        rotateXY=mathTowerRotateXY(panzerArr[num].x+panzerArr[num].mixTowerPosX,
-//                            panzerArr[num].y+panzerArr[num].mixTowerPosY);
-//        let angleAim=angleIm(rotateXY.x*camera.summMultScalingX+mouseOffsetX,
-//                             rotateXY.y*camera.summMultScalingY+mouseOffsetY,
-//                             mouseX,mouseY);
-//// плавно поварачиваем башню танка                             
-//        panzerArr[num].angleTower=movingToAngle(panzerArr[num].angleTower,angleAim,100);
-//        panzerArr[num].updateState();
-//        // прибавляем счетчик задержки перезарядки
-//        if (panzerArr[num].countAttack<maxPanzerTimeAttack(num) /*||
-//            panzerArr[num].countAttack<panzerArr[num].timeAttackPatron*/) 
-//        {
-//            panzerArr[num].countAttack++;
-//        }
-//    }
-//}
 function panzerControll(num)// функция автоуправления танком
 {
     var dx=0;
@@ -1908,12 +1804,6 @@ function panzerControll(num)// функция автоуправления та�
          panzerArr[num].angleTower=movingToAngle(panzerArr[num].angleTower,angleAim,100);
      }
      panzerArr[num].updateState();
-        // прибавляем счетчик задержки перезарядки
-//        if (panzerArr[num].countAttack<maxPanzerTimeAttack(num) /*||
-//            panzerArr[num].countAttack<panzerArr[num].timeAttackPatron*/) 
-//        {
-//            panzerArr[num].countAttack++;
-//        }
     if (panzerArr[num].countAttack<maxPanzerTimeAttack(num)) panzerArr[num].countAttack++;
 
 }
@@ -2558,8 +2448,6 @@ function checkAttackBigBurstToPanz(x,y,nPanz,distBurst)// проверить м�
             let dist=Math.sqrt(dx*dx+dy*dy);
             if (dist<distBurst)
             {
-//                if (checkCrossLinePanzerArrObj(wallArr,num,{x:panzerArr[i].x+panzerArr[i].width/2,
-//                    y:panzerArr[i].y+panzerArr[i].height/2})==false)
                 if (checkCrossLinePanzerArrObj(wallArr,nPanz,
                     {x:x,y:y})==false)
                 {
@@ -2583,11 +2471,9 @@ function attackPanzerBigBurst(x,y,hitBurst,distBurst)
             {
                 
                 panzerArr[i].HP-=(distBurst-dist)/distBurst*hitBurst;
-               // console.log((distBurst-dist)/distBurst*hitBurst);
                 if(panzerArr[i].HP<=0 /*&& j!=0*/) 
                 {
                     killPanzer(i);
-                   // if  (i==numPanzer)   nextNumPanzer();
                 }
             }
         }
@@ -2598,24 +2484,6 @@ function burstBarrel(num,destroy=true)// взрыв бочки
     newBurst(barrelArr[num].x+mapSize/2,barrelArr[num].y+mapSize/2,1);
     attackPanzerBigBurst(barrelArr[num].x+mapSize/2,barrelArr[num].y+mapSize/2,
             barrelArr[num].hit,barrelArr[num].distHit);
-//    for (let i=0;i<panzerArr.length;i++)
-//    {
-//        if (checkAttackBigBurstToPanz(barrelArr[num].x+mapSize/2,
-//                        barrelArr[num].y+mapSize/2,i,
-//                        barrelArr[num].distHit))
-//        {
-//            let dx=barrelArr[num].x+mapSize/2-panzerArr[i].x;
-//            let dy=barrelArr[num].y+mapSize/2-panzerArr[i].y;
-//            let dist=Math.sqrt(dx*dx+dy*dy);
-//            panzerArr[i].HP-=dist/barrelArr[num].distHit*barrelArr[num].hit;
-//            if(panzerArr[i].HP<=0 /*&& j!=0*/) 
-//            {
-//                killPanzer(i);
-//                if  (i==numPanzer)   nextNumPanzer();
-//            }
-//        
-//        }
-//    }
     if (destroy==true)
     {
         barrelArr[num].being=false;
@@ -2625,55 +2493,41 @@ function burstBarrel(num,destroy=true)// взрыв бочки
 }
 function shot(x,y,angle,hit,type=0,x1=-1,y1=-1)// функция регистрации пули при выстреле
 {
-//    if (type<2)
-//    {
-        for (var i=0;i<bulletArr.length;i++)
-        {
-            if (bulletArr[i].being===false)
-            {
-                if ( (x1==-1 && y1==-1) )
-                {
-                    bulletArr[i].x1=bulletArr[i].x=x;
-                    bulletArr[i].y1=bulletArr[i].y=y; 
-                    bulletArr[i].angle=angle;
-                  //  console.log("BAAAD");
-                }
-                else
-                {
-                    bulletArr[i].x=x;
-                    bulletArr[i].y=y;
-                    bulletArr[i].x1=x1;
-                    bulletArr[i].y1=y1;
-                    rotateXY=mathTowerRotateXY(x,y);
-                    bulletArr[i].angle=angleIm(rotateXY.x*camera.summMultScalingX+mouseOffsetX,
-                             rotateXY.y*camera.summMultScalingY+mouseOffsetY,
-                             mouseX,mouseY);
-//                    bulletArr[i].angle=angleIm(x/**camera.summMultScalingX+mouseOffsetX*/,
-//                             y/**camera.summMultScalingY+mouseOffsetY*/,
-//                             x1,y1);
-                }
-               
-                bulletArr[i].being=true;
-                bulletArr[i].flagCalc=false;
-                
-                bulletArr[i].type=type;
-                bulletArr[i].hit=hit;
 
-               // if (type==0) bulletArr[i].hit=10;
-               // else if (type==1) bulletArr[i].hit=2;
-                ////console.log('Shot'+' lemngth '+bulletArr.length+" i="+i);
-                break;
+    for (var i=0;i<bulletArr.length;i++)
+    {
+        if (bulletArr[i].being===false)
+        {
+            if ( (x1==-1 && y1==-1) )
+            {
+                bulletArr[i].x1=bulletArr[i].x=x;
+                bulletArr[i].y1=bulletArr[i].y=y; 
+                bulletArr[i].angle=angle;
+              //  console.log("BAAAD");
+            }
+            else
+            {
+                bulletArr[i].x=x;
+                bulletArr[i].y=y;
+                bulletArr[i].x1=x1;
+                bulletArr[i].y1=y1;
+                rotateXY=mathTowerRotateXY(x,y);
+                bulletArr[i].angle=angleIm(rotateXY.x*camera.summMultScalingX+mouseOffsetX,
+                         rotateXY.y*camera.summMultScalingY+mouseOffsetY,
+                         mouseX,mouseY);
             }
 
+            bulletArr[i].being=true;
+            bulletArr[i].flagCalc=false;
+
+            bulletArr[i].type=type;
+            bulletArr[i].hit=hit;
+
+            break;
         }
+
     }
-//    else if(type==2)
-//    {
-//        leser
-//    }
-    
-    
-    ////console.log(bulletArr);
+}
 
 function nextNumPanzer(live=false)// присвоить новый номер танка которым можно управлять
 {
@@ -2697,9 +2551,8 @@ function nextNumPanzer(live=false)// присвоить новый номер т
         panzerArr[numPanzer].bodyNameImage='body15';
     }
     playerGan=nextGan(1);
-    //console.log(panzerArr[numPanzer].bodyNameImage);
 }
-function burstService()// функция ослуживания тиков взрывов
+function burstService()// функция облуживания тиков взрывов
 {
     
     for (let i=0;i<burstArr.length;i++)
@@ -2748,61 +2601,6 @@ function collissionPanzerSolid(num)// столкновения танка ств
     {
         return true;
     }
-//    for (let i=0;i<shopImageArr.length;i++)
-//    {
-//        if (panzerArr[num].x+panzerArr[num].width>shopImageArr[i].x &&
-//            panzerArr[num].x<shopImageArr[i].x+shopImageArr[i].width &&
-//            panzerArr[num].y+panzerArr[num].height>shopImageArr[i].y &&
-//            panzerArr[num].y<shopImageArr[i].y+shopImageArr[i].height)
-//        {
-//            let res=true;
-//            let X=shopImageArr[i].x;
-//            let Y=shopImageArr[i].y;
-//            let pointArr=[
-//                {x:panzerArr[num].x,y:panzerArr[num].y},
-//                {x:panzerArr[num].x+panzerArr[num].width,
-//                            y:panzerArr[num].y},
-//                {x:panzerArr[num].x+panzerArr[num].width,
-//                            y:panzerArr[num].y+panzerArr[num].height},
-//                {x:panzerArr[num].x,y:panzerArr[num].y+panzerArr[num].height},
-//            ]
-//            let count=0;
-//            for (let j=0;j<shopImageArr[i].entranceArr.length;j++ )
-//            {
-//                let flag=false;
-//                for (let k=0;k<pointArr.length;k++)
-//                {
-//                    if (pointArr[k].x>shopImageArr[i].entranceArr[j].x &&
-//                        pointArr[k].x<shopImageArr[i].entranceArr[j].x+shopImageArr[i].entranceWidth  &&
-//                        pointArr[k].y>shopImageArr[i].entranceArr[j].y &&
-//                        pointArr[k].y<shopImageArr[i].entranceArr[j].y+shopImageArr[i].entranceHeight )
-//                    {
-//
-//                        if (num==numPanzer )res=false; else res=true;
-//                        if (checkCrossPerimeterPanzToLine(shopImageArr[i].lineArr,num))
-//                        {
-//                            res=true;
-//                            console.log("ENTRANCE");
-//                            ///break;
-//                        } 
-//                        flag=true;
-//                        break;
-//                    }
-//                    if (flag==true) break;
-//    //                if (panzerArr[num].x+panzerArr[num].width>X+shopImageArr[i].entranceArr[i].x &&
-//    //                    panzerArr[num].x<X+shopImageArr[i].entranceArr[i].x+shopImageArr[i].entranceWidth &&
-//    //                    panzerArr[num].y+panzerArr[num].height>Y+shopImageArr[i].entranceArr[i].y &&
-//    //                    panzerArr[num].y<Y+shopImageArr[i].entranceArr[i].y+shopImageArr[i].entranceHeight)
-//    //                    {
-//    //                        res=false;
-//    //                        break;
-//    //                    }
-//                }
-//            }
-//            return res;
-//        }
-//        
-//    }
     return false;
 }
 function checkInGarage(num)
@@ -3100,33 +2898,6 @@ function initShopImage(xx=-1,yy=-1)// инициализировать обье�
         }
         shopImageArr[i].x=Math.floor(x/mapSize)*mapSize;
         shopImageArr[i].y=Math.floor(y/mapSize)*mapSize;
-//        for (let j=0;j<shopImageArr[i].entranceArr.length;j++ )
-//        {
-//            shopImageArr[i].entranceArr[j].x+= shopImageArr[i].x;
-//            shopImageArr[i].entranceArr[j].y+= shopImageArr[i].y;
-//        }
-        //console.log(lastShop);
-//
-//        for (let j=0;j<shopImageArr[i].entranceArr.length;j++ )
-//        {
-//            let buffer=calcLineArr(shopImageArr[i].entranceArr[j],i);
-//            for (let k=0;k<4;k++)
-//            {
-//                shopImageArr[i].lineArr.push(buffer[k]);
-//            }
-//
-//        }
-//        deleteElemArrToNum(shopImageArr[i].lineArr,0);
-//        deleteElemArrToNum(shopImageArr[i].lineArr,4);
-//        deleteElemArrToNum(shopImageArr[i].lineArr,8);
-//        deleteElemArrToNum(shopImageArr[i].lineArr,12);
-//
-//        let     buffer=calcLineArr(shopImageArr[i],i);
-//        for (let j=0;j<4;j++)
-//        {
-//            shopImageArr[i].linePerimetrArr.push(buffer[j]);
-//        }
-       // delete shopImageArr[i].lineArr[
         addWallObject(shopImageArr[i].x,shopImageArr[i].y,3,true);
         addWallObject(shopImageArr[i].x+mapSize,shopImageArr[i].y,3,true);
         addWallObject(shopImageArr[i].x+mapSize*3,shopImageArr[i].y,3,true);
@@ -3172,22 +2943,6 @@ function initGarageImage(xx=-1,yy=-1)
            garageImageArr[i].x=xx;
            garageImageArr[i].y=yy; 
         }
-//        for (let j=0;j<garageImageArr[i].entranceArr.length;j++ )
-//        {
-//            garageImageArr[i].entranceArr[j].x+= garageImageArr[i].x;
-//            garageImageArr[i].entranceArr[j].y+= garageImageArr[i].y;
-//        }
-//        for (let j=0;j<garageImageArr[i].entranceArr.length;j++ )
-//        {
-//            let buffer=calcLineArr(garageImageArr[i].entranceArr[j],i);
-//            for (let k=0;k<4;k++)
-//            {
-//                garageImageArr[i].lineArr.push(buffer[k]);
-//            }
-//
-//        }
- //       deleteElemArrToNum(garageImageArr[i].lineArr,3);
- //       deleteElemArrToNum(garageImageArr[i].lineArr,4);
         addWallObject(garageImageArr[i].x,garageImageArr[i].y,3,true);
         addWallObject(garageImageArr[i].x+mapSize,garageImageArr[i].y,3,true);
         addWallObject(garageImageArr[i].x+mapSize*2,garageImageArr[i].y,3,true);
@@ -3205,8 +2960,6 @@ function addWallObject(x,y,type,solid=true)
     let buffer;
     if (x!=-1 && y!=-1)
     {
-       // buffer[0].x=x;
-        //buffer[0].y=y;
         buffer= initNoMoveObject(1,wall,type,x,y);      
 
     }
@@ -3259,18 +3012,6 @@ function initAllNoMoveObject()
     {
         addWallObject(-1,-1,1,false)
     }
-//    buffer= initNoMoveObject(quantityWater,wall,1);
-//    for (let i=0;i<buffer.length;i++)
-//    {
-//        for (let j=0;j<buffer[i].lineArr.length;j++)
-//        {
-//            buffer[i].lineArr[j].x=0;
-//            buffer[i].lineArr[j].y=0;
-//            buffer[i].lineArr[j].x1=0;
-//            buffer[i].lineArr[j].y1=0;
-//        }
-//    }
-//    wallArr = wallArr.concat(buffer);
     buffer= initNoMoveObject(quantityBrickWall,wall,2);
     wallArr = wallArr.concat(buffer);
     barrelArr=initNoMoveObject(quantityBarrel,barrel);
@@ -3473,75 +3214,6 @@ function initNoMoveObject(quantity,object,type=0,xx=-1,yy=-1)
     }
     return arr;
 }
-//function initBox()
-//{
-//    	//bonusArr=game.add.group();			
-//    for (let i=0;i<quantityBonus;i++)
-//    {
-//        // скопируем в него все свойства 
-//         bonusArr[i]=JSON.parse(JSON.stringify(bonus));;
-//
-//        let flag=false;
-//        let x=0;
-//        let y=0;
-//        do
-//        {
-//            flag=false;
-//            x=(randomInteger(1,mapWidth/mapSize-1-1))*mapSize;
-//            y=randomInteger(1,mapHeight/mapSize-1-1)*mapSize;
-//            flag=checkPointCollisionAll(x+mapSize/2,y+mapSize/2);
-//        }
-//        while(flag==true&&i>0);
-//        bonusArr[i].x=x;
-//        bonusArr[i].y=y;
-//        bonusArr[i].being=true;
-//        bonusArr[i]=calcLineArr(bonusArr,i);
-//
-//    }
-//}
-/////функция раставления стен
-//function initWall()
-//{
-//    for (let i=0;i<quantityWall;i++)
-//    {
-//        wallArr[i]=JSON.parse(JSON.stringify(wall));;
-//        let flag=false;
-//        let x=0;
-//        let y=0;
-//        do
-//        {
-//            flag=false;
-//            x=(randomInteger(1,mapWidth/mapSize-1-1))*mapSize;
-//            y=randomInteger(1,mapHeight/mapSize-1-1)*mapSize;
-//            flag=checkPointCollisionAll(x+mapSize/2,y+mapSize/2);
-//        }while(flag==true && i>0);
-//        wallArr[i].x=x;
-//        wallArr[i].y=y;
-//        wallArr[i].being=true;
-//        wallArr[i]=calcLineArr(wallArr,i);
-//    }
-//}
-//function initBarrel()// функция раставления бочек
-//{
-//    for (let i=0;i<quantityBarrel;i++)
-//    {
-//        barrelArr[i]=JSON.parse(JSON.stringify(barrel));;
-//        let flag=false;
-//        let x=0;
-//        let y=0;
-//        do
-//        {
-//            flag=false;
-//            x=randomInteger(1,mapWidth/mapSize-1-1)*mapSize;
-//            y=randomInteger(1,mapHeight/mapSize-1-1)*mapSize;
-//            flag=checkPointCollisionAll(x+mapSize/2,y+mapSize/2);
-//        }while(flag==true && i>0);
-//        barrelArr[i].x=x;
-//        barrelArr[i].y=y;
-//        barrelArr[i].being=true;
-//        barrelArr[i]=calcLineArr(barrelArr,i);
-//    }
-//}
 function calcLineArr(obj,i=-1)
 {
    let lineArr=[];
@@ -3692,11 +3364,6 @@ function initPanzers()// функция инициализации танков
                         }
                     }
                 }
-            //   panzerArr[i].bodyNameImage[4]='2';
-//                let str=panzerArr[i].bodyNameImage;
-//                console.log(str);
-//                panzerArr[i].bodyNameImage=str.replace('body1','body2');;
-                
                 panzerArr[i].bodyNameImage='body2'+ panzerArr[i].numType;
                             
                             
@@ -3729,20 +3396,6 @@ function initPanzers()// функция инициализации танков
 }
 function bonusAppearance()
 {
-//    for (let i=0;i<bonusArr.length;i++)
-//    {
-//        if (bonusArr[i].being==false)
-//        {
-//            bonusArr[i].count++;
-//            if (bonusArr[i].count>=option[numOption].maxCountBonus)
-//            {
-//                bonusArr[i].count=0;
-//                bonusOne=initNoMoveObject(1,bonus)[0];
-//                bonusOne.type=2;
-//                bonusArr[i]=bonusOne;
-//            }
-//        }
-//    }
     countNewBonus++;
     if (countNewBonus>=option[numOption].maxCountBonus)
     {
@@ -3826,8 +3479,6 @@ function initMap(data)
         wallArr=wallArr.concat(objOne);
         objOne=initNoMoveObject(1,wall,0,i*mapSize,mapHeight-mapSize);
         wallArr=wallArr.concat(objOne);
-//        drawSprite(context,imageArr.get("wall"),,camera,scale);;
-//        drawSprite(context,imageArr.get("wall"),i*mapSize,mapHeight-mapSize,camera,scale);;
     }
     
     for (let i=0;i<mapHeight/mapSize;i++)
@@ -3837,9 +3488,6 @@ function initMap(data)
         objOne=initNoMoveObject(1,wall,0,mapWidth-mapSize,i*mapSize);
         wallArr=wallArr.concat(objOne);
     }
-//        drawSprite(context,imageArr.get("wall"),0,i*mapSize,camera,scale);;
-//        drawSprite(context,imageArr.get("wall"),mapWidth-mapSize,i*mapSize,camera,scale);;
-//    }
     initNoMoveObject(1,wall,1,80,80);
     for (let i=0;i<data.mapObjArr.length;i++)
     {
@@ -3872,9 +3520,7 @@ function initMap(data)
                 let dir=data.mapObjArr[i].dir;
                 let color=data.mapObjArr[i].color;
                 let gateOne=initGate(dir,x,y,color,false);
-                gateArr.push(gateOne);
-//               let objOne=initNoMoveObject(1,wall,numType,x,y);
-//               wallArr=wallArr.concat(objOne);
+                gateArr.push(gateOne);;
             }
             break;
             case 'barrel':
@@ -3921,8 +3567,6 @@ function initMap(data)
             {
                let color=data.mapObjArr[i].color;
                initKeyGate(x,y,color);
-               //let objOne=initNoMoveObject(1,keyType,color,x,y);
-              // keyGateArr=keyGateArr.concat(objOne); 
             }
             break;
 //            default:
@@ -3994,29 +3638,6 @@ function restartLevel()
 }
 function uploadLevelOrRestart(restart=true,loadBrowser=false)// функция обновления уровня после того как бой закончен
 {
-//    for (let i=0;i<panzerArr.length;i++)
-//    {
-//        delete panzerArr[i].body;
-//        delete panzerArr[i].tower;
-//        delete panzerArr[i];
-//    }
-//    for (let i=0;i<bonusArr.length;i++)
-//    {
-//        delete bonusArr[i];
-//    }
-//    for (let i=0;i<wallArr.length;i++)
-//    {
-//        delete wallArr[i];
-//    }
-//    for (let i=0;i<barrelArr.length;i++)
-//    {
-//        delete barrelArr[i];
-//    }
-        
-        
-    
-    
-    //let i=0;
     if (restart==true||loadBrowser==true)
     {
         while (panzerArr.length>0)
@@ -4105,20 +3726,6 @@ function uploadLevelOrRestart(restart=true,loadBrowser=false)// функция �
             panzerInGarageArr.splice(0,1);
         }
     }
-//    else
-//    {
-//        while (panzerInGarageArr.length>0)
-//        {
-//           if (panzerInGarageArr[0].id == panzerArr[numPanzer].id)
-//           {
-//               panzerInGarageArr.splice(0,1);
-//           }
-//           else
-//           {
-//               break;
-//           }
-//        } 
-//    }
     while (baseImageArr.length>0)
     {
        baseImageArr.splice(0,1);
@@ -4136,13 +3743,7 @@ function uploadLevelOrRestart(restart=true,loadBrowser=false)// функция �
         initMap(levelMap[levelGame-1]);
         if (levelGame==1) money=option[numOption].startMoney;
     }
-//    initPanzers();
-//    initAllNoMoveObject();
-//    initBox();
-//    initWall();
-//    initBarrel();
     numPanzer=0;
-//    panzerArr[numPanzer].id=1;
     if (restart==true)
     {
         let panz=copyPanz(panzerArr[numPanzer]);
@@ -4167,7 +3768,6 @@ function VectMult( ax,  ay,  bx, by)
        
 }
 
-//function IsCrossing( a1x,  a1y,  a2x,  a2y,  b1x, b1y,  b2x,  b2y)
 function   IsCrossing( x1,  y1,  x2,  y2,  x3,  y3,  x4,  y4)
 {
     var a_dx = x2 - x1;
@@ -4177,25 +3777,6 @@ function   IsCrossing( x1,  y1,  x2,  y2,  x3,  y3,  x4,  y4)
     var s = (-a_dy * (x1 - x3) + a_dx * (y1 - y3)) / (-b_dx * a_dy + a_dx * b_dy);
     var t = (+b_dx * (y1 - y3) - b_dy * (x1 - x3)) / (-b_dx * a_dy + a_dx * b_dy);
     return (s >= 0 && s <= 1 && t >= 0 && t <= 1);
-//    let n;
-//    var dot=[];
-//    if (y2 - y1 != 0)
-//    {  // a(y)
-//        let q = (x2 - x1) / (y1 - y2);   
-//        let sn = (x3 - x4) + (y3 - y4) * q; 
-//        if (!sn)return false;   // c(x) + c(y)*q
-//        let fn = (x3 - x1) + (y3 - y1) * q;   // b(x) + b(y)*q
-//        n = fn / sn;
-//    }
-//    else 
-//    {
-//        if ((y3 - y4)!=0)return false;  // b(y)
-//        n = (y3 - y1) / (y3 - y4);   // c(y)/b(y)
-//    }
-//    dot[0] = x3 + (x4 - x3) * n;  // x3 + (-b(x))*n
-//    dot[1] = y3 + (y4 - y3) * n;  // y3 +(-b(y))*n
-//    console.log ('cross');
-//    return true;
 }
 
 function CrossingPoint(a1,  b1,  c1,  a2,  b2,  c2)
@@ -4275,81 +3856,6 @@ function checkCrossPerimeterPanzToLine(lineArr,numPanz)
     }
     return false;
 }
-//определение пересечения линии выстрела с краями бочки
-//function PointCrossPanzerBarrel(num,point,numBarrel=-1)
-//{
-//    let pPanz={x:panzerArr[num].x+panzerArr[num].width/2,
-//                y:panzerArr[num].y+panzerArr[num].height/2};
-//    for (let i=0;i<barrelArr.length;i++)
-//    {
-//        if (barrelArr[i].being==true )
-//        {
-//            
-//            ////console.log('true');
-//            for (let j=0;j<4;j++)
-//            {
-//                if (IsCrossing( pPanz.x, pPanz.y,  point.x,point.y,
-//                    barrelArr[i].lineArr[j].x,barrelArr[i].lineArr[j].y,
-//                    barrelArr[i].lineArr[j].x1, barrelArr[i].lineArr[j].y1)) 
-//                    {
-//                        if (numBarrel!=i) return true;
-//                    }
-//            }
-//        }
-//    }
-//    return false;
-//}
-//// определиние пересечения линии выстрела с краями стен
-//function PointCrossPanzerWall(num,point)
-//{
-//    let pPanz={x:panzerArr[num].x+panzerArr[num].width/2,
-//                y:panzerArr[num].y+panzerArr[num].height/2,};
-//   // //console.log(pPanz.x+' '+pPanz.y+' '+point.x+' '+point.y);
-//    for (let i=0;i<wallArr.length;i++)
-//    {
-//        if (wallArr[i].being==true)
-//        {
-//            ////console.log('true');
-//            for (let j=0;j<4;j++)
-//            {
-//                ////console.log(i+" "+j);
-//                if (IsCrossing( pPanz.x, pPanz.y,  point.x,point.y,
-//                    wallArr[i].lineArr[j].x,wallArr[i].lineArr[j].y,
-//                    wallArr[i].lineArr[j].x1, wallArr[i].lineArr[j].y1)) 
-//                    {
-//                        return true;;
-//                    }
-//            }
-//        }
-//    }
-//    return false;
-//    
-//}
-//function PointCrossPanzerBox(num,point)
-//{
-//    let pPanz={x:panzerArr[num].x+panzerArr[num].width/2,
-//                y:panzerArr[num].y+panzerArr[num].height/2,};
-//   // //console.log(pPanz.x+' '+pPanz.y+' '+point.x+' '+point.y);
-//    for (let i=0;i<bonusArr.length;i++)
-//    {
-//        if (bonusArr[i].being==true)
-//        {
-//            ////console.log('true');
-//            for (let j=0;j<4;j++)
-//            {
-//                ////console.log(i+" "+j);
-//                if (IsCrossing( pPanz.x, pPanz.y,  point.x,point.y,
-//                    bonusArr[i].lineArr[j].x,bonusArr[i].lineArr[j].y,
-//                    bonusArr[i].lineArr[j].x1, bonusArr[i].lineArr[j].y1)) 
-//                    {
-//                        return true;;
-//                    }
-//            }
-//        }
-//    }
-//    return false;
-//    
-//}
 function crossPanzerToPanzer(num,point,numAttack)
 {
     let pPanz={x:panzerArr[num].x+panzerArr[num].width/2,
@@ -4539,6 +4045,7 @@ function checkKillBaseAll()
     {
         if(baseImageArr[i].being==true) return false;
     }
+   // if (baseImageArr.length==0) return true;
     return true;
 }
 

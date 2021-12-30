@@ -1028,10 +1028,6 @@ function drawFillRectScale(x,y,w,h,color,scale=1)
 function drawTurnSprite(context,image,x,y,angle,x1,y1,camera,scale)// функция вывода повернутого спрайта на экран
 {
     if(!context || !image) return;
-//    context.save();
-//    context.scale(scale,scale);
-//    context.drawImage(image,x-camera.x,y-camera.y);
-//    context.restore();
     context.save();
     context.translate((x+x1-camera.x)*scale,
                         (y+y1-camera.y)*scale);
@@ -1042,8 +1038,7 @@ function drawTurnSprite(context,image,x,y,angle,x1,y1,camera,scale)// функц
 }
 function drawKeyForGate(color,x,y,scale,camPos=true,colorRect='green')
 {
-    //context.save();
-    //context.closePath();
+
     let oldScale;
     let camX;
     let camY;
@@ -1067,14 +1062,6 @@ function drawKeyForGate(color,x,y,scale,camPos=true,colorRect='green')
         camera.x=camX;
         camera.y=camY;
     }
-//    else 
-//    {
-//        oldScale=scale;
-//        scale=0.8;
-//        x=xx;
-//        y=yy;
-//       // console.log("scale");
-//    }
     
     context.beginPath();
     context.fillStyle=color;
@@ -1091,13 +1078,6 @@ function drawKeyForGate(color,x,y,scale,camPos=true,colorRect='green')
     context.fillStyle=color ;
     context.fillRect(x+6*scale, y-2*scale,17*scale,5*scale);
     context.fillRect(x+(6+17-4)*scale,y-2*scale+5*scale,4*scale,3*scale);
-//    if (rect==false && xx!=-1 && yy!=-1)
-//    {
-//        scale=oldScale;
-//    }
-    //console.log(scale);
- //   context.strokeRect (keyGate.x,keyGate.y,mapSize,mapSize);
-    //context.stroke();
 }
 function drawPanzerIcon(x,y,type,GR=0,noScaleAndCamera=false)
 {
@@ -1106,7 +1086,6 @@ function drawPanzerIcon(x,y,type,GR=0,noScaleAndCamera=false)
     if (GR!=0)
     {
        bodyNameImage= bodyNameImage.replace('body1',"body2");
-        //towerNameImage.replace('body1',"body2");
     } 
     let towerX=panzerOption[type].mixTowerPosX - panzerOption[type].mixTowerX+x;
     let towerY=panzerOption[type].mixTowerPosY - panzerOption[type].mixTowerY+y;
@@ -1133,11 +1112,6 @@ function drawBase(x,y,type,scaleAndCamera=true)
         {
             context.drawImage(imageArr.get("base"),x,y);
         }
-//        drawFillRectScale(base.x,base.y-10,
-//                           base.width*base.HP/base.maxHP,3,"#00FF00");
-//        drawFillRectScale(base.x,base.y-5,
-//                            base.width*base.count/base.maxCount,3,"#0000FF");
-            
         let width=mapSize*2;
         let height=mapSize*2;
         x=(x+width-4-panzerOption[type].width);//*scale-(camera.x*camera.summMultScalingX);            
