@@ -1526,13 +1526,21 @@ function controlHuman()// управление программой челове
     {
         playerGan=1;
     }
+    if (keyUpDuration("Digit3",100)) 
+    {
+        if (panzerArr[numPanzer].numType==5)playerGan=3;
+    }
+    if (keyUpDuration("Digit4",100)) 
+    {
+        if (panzerArr[numPanzer].numType==5) playerGan=2;
+    }
     if (shop.open==false && garage.open==false && checkPressKey("KeyM") 
             && pause==false &&levelGame>1) 
     {
           shop.start(0);
     }
     let resWhell=checkWheel();
-    if (resWhell==-1) 
+    if (resWhell==1) 
     {    
         if (panzerArr[numPanzer].attackPatron==false)
         {
@@ -1544,28 +1552,29 @@ function controlHuman()// управление программой челове
         }
         
     }
-    if (resWhell==1) // если сработало колесико мыши
+    if (resWhell==-1) // если сработало колесико мыши
     {
             playerGan=nextGan(1);
     }
   
-    
+    if (keyUpDuration("KeyN",100)) 
+        {
+            uploadLevelOrRestart(false);
+        } 
+    if (keyUpDuration("KeyL",100)) 
+        {
+            uploadLevelOrRestart(false,true);
+        }
     if (false)
     {
         
-        if (keyUpDuration("KeyN",100)) 
-        {
-            uploadLevelOrRestart(false);
-        }
+        
         if (keyUpDuration("KeyK",100))
         {
             panzerArr[numPanzer].being=false;
         } 
 
-        if (keyUpDuration("KeyL",100)) 
-        {
-            uploadLevelOrRestart(false,true);
-        }
+       
         if (keyUpDuration("KeyI",100)) 
         {
           //  informationOfPanzer(numPanzer);
