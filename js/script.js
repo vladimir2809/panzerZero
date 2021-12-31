@@ -1557,17 +1557,17 @@ function controlHuman()// управление программой челове
             playerGan=nextGan(1);
     }
   
-    if (keyUpDuration("KeyN",100)) 
+       
+    if (false)
+    {
+        if (keyUpDuration("KeyN",100)) 
         {
             uploadLevelOrRestart(false);
         } 
-    if (keyUpDuration("KeyL",100)) 
+        if (keyUpDuration("KeyL",100)) 
         {
             uploadLevelOrRestart(false,true);
         }
-    if (false)
-    {
-        
         
         if (keyUpDuration("KeyK",100))
         {
@@ -3735,7 +3735,7 @@ function uploadLevelOrRestart(restart=true,loadBrowser=false)// функция �
     {
         garageImageArr.splice(0,1);
     }
-    if (restart==true)
+    if (restart==true||levelGame==2)
     {
         while (panzerInGarageArr.length>0)
         {
@@ -3760,7 +3760,7 @@ function uploadLevelOrRestart(restart=true,loadBrowser=false)// функция �
         if (levelGame==1) money=option[numOption].startMoney;
     }
     numPanzer=0;
-    if (restart==true)
+    if (restart==true||levelGame==2)
     {
         let panz=copyPanz(panzerArr[numPanzer]);
         panzerInGarageArr.push(panz);
