@@ -76,7 +76,7 @@
         DMG:1,
         attackPatron:true,
         timeAttack:1000/50,// время перезарядки
-        timeAttackPatron:1000/500,// время перезарядки пулемята
+        timeAttackPatron:1000/330,// время перезарядки пулемята
         hitAttack:10,
         hitAttackPatron:2,
         maskGan:[0,1,0,0],
@@ -238,7 +238,7 @@ var option=[
         visibleGame:true,       
         gamePlayer:true,
         startXP:0,
-        startMoney:1000,
+        startMoney:0,
         
         addBonusXP:100,
         addBonusMoney:50,

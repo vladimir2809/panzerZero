@@ -112,6 +112,7 @@ var redactOption=[
             y:40,
             x:100,
             width:panzerOption[1].width,
+            height:panzerOption[1].height,
 
         },
         {

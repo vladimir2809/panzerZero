@@ -110,7 +110,7 @@ var panzer={
     timeAttack:10,// время перезарядки
     hitAttack:10,
     timeAttackPatron:1000/580,// время перезарядки пулемята
-    timeAttackLaser:4,
+    timeAttackLaser:20,
     speedReaction:100,// скорость реакции при виде врага
     hitAttackPatron:1,
     maskGan:[],
@@ -492,10 +492,10 @@ function preload()// функция предзагрузки
     console.log(option[numOption].typePanzerArrGR0);
     addText('QuantityGan',"12px Arial","#0000FFAA","win",635,110);
     //addText('Shot/Hits',"18px Arial","#00FF00","win",100,100);
-    addText('Level',"18px Arial","#00FF00","win",100,100);
+    addText('Level',"18px Arial","#00FF00","",100,100);
     addText('Money',"18px Arial","#00FF00","win",100,100);
     addText('Balance',"18px Arial","#00FF00","",100,150);
-    addText('XP',"18px Arial","#00FF00","win",100,200);
+    addText('XP',"18px Arial","#00FF00","",100,200);
 //    addText('Time',"18px Arial","#0000FF","win",100,250);
     addText('MessageText',"24px font-family","#00FF00","",250,600);
     //Howler.autoUnlock = false;
@@ -762,15 +762,18 @@ function drawAll()// нарисовать все
             let stepY=25;
     //        setText('Shot/Hits','Test:'+countTestMixShot+' HP1: '+panzerArr[0].HP+
     //                '  HP2:'+panzerArr[1].HP,"#44FF44",10,y-stepY);
-            setText('Level','Уровень: '+levelPlayer,"#44FF44",10,y);
+            if (levelGame>1) setText('Level','Уровень: '+levelPlayer,"#44FF44",10,y);
             
            // money++;
 
            // setText('Balance','HP1: '+panzerArr[0].HP+' HP2: '+panzerArr[1].HP,"#44FF44",10,y+stepY);
             if (option[numOption].calcShotTime==false)
             {
-                setText('XP','XP: '+XP+"/"+levelXPValue[levelPlayer-1],
-                                                    "#FF0000",10,y+stepY);
+                if (levelGame>1) 
+                {
+                    setText('XP','XP: '+XP+"/"+levelXPValue[levelPlayer-1],
+                                                        "#FF0000",10,y+stepY);
+                }
 //                setText('Balance','Balance: '+calcBalance(false),
 //                        calcBalance()<0?"#FF0000":"#00FF00",10,y+stepY*2);
             }
@@ -1380,7 +1383,8 @@ function gameLoop(mult,visible)// игровой цикл
                 if (( checkPressKey("KeyA")||checkPressKey("KeyS")||
                     checkPressKey("KeyD")||checkPressKey("KeyW")))
                 {
-                 bonusAppearance();
+                    if (levelGame>1)bonusAppearance();
+                 
                 }
                 burstService();
                 controlBase();
@@ -1509,9 +1513,10 @@ function controlHuman()// управление программой челове
         }
               
     }  
-    if (keyUpDuration("KeyG",100) && pause==false) 
+    if (shop.open==false && garage.open==false && checkPressKey("KeyG")
+            && pause==false && levelGame>1) 
     {
-        if (garage.open==false)garage.start();
+       garage.start();
     }//    console.log("sosiska");
     if (keyUpDuration("Digit2",100)) 
     {
@@ -1521,7 +1526,8 @@ function controlHuman()// управление программой челове
     {
         playerGan=1;
     }
-    if (shop.open==false && checkPressKey("KeyM") && pause==false) 
+    if (shop.open==false && garage.open==false && checkPressKey("KeyM") 
+            && pause==false &&levelGame>1) 
     {
           shop.start(0);
     }
@@ -1543,6 +1549,7 @@ function controlHuman()// управление программой челове
             playerGan=nextGan(1);
     }
   
+    
     if (false)
     {
         
@@ -2410,7 +2417,7 @@ function controlBullets()// функция управления полетами
 function killPanzer(num)// убить танк
 {
     panzerArr[num].being=false;
-    if (panzerArr[num].group==1)
+    if (panzerArr[num].group==1&&levelGame>1)
     {
         switch(panzerArr[num].numType)
         {
@@ -3750,8 +3757,10 @@ function uploadLevelOrRestart(restart=true,loadBrowser=false)// функция �
         panzerInGarageArr.push(panz);
     }
     calcBalance(false,true);
+    
     countIterationGameLoop=0;
     countBeforeUpload=0;
+    playerGan=nextGan(1);
 //    //console.log('USPEH');
 //    //console.log(panzerArr.length);
 //    //console.log(bulletArr.length);
