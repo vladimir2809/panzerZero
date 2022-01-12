@@ -6,6 +6,7 @@
     <style>* { padding: 0; margin: 0; }</style>
     <script>"use strict";</script>
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.1.1/howler.min.js"></script>-->
+    <link rel="stylesheet" href="css/cssRedactor.css">
     <script src="includes/howler/dist/howler.js" ></script> 
     <script src= "js/jquery-1.10.2.min.js"></script> 
     <script src="data/accuracyToHits.js" ></script> 
@@ -30,5 +31,15 @@
    <canvas id='canvas' width="800" height="600" style="position:absolute;">
        
    </canvas>
+      <form id="formText" >
+           
+            <p>Уровень игрока</p>    
+            <input class="text" type="text" id="textLevel" value="1">
+            <p id="pXP">Опыт</p>
+            <input type="range" id="range" min="0" max="100" step="1" value="50">
+            <p>Деньги</p>    
+            <input class="text" type="text" id="textMoney" value="1">
+            <input type="button" id="buttonForm" value="Применить">
+        </form>
 </body>
 </html>

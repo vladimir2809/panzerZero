@@ -793,7 +793,7 @@ shop={
             {
                 
                 
-                for (let i=0;i<5;i++)
+                for (let i=0;i<this.tabText.length;i++)
                 {
                     if (mX>this.x+widthTab*i && mX<this.x+widthTab*(i+1) )
                     {

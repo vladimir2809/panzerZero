@@ -36,7 +36,10 @@ var numBattle=0;// количество битв
 var countBeforeUpload=0;// время задержки в циклах после того как бой закончен
 let flagPressV=false;// флаг того что нажата кнопка отключить\включить отобюражение
 var maxPanzerId=0;
-
+var modeDev=false;
+var XPminDev=0;
+var XPmaxDev=1000;
+var devXP=500;
 var time=0;// время боя
 var timeNow=0;// текушие время
 var timeOld=0;// старое время перед боем
@@ -408,11 +411,60 @@ function setText(key,str,fill,x,y)// изменить текс
         textArr[key].y=y;
     }
 }
+
+//range.addEventListener("change",function(){
+    
+   
+   //pXP.innerHTML="опыт: "+55;//range.value;
+//});
+//window.addEventListener('load', function () {
+//    
+//}
 // событие загрузки страницы
+
 window.addEventListener('load', function () {
     //console.log(localStorage.getItem("gameMap"));
     preload();
     create();
+    var textLevel=document.getElementById('textLevel');
+    var range=document.getElementById('range');
+    var buttonForm=document.getElementById("buttonForm");
+    document.getElementById('pXP').innerHTML=devXP;
+    function updatepXP()
+    {
+        devXP=XPminDev+(XPmaxDev-XPminDev)*range.value/100;
+        devXP=Math.trunc(devXP);
+        document.getElementById('pXP').innerHTML="опыт: "+devXP;
+    }
+    textLevel.onchange=function(){
+       // var levelXPValue=[1000,2500,5000,8000,12000,20000,30000,50000,];
+        let levelDev=textLevel.value-1;
+        
+        XPminDev=levelDev>0?levelXPValue[levelDev-1]:0;
+        XPmaxDev=levelDev<9?levelXPValue[levelDev]-1:50000;
+        updatepXP();
+        //alert(XPminDev+ ' ' +XPmaxDev);
+       // range.setAttribute('min', XPminDEv);
+      //  range.setAttribute('max', XPmaxDEv);
+//        range.min=XPminDev;
+//        range.max=XPmaxDev;
+//        devXP=(XPmaxDev-XPminDev)*range.value/100;
+//        devXP=Math.trunc(devXP);
+//        document.getElementById('pXP').innerHTML="опыт: "+devXP;
+    }
+    
+    range.onchange=function(){
+        updatepXP();
+//       devXP=(XPmaxDev-XPminDev)*range.value/100;
+//       devXP=Math.trunc(devXP);
+//       document.getElementById('pXP').innerHTML="опыт: "+devXP; 
+    }
+    buttonForm.onclick=function(){
+       // alert(545);
+        levelPlayer=textLevel.value;
+        XP=devXP;
+        money=document.getElementById('textMoney').value;
+    }
     
    // audio.play("shot");
     setInterval(drawAll,16);
@@ -496,7 +548,7 @@ function preload()// функция предзагрузки
     addText('Money',"18px Arial","#00FF00","win",100,100);
     addText('Balance',"18px Arial","#00FF00","",100,150);
     addText('XP',"18px Arial","#00FF00","",100,200);
-//    addText('Time',"18px Arial","#0000FF","win",100,250);
+    addText('Time',"18px Arial","#0000FF","",100,250);
     addText('MessageText',"24px font-family","#00FF00","",250,600);
     //Howler.autoUnlock = false;
     audio = new Howl({
@@ -545,7 +597,7 @@ function create ()// функция создание обьектов неоюх
                             (window.innerHeight - canvas.height)/2);
         initKeyboardAndMouse(["KeyA","KeyS","KeyD","KeyW","KeyM","KeyB","KeyR",'ArrowLeft',
                     'ArrowRight','ArrowUp','ArrowDown',"Enter","KeyP","KeyO",'KeyG',"KeyM",
-                    "KeyI","KeyK" ]);
+                    "KeyI","KeyK",'ControlLeft',"KeyQ" ]);
         //changeColorImg(context,imageArr.get('body10'),0xb5e61dff,0xdf0d00ff);
        // initMap(JSON.parse(localStorage.getItem('gameMap')));
         initMap(levelMap[levelGame-1]);
@@ -784,7 +836,7 @@ function drawAll()// нарисовать все
             }
     //        setText('Balance','Balance: '+calcBalance(false),
     //                calcBalance()<0?"#FF0000":"#00FF00",10,y+stepY*2);
-           // setText('Time','Time: '+Math.trunc(time),"#0000FF",10,y+stepY*3);
+            
             if (checkInShop(numPanzer).num!=-1)
             {
                 if (viewTextInShop==false)
@@ -1209,6 +1261,8 @@ function gameLoop(mult,visible)// игровой цикл
     let countUpload=1000;
     let countIter=visible==true?mult:mult*(countUpload/mult)*multIter;
     let countBreak=0;
+    let timeNow1=new Date().getTime();
+    setText('Time','Time: '+/*Math.trunc*/(timeNow1-timeOld),"#0000FF",10,400);
     timeOld=new Date().getTime();
 //    if (imageLoad==true && countIterationGameLoop==0 ) 
 //    {
@@ -1398,10 +1452,17 @@ function gameLoop(mult,visible)// игровой цикл
 
         }
     }
+//    do
+//    {
+//       timeNow=new Date().getTime();
+//    }
+//    while(timeNow-timeOld<1)
     timeNow=new Date().getTime();
     time=timeNow-timeOld;
     let timeLoop=16;
-    setTimeout(gameLoop,time<timeLoop?timeLoop-time:1,option[numOption].speedGame,visibleGame);
+   // setText('Time','Time: '+/*Math.trunc*/(timeLoop-time),"#0000FF",10,400);
+    
+    setTimeout(gameLoop,(time<timeLoop==true)?timeLoop-time:1,option[numOption].speedGame,visibleGame);
 }
 function controlEnabled(obj)
 {
@@ -1557,8 +1618,14 @@ function controlHuman()// управление программой челове
             playerGan=nextGan(1);
     }
   
-       
-    if (false)
+    if (checkPressKey('KeyQ') && checkPressKey('ControlLeft') && modeDev==false
+            && pause==false) 
+    {
+        modeDev=true;
+        initBigText("Режим разработчика активирован.","#0000FF",80,-1);
+        document.getElementById('formText').style.display="block"; 
+    }
+    if (modeDev==true)
     {
         if (keyUpDuration("KeyN",100)) 
         {

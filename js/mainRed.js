@@ -39,6 +39,8 @@ var map={// обьект карта
 var selectObj={
     tabMenu:null,
     numSelect:null,
+    oldTabMenu:-1,
+    oldNumSelect:-1,
 }
 
 camera={// обьект камера
@@ -403,6 +405,7 @@ var selectInterface={
     {
         context.fillStyle="#CCCCCC";
         context.fillRect(0,this.y,this.width,this.heigth);
+
         for(let i=0;i<this.tabValues.length;i++)
         {
             
@@ -522,50 +525,50 @@ var selectInterface={
          
         }
     
-        
-        if (mY<this.y &&selectObj.tabMenu!=null && selectObj.numSelect!=null)
-        {
-            let posXY=this.calcXYScaling(mX,mY);
-            if (selectObj.tabMenu==1)
+  
+            if (mY<this.y &&selectObj.tabMenu!=null && selectObj.numSelect!=null)
             {
-                let dir=redactOption[selectObj.tabMenu][selectObj.numSelect].dir;
-                drawGate(posXY.x,posXY.y,dir,colorsForGate[selectColor],scale,false);
-                
+                 let posXY=this.calcXYScaling(mX,mY);
+            
+                if (selectObj.tabMenu==1)
+                {
+                    let dir=redactOption[selectObj.tabMenu][selectObj.numSelect].dir;
+                    drawGate(posXY.x,posXY.y,dir,colorsForGate[selectColor],scale,false);
+
+                }
+                else if (selectObj.tabMenu==6)
+                {
+                    //drawKeyForGate(color,x,y,scale,colorRect='green')
+                    let color=redactOption[selectObj.tabMenu][selectObj.numSelect].color;
+                    drawKeyForGate(color,posXY.x,posXY.y,scale,false);
+                }
+                else if (selectObj.tabMenu==3)
+                {
+                    let GR=redactOption[selectObj.tabMenu][selectObj.numSelect].group;
+                    let type=redactOption[selectObj.tabMenu][selectObj.numSelect].numType;
+                    drawPanzerIcon(posXY.x,posXY.y,type,GR);
+                }   else if(selectObj.tabMenu==5 && selectObj.numSelect>1)
+                {
+                    let numType=redactOption[selectObj.tabMenu][selectObj.numSelect].numType;
+                        drawBase(posXY.x,posXY.y,numType);
+                }
+                else if ((selectObj.tabMenu==7 && selectObj.numSelect==0))
+                {
+                    let x=posXY.x+mapSize-mapSize/2-20/2;
+                    let y=posXY.y+mapSize-mapSize/2-20/2;
+                    this.drawImageByNum(selectObj.tabMenu,selectObj.numSelect,
+                                    x,y,'delete');
+                }
+                else
+                {
+                    this.drawImageByNum(selectObj.tabMenu,selectObj.numSelect,posXY.x,posXY.y);
+                }
             }
-            else if (selectObj.tabMenu==6)
-            {
-                //drawKeyForGate(color,x,y,scale,colorRect='green')
-                let color=redactOption[selectObj.tabMenu][selectObj.numSelect].color;
-                drawKeyForGate(color,posXY.x,posXY.y,scale,false);
-            }
-            else if (selectObj.tabMenu==3)
-            {
-                let GR=redactOption[selectObj.tabMenu][selectObj.numSelect].group;
-                let type=redactOption[selectObj.tabMenu][selectObj.numSelect].numType;
-                drawPanzerIcon(posXY.x,posXY.y,type,GR);
-            }   else if(selectObj.tabMenu==5 && selectObj.numSelect>1)
-            {
-                let numType=redactOption[selectObj.tabMenu][selectObj.numSelect].numType;
-                    drawBase(posXY.x,posXY.y,numType);
-            }
-            else if (selectObj.tabMenu==7 && selectObj.numSelect==0)
-            {
-                let x=posXY.x+mapSize-mapSize/2-20/2;
-                let y=posXY.y+mapSize-mapSize/2-20/2;
-                this.drawImageByNum(selectObj.tabMenu,selectObj.numSelect,
-                                x,y,'delete');
-            }
-            else
-            {
-                this.drawImageByNum(selectObj.tabMenu,selectObj.numSelect,posXY.x,posXY.y);
-            }
+     
             
             
-        }
-           
-                   
-                   
         
+     
     },
     calcXYScaling:function(x,y)
     {
@@ -596,6 +599,7 @@ var selectInterface={
     {
         mX=mouseX-mouseOffsetX;
         mY=mouseY-mouseOffsetY;
+     
         this.enabledPanzerGRO();
        //this.tabMenu=(this.tabMenu+1)%6;
         if (mouseLeftClick())
@@ -693,6 +697,23 @@ var selectInterface={
        
             
         }  
+        if (checkPressKey('Delete') && selectObj.oldNumSelect==-1 &&
+                        selectObj.oldTabMenu==-1)
+        {
+            selectObj.oldNumSelect=selectObj.numSelect;
+            selectObj.oldTabMenu=selectObj.tabMenu;
+            selectObj.numSelect=0;
+            selectObj.tabMenu=this.tabMenu=7 ;
+        }
+        if (checkPressKey('Delete')==false && selectObj.oldNumSelect!=-1 &&
+                        selectObj.oldTabMenu!=-1)
+        {
+            //alert("545")
+            selectObj.numSelect=selectObj.oldNumSelect;
+            selectObj.tabMenu=this.tabMenu=selectObj.oldTabMenu ;
+            selectObj.oldTabMenu=-1;
+            selectObj.oldNumSelect=-1;
+        }
         if (checkMouseLeft()==true)
         {
             
@@ -919,7 +940,7 @@ function create ()// функция создание обьектов неоюх
                             (window.innerHeight - canvas.height)/2);
         initKeyboardAndMouse(["KeyA","KeyS","KeyD","KeyW","KeyM","KeyB","KeyR",'ArrowLeft',
                     'ArrowRight','ArrowUp','ArrowDown',"Enter","KeyP","KeyO",'KeyG',"KeyM",
-                    "KeyI","KeyK" ]);   
+                    "KeyI","KeyK",'Delete' ]);   
 }
 function drawAll()
 {

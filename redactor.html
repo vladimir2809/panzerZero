@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Redactor panzerZero</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="css/cssRedactor.css">
+        <script  src="js/function.js"></script>
+        <script  src="js/option.js"></script>
+        <script  src="js/keyboardAndMouse.js"></script>
+        <script  src="js/redactOption.js"></script>
+        <script  src="js/mainRed.js"></script>
+    </head>
+    <body>
+        <canvas id='canvas' width="800" height="600" style="position:absolute;">
+                   
+        </canvas>
+        <form id="formText">
+            <p>MapWidth</p>    
+            <input class="text" type="text" id="textWidth" value="100">
+            <p>MapHeight</p>    
+            <input   class="text" type="text" id="textHeight" value="100">
+          
+        </form>
+        <form id="formFile">
+            <input type="file" id="your-files" multiple>
+        </form>
+    </body>
+</html>
