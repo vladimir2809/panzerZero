@@ -1,4 +1,12 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
 /* 
+    Created on : 12.01.2022, 12:51:13
+    Author     : Владимир
+*//* 
     Created on : 07.11.2021, 10:09:45
     Author     : Владимир
 */
@@ -8,7 +16,7 @@
     left:1px;
     width:100px;
     height:200px;
-    display:block;    
+    display:none;    
     margin-left: 4px;
     border:1px black solid; 
 }
