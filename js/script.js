@@ -5,6 +5,13 @@ screenHeight=option[numOption].heightScreenBlock*mapSize;// высота экр�
 var context;// контекс канвас
 var mapWidth=option[numOption].mapWidthBlock*mapSize;// размер карты в ячейках по ширине
 var mapHeight=option[numOption].mapHeightBlock*mapSize;// размер карты в ячейках по высоте
+var windowWidth=document.documentElement.clientWidth;
+var windowHeight=document.documentElement.clientHeight;
+var windowWidthOld = windowWidth;
+var windowHeighOld = windowHeight;
+var  canvasWidth= windowWidth;
+var  canvasHeight= windowHeight;
+var canvas;
 var scale=1;// маштаб карты
 var quantityBurst=100;// количество взрывов
 var mouseOffsetX=0;// смешение мыши для правильно прицеливания так как экран выровнян по сиредине
@@ -76,6 +83,7 @@ var lastNumGarage=0;
 var countLoopShot=0;
 var countShot=0;
 var flagShot=false;
+var canvasWidthMore = null;
 var lastShop={
     numShop:0,
     numEntrance:0,
@@ -421,7 +429,52 @@ function setText(key,str,fill,x,y)// изменить текс
 //    
 //}
 // событие загрузки страницы
-
+window.onresize = function()
+{
+    updateSize()
+}
+function updateSize()
+{
+    windowWidth=document.documentElement.clientWidth;
+    windowHeight=document.documentElement.clientHeight;
+    let mult =1;
+    if (windowWidth>=windowHeight)
+    {
+        canvasWidth = /*canvas.width = */windowHeight*screenWidth/screenHeight;
+        canvasHeight = /*canvas.height = */windowHeight;
+        if (canvasWidth>windowWidth)
+        {
+            mult = windowWidth/canvasWidth;
+           // canvas.width =
+                canvasWidth *= mult;
+            //canvas.height =
+                canvasHeight *= mult;
+        }
+        canvasWidthMore = true;
+    }
+    else
+    {
+        canvasWidthMore = false;
+        canvasWidth = /*canvas.width*/  windowWidth;
+        canvasHeight= /*canvas.height*/  windowWidth*screenHeight/screenWidth;
+    }
+    
+    canvas.setAttribute('width',canvasWidth);
+    canvas.setAttribute('height',canvasHeight);
+    canvas.style.setProperty('left', (window.innerWidth - canvas.width)/2 + 'px'); 
+    canvas.style.setProperty('top', (window.innerHeight - canvas.height) / 2 + 'px'); 
+    if (canvasWidthMore==true)
+    {
+        context.scale(windowHeight / screenHeight * mult, windowHeight / screenHeight * mult);   
+    }
+    else
+    {
+       context.scale(windowWidth/screenWidth,windowWidth/screenWidth);
+    }
+   
+    //camera.width = canvasWidth;
+    //camera.height = canvasHeight;
+}
 window.addEventListener('load', function () {
     //console.log(localStorage.getItem("gameMap"));
     preload();
@@ -585,14 +638,16 @@ function preload()// функция предзагрузки
 function create ()// функция создание обьектов неоюходимых для игры
 {
         
-        var canvas = document.getElementById("canvas");
-        canvas.setAttribute('width',camera.width);
-        canvas.setAttribute('height',camera.height);
-        canvas.width = camera.width;//(window.innerWidth * 90) / 100;
-        canvas.height = camera.height//(window.innerHeight * 90) / 100;
-        canvas.style.setProperty('left', (window.innerWidth - canvas.width)/2 + 'px');
-        canvas.style.setProperty('top', (window.innerHeight - canvas.height)/2 + 'px')
+        canvas = document.getElementById("canvas");
+       // canvas.setAttribute('width',camera.width);
+       // canvas.setAttribute('height',camera.height);
+       // canvas.width = camera.width;//(window.innerWidth * 90) / 100;
+       // canvas.height = camera.height//(window.innerHeight * 90) / 100;
+       //// updateSize();
+       // canvas.style.setProperty('left', (window.innerWidth - canvas.width)/2 + 'px');
+       // canvas.style.setProperty('top', (window.innerHeight - canvas.height) / 2 + 'px');   
         context = canvas.getContext("2d");
+        updateSize();
         setOffsetMousePosXY((window.innerWidth - canvas.width)/2,
                             (window.innerHeight - canvas.height)/2);
         initKeyboardAndMouse(["KeyA","KeyS","KeyD","KeyW","KeyM","KeyB","KeyR",'ArrowLeft',
@@ -629,6 +684,13 @@ function create ()// функция создание обьектов неоюх
 
         
 }
+function drawTextNow(text,fontSize,x,y,color='rgb(255,128,0')
+{
+    context.fillStyle=color;
+    context.font = fontSize+'px Arial';
+   // context.strokeRect(this.widthTab*i,this.y,this.widthTab,20);
+    context.fillText(text,x,y);
+}
 function drawAll()// нарисовать все
 {
     if (imageLoad==true)// если изображения загружены
@@ -636,7 +698,12 @@ function drawAll()// нарисовать все
         //context.clearRect(0,0,camera.width,camera.height);// очистка экрана
         if (startScreen.being==true)
         {
-            startScreen.draw();
+            startScreen.draw(); 
+            drawTextNow('width: ' + Math.trunc(canvasWidth), 20, 100, 100, "Red");
+            drawTextNow('height: ' + Math.trunc( canvasHeight), 20, 100, 150, "Green");
+            drawTextNow(canvasWidthMore ? 'WidthMore' :'HeightMore', 20, 220, 100, "Blue");
+            drawTextNow('Innerheight: ' + Math.trunc( window.innerHeight), 20, 220, 150, "Green");
+            
         }    
         
         if (shop.open==true)
@@ -667,6 +734,7 @@ function drawAll()// нарисовать все
         }
         context.fillStyle='rgb(210,210,210)';
         context.fillRect(0,0,camera.width,camera.height);// очистка экрана
+       
         if (visibleGame==true)// если влючено отображение
         {
             for (let i=0;i<shopImageArr.length;i++)
@@ -1495,7 +1563,7 @@ function calibrationAccuracy()
         strFile=JSON.stringify(accuracyArr);
         downloadAsFile(strFile);
         numBattle=0;
-        accuracyTest=40;;
+        accuracyTest=ьфз;;
         strFile="";
         countTestMixShot=0;
         restartLevel();
