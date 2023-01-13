@@ -4,7 +4,8 @@ var keyUpArr=[];
 var gameKeyArr=[];
 var mouseX=250;
 var mouseY=250;
-
+var mouseMultX = 1;
+var mouseMultY = 1;
 var mouseLeftPress=false;
 var mouseClick=false;
 var wheelDelta=0;
@@ -36,8 +37,10 @@ function initKeyboardAndMouse(keyArr)// инициализировать пер�
           }
     });
     window.addEventListener('mousemove', function () {
-        mouseX=event.clientX;
-        mouseY=event.clientY;
+        let mouseOfsX=(window.innerWidth - canvas.width)/2
+        let mouseOfsY=(window.innerHeight - canvas.height)/2;
+        mouseX = (event.clientX-mouseOfsX)/mouseMultX;
+        mouseY = (event.clientY-mouseOfsY)/mouseMultY;
        // console.log("mX:"+mouseX+" mY:"+mouseY)
     });
     window.addEventListener('mousedown', function () {

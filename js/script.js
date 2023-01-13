@@ -16,6 +16,7 @@ var scale=1;// маштаб карты
 var quantityBurst=100;// количество взрывов
 var mouseOffsetX=0;// смешение мыши для правильно прицеливания так как экран выровнян по сиредине
 var mouseOffsetY=0;
+
 var maxDistBullet=calcDist(0,0,screenWidth,screenHeight)/3.5;// максимальная дистанция полета пули
 var quantityBonus=option[numOption].quantityBonus;// количество яшиков
 var quantityBarrel=option[numOption].quantityBarrel;;// количество взрываюшихшя бочек
@@ -466,12 +467,17 @@ function updateSize()
     if (canvasWidthMore==true)
     {
         context.scale(windowHeight / screenHeight * mult, windowHeight / screenHeight * mult);   
+        mouseMultX = windowHeight / screenHeight * mult;
+        mouseMultY = windowHeight / screenHeight * mult;
     }
     else
     {
        context.scale(windowWidth/screenWidth,windowWidth/screenWidth);
+        mouseMultX = windowWidth / screenWidth;
+        mouseMultY = windowWidth / screenWidth;
     }
-   
+    //setOffsetMousePosXY((window.innerWidth - canvas.width)/2,
+    //                        (window.innerHeight - canvas.height)/2);
     //camera.width = canvasWidth;
     //camera.height = canvasHeight;
 }
@@ -648,8 +654,8 @@ function create ()// функция создание обьектов неоюх
        // canvas.style.setProperty('top', (window.innerHeight - canvas.height) / 2 + 'px');   
         context = canvas.getContext("2d");
         updateSize();
-        setOffsetMousePosXY((window.innerWidth - canvas.width)/2,
-                            (window.innerHeight - canvas.height)/2);
+        //setOffsetMousePosXY((window.innerWidth - canvas.width)/2,
+        //                    (window.innerHeight - canvas.height)/2);
         initKeyboardAndMouse(["KeyA","KeyS","KeyD","KeyW","KeyM","KeyB","KeyR",'ArrowLeft',
                     'ArrowRight','ArrowUp','ArrowDown',"Enter","KeyP","KeyO",'KeyG',"KeyM",
                     "KeyI","KeyK",'ControlLeft',"KeyQ" ]);
@@ -699,10 +705,11 @@ function drawAll()// нарисовать все
         if (startScreen.being==true)
         {
             startScreen.draw(); 
-            drawTextNow('width: ' + Math.trunc(canvasWidth), 20, 100, 100, "Red");
-            drawTextNow('height: ' + Math.trunc( canvasHeight), 20, 100, 150, "Green");
-            drawTextNow(canvasWidthMore ? 'WidthMore' :'HeightMore', 20, 220, 100, "Blue");
-            drawTextNow('Innerheight: ' + Math.trunc( window.innerHeight), 20, 220, 150, "Green");
+            drawTextNow('xButton: ' + Math.trunc(startScreen.button.x), 20, 100, 100, "Red");
+            drawTextNow('yButton: ' + Math.trunc(startScreen.button.y), 20, 100, 150, "Red");
+            drawTextNow('xMouse: ' + Math.trunc( mouseX-mouseOffsetX), 20, 220, 100, "Green");
+            //drawTextNow(canvasWidthMore ? 'WidthMore' :'HeightMore', 20, 220, 100, "Blue");
+            drawTextNow('yMouse: ' + Math.trunc( mouseY-mouseOffsetY), 20, 220, 150, "Green");
             
         }    
         
@@ -1322,6 +1329,9 @@ function messageCenterScreen(str)
     let countPix=context.measureText(str).width;
     setText('MessageText',str,"#00FF00",(screenWidth/2)-countPix/2,400);
 }
+//setInterval(function () {
+//    mouseX=
+//}, 60);
 function gameLoop(mult,visible)// игровой цикл
 {
     //let mult=2;
@@ -1338,6 +1348,7 @@ function gameLoop(mult,visible)// игровой цикл
 //        console.log(changeColorImg(context,imageArr.get('body10'), [181,230,29],[255,0,0]));
 //        
 //    }
+    
     if (imageLoad==true && loadLevel==true)
     {
     
@@ -2852,8 +2863,8 @@ function collisionPanzerKeyGate()
 }
 function setOffsetMousePosXY(x,y)// устонавить смешения координаат для прицелевания так как экран начинается не в 0 0
 {
-    mouseOffsetX=x;
-    mouseOffsetY=y;
+    mouseOffsetX = 0;//x;
+    mouseOffsetY = 0;//y;
 }
 function mathTowerRotateXY(x,y)// расчитать точку вокруг которой должна крутиться башня танка
 {
