@@ -19,7 +19,7 @@
         timeAttackPatron:1000/250,// время перезарядки пулемята
         hitAttack:10,
         hitAttackPatron:2,
-        maskGan:[0,1,0,0],
+        maskGun:[0,1,0,0],
         speedReaction:70,// скорость реакции при виде врага
         timeReaction:1000/this.speedReaction,// время реакции
         accuracy:84,// точность//точность
@@ -49,7 +49,7 @@
         timeAttackPatron:1000/580,// время перезарядки пулемята
         hitAttack:25,
         hitAttackPatron:1,
-        maskGan:[1,0,0,0],
+        maskGun:[1,0,0,0],
         speedReaction:60,// скорость реакции при виде врага
         timeReaction:1000/this.speedReaction,// время реакции
         accuracy:85,// точность//точность
@@ -79,7 +79,7 @@
         timeAttackPatron:1000/250,// время перезарядки пулемята
         hitAttack:10,
         hitAttackPatron:2,
-        maskGan:[0,1,0,0],
+        maskGun:[0,1,0,0],
         speedReaction:100,// скорость реакции при виде врага
         timeReaction:1000/this.speedReaction,// время реакции
         accuracy:72,// точность//точность
@@ -109,7 +109,7 @@
         timeAttackPatron:1000/250,/// время перезарядки пулемята
         hitAttack:35,
         hitAttackPatron:2,
-        maskGan:[1,1,0,0],
+        maskGun:[1,1,0,0],
         speedReaction:100,// скорость реакции при виде врага
         timeReaction:1000/this.speedReaction,// время реакции
         accuracy:90,// точность//точность
@@ -139,7 +139,7 @@
         timeAttackPatron:1000/250,// время перезарядки пулемята
         hitAttack:35,
         hitAttackPatron:1,
-        maskGan:[1,0,0,0],
+        maskGun:[1,0,0,0],
         speedReaction:100,// скорость реакции при виде врага
         timeReaction:1000/this.speedReaction,// время реакции
         accuracy:82,// точность//точность
@@ -169,7 +169,7 @@
         timeAttackPatron:1000/250,// время перезарядки пулемята
         hitAttack:100,
         hitAttackPatron:2,
-        maskGan:[1,1,1,1],
+        maskGun:[1,1,1,1],
         speedReaction:100,// скорость реакции при виде врага
         timeReaction:1000/this.speedReaction,// время реакции
         accuracy:85,// точность//точность
@@ -199,7 +199,7 @@
 //        timeAttackPatron:1000/580,// время перезарядки пулемята
 //        hitAttack:15,
 //        hitAttackPatron:1,
-//        maskGan:[1,1,1,1],
+//        maskGun:[1,1,1,1],
 //        speedReaction:100,// скорость реакции при виде врага
 //        timeReaction:1000/this.speedReaction,// время реакции
 //        accuracy:70,// точность//точность
@@ -280,7 +280,7 @@ var option=[
 //        quantityWall:20,
 //        quantityPanzerGroup0:5,
 //        quantityPanzerGroup1:5,
-//        playerGan:0,
+//        playerGun:0,
 //        visibleGame:true,
 //        gamePlayer:true,
 //    }

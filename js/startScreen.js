@@ -25,14 +25,14 @@ startScreen={
         context.fillText("PANZER-ZERO",165,60);
         context.font = "38px Arial";
         context.fillStyle='#3333FF';
-        let x=100;
-        context.fillText("WASD - Управление.",20,x+80);
-        context.fillText("1234 - Выбор оружия.",20,x+120);
-        context.fillText("Левая кнопка мыши - Стрелять.",20,x+160);
-        context.fillText("Колёсико мыши - сменить оружие.",20,x+200);
-        context.fillText("M - Магазин.",20,x+240);
-        context.fillText("G - Гараж.",20,x+280);
-        context.fillText("R - Войти в здание или открыть дверь.",20,x+320);
+        let y=100;
+        context.fillText("WASD - Управление.",20,y+80);
+        context.fillText("1234 - Выбор оружия.",20,y+120);
+        context.fillText("Левая кнопка мыши - Стрелять.",20,y+160);
+        context.fillText("Колёсико мыши - сменить оружие.",20,y+200);
+        context.fillText("M - Магазин.",20,y+240);
+        context.fillText("G - Гараж.",20,y+280);
+        context.fillText("R - Войти в здание или открыть дверь.",20,y+320);
         context.fillStyle='rgb(210,10,10)';
         context.fillRect(this.button.x,this.button.y,
                     this.button.width,this.button.height);

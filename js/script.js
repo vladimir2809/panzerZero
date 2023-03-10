@@ -28,7 +28,7 @@ var quantityPanzerGroup0=0;//option[numOption].quantityPanzerGroup0;// коли�
 var quantityPanzerGroup1=0;//option[numOption].quantityPanzerGroup1;// количество танков красных
 var visibleGame=option[numOption].visibleGame;// отображение игры
 var gamePlayer=option[numOption].gamePlayer;// играет ли игрок или игра идет автоматически
-var playerGan=0;// номер оружия у танка игрока
+var playerGun=0;// номер оружия у танка игрока
 var money=option[numOption].startMoney;// деньги игрока
 var addMoney=0;
 var timeAddMoney=0;
@@ -36,8 +36,8 @@ var levelPlayer=1;
 var levelGame=1;
 var levelXPValue=[1000,2500,5000,8000,12000,20000,30000,50000,];
 var XP=0;
-var ganQuantityArr=[130,500,100,100];
-var labelGanXY={x:635,y:40};
+var gunQuantityArr=[130,500,100,100];
+var labelGunXY={x:635,y:40};
 var win=0;// количество побед зеленых над красными
 var maxPowerGroup;// максимальная мошность команды
 var numBattle=0;// количество битв
@@ -55,6 +55,7 @@ var quantityPanzer=quantityPanzerGroup0+quantityPanzerGroup1;// количесв
 
 var numPanzer=option[numOption].numPanzer;// номер танка которым можно управлять
 var pause=true;// пауза игры
+var levelUpdates = false;
 var countIterationGameLoop=0;// счетчик игровых циклов
 // массив имен картинок для загрузки 
 var nameImageArr=["body10","body11",'body12','body13','body14','body15',
@@ -64,7 +65,7 @@ var nameImageArr=["body10","body11",'body12','body13','body14','body15',
                 "bonusPatron",'bonusBullet','garage',
                 'wall',"water","brickwall","badbrickwall",'bullet',"rocket",
                 'patron','burst','burstBig','burstSmall','barrel',/*'barrel2',*/
-                'ganIcon','shop',"star",'starContur','gate',"base"];
+                'gunIcon','shop',"star",'starContur','gate',"base"];
 var audio;
 var soundTrack;
 var flagSoundTrack=false;
@@ -125,7 +126,7 @@ var panzer={
     timeAttackLaser:20,
     speedReaction:100,// скорость реакции при виде врага
     hitAttackPatron:1,
-    maskGan:[],
+    maskGun:[],
     timeReaction:1000/this.speedReaction,// время реакции
     countReaction:0,// счетчик реакции
     accuracy:100,// точность
@@ -601,7 +602,7 @@ function preload()// функция предзагрузки
     loadImageArr();   
    // getDataGoogleSheets();
     console.log(option[numOption].typePanzerArrGR0);
-    addText('QuantityGan',"12px Arial","#0000FFAA","win",635,110);
+    addText('QuantityGun',"12px Arial","#0000FFAA","win",635,110);
     //addText('Shot/Hits',"18px Arial","#00FF00","win",100,100);
     addText('Level',"18px Arial","#00FF00","",100,100);
     addText('Money',"18px Arial","#00FF00","win",100,100);
@@ -677,13 +678,14 @@ function create ()// функция создание обьектов неоюх
         //initWall();
         //initBarrel();
         numPanzer=0;
-        playerGan=nextGan(1);
+        playerGun=nextGun(1);
        // panzerArr[numPanzer].id=1;
         let panz=copyPanz(panzerArr[numPanzer]);
         console.log("panz start");
         console.log(panz);
         panzerInGarageArr.push(panz);
         loadLevel=true;
+       // mainMenu.start();
         startScreen.start();
        // alert(panzerArr[numPanzer].id);
        
@@ -702,6 +704,10 @@ function drawAll()// нарисовать все
     if (imageLoad==true)// если изображения загружены
     {
         //context.clearRect(0,0,camera.width,camera.height);// очистка экрана
+        if (mainMenu.being==true)
+        {
+            mainMenu.draw();
+        }
         if (startScreen.being==true)
         {
             startScreen.draw(); 
@@ -735,7 +741,7 @@ function drawAll()// нарисовать все
         }
         if (shop.open==true || boxWindowSelect.open==true || 
                 garage.open==true ||   messageBox.open==true ||
-                startScreen.being==true )
+                startScreen.being==true || mainMenu.being==true )
         {
            return 0;   
         }
@@ -878,11 +884,11 @@ function drawAll()// нарисовать все
                 context.fillStyle=bigText.color;
                 
                 let widthText=context.measureText(bigText.str).width+10;
-                    let x=screenWidth/2-widthText/2;
-                    context.fillText(bigText.str,x,280);
+                let x=screenWidth/2-widthText/2;
+                context.fillText(bigText.str,x,280);
             }
-            addText('QuantityGan',"13px Arial","#0000FF",+ganQuantityArr[playerGan],
-                        labelGanXY.x+35,labelGanXY.y+12/*+30*/);
+            addText('QuantityGun',"13px Arial","#0000FF",+gunQuantityArr[playerGun],
+                        labelGunXY.x+35,labelGunXY.y+12/*+30*/);
             let str=money+"$";
             setText('Money',str,"#00FF00",screenWidth-53-str.length*10,95);
             let y=475
@@ -978,7 +984,7 @@ function drawAll()// нарисовать все
             
             drawText(context,textArr[key]);
         }
-        drawIconGan(playerGan);
+        drawIconGun(playerGun);
         drawHPPlayer();
 //        for (let i=0;i<shopImageArr.length;i++)
 //        {
@@ -1027,21 +1033,21 @@ function drawHPPlayer()
     context.closePath();
     //arc(x,y, radius, startAngle, endAngle, anticlockwise);
 }
-function drawIconGan(numGan)
+function drawIconGun(numGun)
 {
-    if(!context || !imageArr.get('ganIcon')) return;
+    if(!context || !imageArr.get('gunIcon')) return;
     context.save();
     //context.scale(scale,scale);
-    context.drawImage(imageArr.get('ganIcon'),1+30*numGan,1,30,30,
-                labelGanXY.x,labelGanXY.y,30,30);
+    context.drawImage(imageArr.get('gunIcon'),1+30*numGun,1,30,30,
+                labelGunXY.x,labelGunXY.y,30,30);
     context.restore();
     context.fillStyle="#FF0000";
-    context.fillRect(labelGanXY.x,labelGanXY.y+30,30,4);
+    context.fillRect(labelGunXY.x,labelGunXY.y+30,30,4);
     context.fillStyle="#00FF00";
     rectWidth=panzerArr[numPanzer].countAttack<maxPanzerTimeAttack(numPanzer)?
             panzerArr[numPanzer].countAttack/maxPanzerTimeAttack(numPanzer)*30:
             30;
-    context.fillRect(labelGanXY.x,labelGanXY.y+30,rectWidth,4);
+    context.fillRect(labelGunXY.x,labelGunXY.y+30,rectWidth,4);
 }
 function drawSprite(context,image,x,y,camera,scale)// функция вывода спрайта на экран
 {
@@ -1318,8 +1324,24 @@ function controlBigText()
             bigText.count=0;
             switch (bigText.value)
             {
-                case 1: uploadLevelOrRestart(false);break;
-                case 2: uploadLevelOrRestart(); break;
+                case 1://  уровень пройден
+                    {
+                        
+                        uploadLevelOrRestart(0);
+                        saveDataLevel();
+                    }
+                    break;
+                case 2:// вы проиграли
+                {
+                    if (localStorage.getItem('panzerZeroData')!=null && localStorage.getItem('panzerZeroData')!=undefined)
+                    {
+                        readDatalevel();
+                        console.log('Уровень Загружен');
+                    }
+                    uploadLevelOrRestart(2);
+                    garage.close();
+                }
+                break;
             }
         }
     }
@@ -1332,7 +1354,88 @@ function messageCenterScreen(str)
 //setInterval(function () {
 //    mouseX=
 //}, 60);
-function gameLoop(mult,visible)// игровой цикл
+function removeDataLevel()
+{
+    localStorage.removeItem('panzerZeroData');
+}
+function saveDataLevel()
+{
+    //let dataWall = [];
+    //let dataFood = [];
+    //for (let i = 0; i < arrWall.length;i++)
+    //{
+    //    dataWall.push({x: arrWall.children[i].x, y: arrWall.children[i].y});
+    //}
+    //for (let i = 0; i < arrFood.length;i++)
+    //{
+    //    dataFood.push({x: arrFood.children[i].x, y: arrFood.children[i].y});
+    //}
+    localStorage.setItem('panzerZeroData',JSON.stringify({panzerInGarageArr:panzerInGarageArr,
+                                            money:money,XP:XP,gunQuantityArr,gunQuantityArr,
+                                            levelPlayer:levelPlayer,levelGame:levelGame,}));
+    console.log('Уровень сохранен');
+    console.log(localStorage.getItem('panzerZeroData'))
+   // console.log(dataWall);
+   // console.log(dataFood);
+    //readDatalevel();
+}
+function readDatalevel()
+{
+    let data=localStorage.getItem('panzerZeroData');
+    data = JSON.parse(data);
+    console.log(data);
+    if (Array.isArray(data.panzerInGarageArr)==true)
+    {
+        while (panzerInGarageArr.length>0)
+        {
+            panzerInGarageArr.splice(0,1);
+        }
+        for (let i = 0; i <data.panzerInGarageArr.length;i++)
+        {
+            panzerInGarageArr.push(data.panzerInGarageArr[i]);
+        }
+    }
+    if (Array.isArray(data.gunQuantityArr)==true)
+    {
+        while (gunQuantityArr.length>0)
+        {
+            gunQuantityArr.splice(0,1);
+        }
+        for (let i = 0; i <data.gunQuantityArr.length;i++)
+        {
+            gunQuantityArr.push(data.gunQuantityArr[i]);
+        }
+    }
+    if (typeof(data.levelGame)=='number')
+    {
+        levelGame=data.levelGame;
+    }
+    if (typeof(data.money)=='number')
+    {
+        money=data.money;
+    }
+    if (typeof(data.XP)=='number')
+    {
+        XP=data.XP;
+    }
+    if (typeof(data.levelPlayer)=='number')
+    {
+        levelPlayer=data.levelPlayer;
+    }
+    // if (typeof(data.money)=='number')
+    //{
+    //    money=data.money;
+    //}
+    //if (typeof(data.level)=='number')
+    //{
+    //    level = data.level;
+    //}
+    //if (typeof(data.leftFood)=='number')
+    //{
+    //    leftFood = data.leftFood;
+    //}
+}
+ function gameLoop(mult,visible)// игровой цикл
 {
     //let mult=2;
     let multIter=1;
@@ -1395,24 +1498,24 @@ function gameLoop(mult,visible)// игровой цикл
 //            {
 //                restartLevel();
 //            }
-            if (false)
-            {    
-                if (keyUpDuration('KeyV',300)) // вкл\выкл отображение игры
-                {
-                    if (flagPressV==false)
-                    {
-                        visibleGame=!visibleGame;
-                        flagPressV=true;
-                        uploadLevelOrRestart();
-        //                    countIterationGameLoop=0;
-        //                    countBeforeUpload=0;
-                     }
-                }
-                else
-                {
-                    flagPressV=false;
-                }
-            }
+        //    if (false)
+        //    {    
+        //        if (keyUpDuration('KeyV',300)) // вкл\выкл отображение игры
+        //        {
+        //            if (flagPressV==false)
+        //            {
+        //                visibleGame=!visibleGame;
+        //                flagPressV=true;
+        //                uploadLevelOrRestart();
+        ////                    countIterationGameLoop=0;
+        ////                    countBeforeUpload=0;
+        //             }
+        //        }
+        //        else
+        //        {
+        //            flagPressV=false;
+        //        }
+        //    }
             controlBigText();
             if (shop.open==false && boxWindowSelect.open==false && garage.open==false)
             {
@@ -1438,7 +1541,7 @@ function gameLoop(mult,visible)// игровой цикл
                     {
                         if (calcBalance()>0) win++; else win--;
                     }
-                    if (killGroupPanzer()==0 && killGroupPanzer()!=-1 )
+                    if (killGroupPanzer()==0 && killGroupPanzer()!=-1 && levelUpdates==false)
                     {
                         if (pause==false)
                         {
@@ -1482,6 +1585,7 @@ function gameLoop(mult,visible)// игровой цикл
                                 if (flag==true)
                                 {
                                     initBigText("Вы проиграли","#FF0000",130,2);
+                                    levelUpdates = true;
                                 }
                             }
                         }
@@ -1497,7 +1601,8 @@ function gameLoop(mult,visible)// игровой цикл
                         }
                         else
                         {
-                           initBigText("Уровень пройден","#00FF00",130,1); 
+                        //    saveDataLevel();
+                          initBigText("Уровень пройден","#00FF00",130,1); 
                         }
                         console.log(panzerArr);
                         
@@ -1660,19 +1765,19 @@ function controlHuman()// управление программой челове
     }//    console.log("sosiska");
     if (keyUpDuration("Digit2",100)) 
     {
-        playerGan=0;
+        playerGun=0;
     }
     if (keyUpDuration("Digit1",100)) 
     {
-        playerGan=1;
+        playerGun=1;
     }
     if (keyUpDuration("Digit3",100)) 
     {
-        if (panzerArr[numPanzer].numType==5)playerGan=3;
+        if (panzerArr[numPanzer].numType==5)playerGun=3;
     }
     if (keyUpDuration("Digit4",100)) 
     {
-        if (panzerArr[numPanzer].numType==5) playerGan=2;
+        if (panzerArr[numPanzer].numType==5) playerGun=2;
     }
     if (shop.open==false && garage.open==false && checkPressKey("KeyM") 
             && pause==false &&levelGame>1) 
@@ -1684,19 +1789,19 @@ function controlHuman()// управление программой челове
     {    
         if (panzerArr[numPanzer].attackPatron==false)
         {
-            playerGan=nextGan(-1);
+            playerGun=nextGun(-1);
         }
         else
         {
-           playerGan=1;
+           playerGun=1;
         }
         
     }
     if (resWhell==-1) // если сработало колесико мыши
     {
-            playerGan=nextGan(1);
+            playerGun=nextGun(1);
     }
-  
+
     if (checkPressKey('KeyQ') && checkPressKey('ControlLeft') && modeDev==false
             && pause==false) 
     {
@@ -1708,11 +1813,12 @@ function controlHuman()// управление программой челове
     {
         if (keyUpDuration("KeyN",100)) 
         {
-            uploadLevelOrRestart(false);
+            initBigText("Уровень пройден","#00FF00",130,1); 
+            //uploadLevelOrRestart(false);
         } 
         if (keyUpDuration("KeyL",100)) 
         {
-            uploadLevelOrRestart(false,true);
+            uploadLevelOrRestart(0,true);
         }
         
         if (keyUpDuration("KeyK",100))
@@ -1727,7 +1833,11 @@ function controlHuman()// управление программой челове
             console.log(panzerArr);
         }
 
-        
+        if (keyUpDuration("KeyJ",100)) 
+        {
+          //  informationOfPanzer(numPanzer);
+          initBigText("Вы проиграли","#FF0000",130,2);
+        }
       
     //    if (keyUpDuration("KeyI",100)) 
     //    {
@@ -1771,18 +1881,18 @@ function controlHuman()// управление программой челове
     
    
 }
-function nextGan(dir)
+function nextGun(dir)
 {
     let count=0;
-    let num=playerGan;
+    let num=playerGun;
     
-    while(count<ganQuantityArr.length)
+    while(count<gunQuantityArr.length)
     {
         if (dir>0) num++; else num--;
-        if (num<0) num=ganQuantityArr.length-1;
-        num=num%ganQuantityArr.length;
-        if (/*ganQuantityArr[num]>0 &&*/
-                panzerArr[numPanzer].maskGan[num]==1)
+        if (num<0) num=gunQuantityArr.length-1;
+        num=num%gunQuantityArr.length;
+        if (/*gunQuantityArr[num]>0 &&*/
+                panzerArr[numPanzer].maskGun[num]==1)
         {
             return num;
         } 
@@ -1791,7 +1901,7 @@ function nextGan(dir)
             count++;
         }
     }
-    return playerGan;
+    return playerGun;
     
 }
 function calcPanzerShotXY(num)// расчитать точку в которой должна появится пуля при выстреле
@@ -1828,9 +1938,9 @@ function panzerControll(num)// функция автоуправления та�
         {
             calcPanzerShotXY(num);
             if  ((panzerArr[num].countAttack>=maxPanzerTimeAttack(num)&&
-                    ganQuantityArr[playerGan]>0)&&
+                    gunQuantityArr[playerGun]>0)&&
                     ( (checkPointCollisionAll(mouseX-mouseOffsetX+camera.x,
-                      mouseY-mouseOffsetY+camera.y,true))==false||playerGan!=3)
+                      mouseY-mouseOffsetY+camera.y,true))==false||playerGun!=3)
                     )
             {
                 if (option[numOption].calcShotTime==true)
@@ -1848,25 +1958,25 @@ function panzerControll(num)// функция автоуправления та�
                 }
                 shot(panzerArr[num].shotX,panzerArr[num].shotY,
                         panzerArr[num].angleTower+
-                                ((playerGan>=2)? 0:
+                                ((playerGun>=2)? 0:
                         mixingShot(panzerArr[num].accuracy)),
                         //panzerArr[num].hitAttack,
-                        playerGan==1?panzerArr[num].hitAttackPatron:
+                        playerGun==1?panzerArr[num].hitAttackPatron:
                                         panzerArr[num].hitAttack,
-                        playerGan,
-                        playerGan==3?(mouseX-mouseOffsetX+camera.x):-1,
-                        playerGan==3?(mouseY-mouseOffsetY+camera.y):-1
+                        playerGun,
+                        playerGun==3?(mouseX-mouseOffsetX+camera.x):-1,
+                        playerGun==3?(mouseY-mouseOffsetY+camera.y):-1
                 );
                 panzerArr[num].countAttack=0;
-                ganQuantityArr[playerGan]--;
+                gunQuantityArr[playerGun]--;
                 console.log(panzerArr[num].x+' '+panzerArr[num].x+' '+
                         ' '+panzerArr[num].shotX+" "+panzerArr[num].shotY+
                         " "+mouseX+' '+mouseY);
                 
-                if (playerGan==1) audio.play("patron");
-                if (playerGan==0) audio.play("shot");
-                if (playerGan==2) audio.play("laser");
-                if (playerGan==3) audio.play("rocket");
+                if (playerGun==1) audio.play("patron");
+                if (playerGun==0) audio.play("shot");
+                if (playerGun==2) audio.play("laser");
+                if (playerGun==3) audio.play("rocket");
             }
         }
     if (panzerArr[num].stopMove==false || num==numPanzer)
@@ -1973,11 +2083,11 @@ function maxPanzerTimeAttack(num)
 {
    if (gamePlayer==true && num==numPanzer)
    {
-        if (playerGan<2)
+        if (playerGun<2)
         {
-          return playerGan==1?panzerArr[num].timeAttackPatron:panzerArr[num].timeAttack; 
+          return playerGun==1?panzerArr[num].timeAttackPatron:panzerArr[num].timeAttack; 
         }
-        else if (playerGan==2)
+        else if (playerGun==2)
             //                      timeAttackLaser
         {    
             return panzerArr[num].timeAttackLaser;
@@ -2712,7 +2822,7 @@ function nextNumPanzer(live=false)// присвоить новый номер т
     {
         panzerArr[numPanzer].bodyNameImage='body15';
     }
-    playerGan=nextGan(1);
+    playerGun=nextGun(1);
 }
 function burstService()// функция облуживания тиков взрывов
 {
@@ -2837,8 +2947,8 @@ function collisionPanzerBonus(num)// столкновения танка с ящ
                 break
                 case 2: money+=option[numOption].addBonusMoney;//randomInteger(1,10)*100;
                     break;
-                case 3: ganQuantityArr[1]+=randomInteger(1,50);break;
-                case 4: ganQuantityArr[0]+=randomInteger(1,5);break;
+                case 3: gunQuantityArr[1]+=randomInteger(1,50);break;
+                case 4: gunQuantityArr[0]+=randomInteger(1,5);break;
                     
 
             }
@@ -3796,11 +3906,11 @@ function restartLevel()
     initPanzers();
     countIterationGameLoop=0;
     countBeforeUpload=0;
-    playerGan=nextGan(1);
+    playerGun=nextGun(1);
 }
-function uploadLevelOrRestart(restart=true,loadBrowser=false)// функция обновления уровня после того как бой закончен
+function uploadLevelOrRestart(restart=1,loadBrowser=false)// функция обновления уровня после того как бой закончен
 {
-    if (restart==true||loadBrowser==true)
+    if (restart==1||loadBrowser==true)
     {
         while (panzerArr.length>0)
         {
@@ -3881,7 +3991,7 @@ function uploadLevelOrRestart(restart=true,loadBrowser=false)// функция �
     {
         garageImageArr.splice(0,1);
     }
-    if (restart==true||levelGame==2)
+    if (restart==1||levelGame==2)
     {
         while (panzerInGarageArr.length>0)
         {
@@ -3897,16 +4007,16 @@ function uploadLevelOrRestart(restart=true,loadBrowser=false)// функция �
     if (loadBrowser==true)
     {
         initMap(JSON.parse(localStorage.getItem('gameMap')));
-        playerGan=nextGan(1);
+        playerGun=nextGun(1);
     }
     else
     {
-        if (restart==true) levelGame=1;
+        if (restart==1) levelGame=1;
         initMap(levelMap[levelGame-1]);
         if (levelGame==1) money=option[numOption].startMoney;
     }
     numPanzer=0;
-    if (restart==true||levelGame==2)
+    if (restart==1||levelGame==2)
     {
         let panz=copyPanz(panzerArr[numPanzer]);
         panzerInGarageArr.push(panz);
@@ -3915,7 +4025,9 @@ function uploadLevelOrRestart(restart=true,loadBrowser=false)// функция �
     
     countIterationGameLoop=0;
     countBeforeUpload=0;
-    playerGan=nextGan(1);
+    playerGun=nextGun(1);
+    levelUpdates = false;
+
 //    //console.log('USPEH');
 //    //console.log(panzerArr.length);
 //    //console.log(bulletArr.length);
