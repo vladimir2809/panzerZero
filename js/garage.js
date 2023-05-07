@@ -100,7 +100,7 @@ garage={
                             }
                         }
                     }  
-                    playerGan=nextGan(1);
+                    playerGun=nextGun(1);
 
                 }
                 panzerArr[numPanzer].HP=panzerArr[numPanzer].maxHP;
@@ -270,7 +270,7 @@ garage={
                 y+=mapSize/2-panzerArr[numPanzer].height/2;
                 panzerArr[numPanzer].x=x;
                 panzerArr[numPanzer].y=y;
-                playerGan=nextGan(1);
+                playerGun=nextGun(1);
                 this.close();
               
             }

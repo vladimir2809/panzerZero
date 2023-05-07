@@ -40,6 +40,15 @@ function checkElemArr(array,elem)// прверить есть ли элемен�
     }
     return false;
 }
+function checkInObj(obj,x,y)
+{
+    if (x>obj.x && x<obj.x+obj.width &&
+            y>obj.y && y<obj.y+obj.height )
+    {
+        return true;
+    }
+    return false;
+}
 function mixingShot(mix)// функция которая генерирует случайные числа с дисперсией mix
 {
     if (mix>=100) return 0;

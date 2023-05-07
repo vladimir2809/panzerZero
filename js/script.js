@@ -26,6 +26,7 @@ var quantityWater=option[numOption].quantityWater;// количество Вод
 var quantityBrickWall=option[numOption].quantityBrickWall;// количество кирпичных стен
 var quantityPanzerGroup0=0;//option[numOption].quantityPanzerGroup0;// количество танков зеленых
 var quantityPanzerGroup1=0;//option[numOption].quantityPanzerGroup1;// количество танков красных
+var mainMenu = null;
 var visibleGame=option[numOption].visibleGame;// отображение игры
 var gamePlayer=option[numOption].gamePlayer;// играет ли игрок или игра идет автоматически
 var playerGun=0;// номер оружия у танка игрока
@@ -395,6 +396,28 @@ bigText={
     value:null,
     
 }
+buttonGarage = {
+    being: true,
+    x:10,
+    y:10,
+    width:80,
+    height:28,
+    color:"blue",
+    text:'Гараж',
+    textSize:19,
+    textColor:'rgb(255,255,0)',
+}
+buttonShop = {
+    being: true,
+    x:100,
+    y:10,
+    width:150,
+    height:28,
+    color:"blue",
+    text:'Магазин',
+    textSize:19,
+    textColor:'rgb(255,255,0)',
+}
 bonusArr=[];//массив яшиков
 wallArr=[];// массив стен
 gateArr=[];//массив дверей
@@ -662,6 +685,18 @@ function create ()// функция создание обьектов неоюх
                     "KeyI","KeyK",'ControlLeft',"KeyQ" ]);
         //changeColorImg(context,imageArr.get('body10'),0xb5e61dff,0xdf0d00ff);
        // initMap(JSON.parse(localStorage.getItem('gameMap')));
+        mainMenu = new Menu();
+        mainMenu.setOption({ 
+            width: screenWidth,
+            height: screenHeight,
+            listSelect:['Играть','Настройки'],
+            header:'Panzer Zero',
+            headerFontSize: 50,
+            widthOneItem: 300,
+            heightOneItem: 60,
+            sizeFontItem:30,
+        });
+   //     mainMenu.start();
         initMap(levelMap[levelGame-1]);
         map.width=mapWidth;
         map.height=mapHeight;
@@ -708,7 +743,7 @@ function drawAll()// нарисовать все
         {
             mainMenu.draw();
         }
-        if (startScreen.being==true)
+        else  if (startScreen.being==true)
         {
             startScreen.draw(); 
             drawTextNow('xButton: ' + Math.trunc(startScreen.button.x), 20, 100, 100, "Red");
@@ -741,7 +776,7 @@ function drawAll()// нарисовать все
         }
         if (shop.open==true || boxWindowSelect.open==true || 
                 garage.open==true ||   messageBox.open==true ||
-                startScreen.being==true || mainMenu.being==true )
+                startScreen.being==true )
         {
            return 0;   
         }
@@ -895,7 +930,12 @@ function drawAll()// нарисовать все
             let stepY=25;
     //        setText('Shot/Hits','Test:'+countTestMixShot+' HP1: '+panzerArr[0].HP+
     //                '  HP2:'+panzerArr[1].HP,"#44FF44",10,y-stepY);
-            if (levelGame>1) setText('Level','Уровень: '+levelPlayer,"#44FF44",10,y);
+            if (levelGame>1) 
+            {
+                setText('Level','Уровень: '+levelPlayer,"#44FF44",10,y);
+                drawButton(buttonGarage);
+                drawButton(buttonShop);
+            }
             
            // money++;
 
@@ -1005,9 +1045,30 @@ function drawAll()// нарисовать все
             context.lineTo(panzerArr[numPanzer].lineArr[i].x1,panzerArr[numPanzer].lineArr[i].y1); //рисуем линию
             context.stroke();
         }
-       
+     
+       // buttonGarage = {
+       // being: true,]
+       // x:10,
+       // y:10,
+       // width:50,
+       // height:20,
+       // text:'Гараж',
+       // textSize:15,
+       // textColor='yellow',
+       //}
+
       
     }
+}
+function drawButton (obj)
+{
+    context.strokeStyle = obj.color;
+    context.strokeRect(obj.x, obj.y, obj.width, obj.height);
+    let str= obj.text;
+    context.font =  obj.textSize+'px Arial';
+    let widthText = context.measureText(str).width;
+    context.fillStyle = obj.textColor;
+    context.fillText(str,obj.x+ obj.width / 2 - widthText / 2, obj.y+obj.textSize);
 }
 function drawText(context,text)// нарисовать текс
 {
@@ -1628,6 +1689,33 @@ function readDatalevel()
                 controlBase();
                 collisionPanzerKeyGate();
                 countIterationGameLoop++;
+                if (mouseLeftClick()==true && levelGame>1)
+                {
+                    if (checkInObj(buttonGarage,mouseX,mouseY)==true)
+                    {
+                        garage.start();
+                    }
+                    if (checkInObj(buttonShop,mouseX,mouseY)==true)
+                    {
+                        shop.start();
+                    }
+                }
+            
+            }
+            if (mainMenu.being==true)
+            {
+                mainMenu.update();
+                mainMenu.selectOn(function (select) {
+                    switch (select) 
+                    {
+                        case 'Играть': 
+                            {
+                                mainMenu.close();
+                                startScreen.start();
+                                break;
+                            }
+                    }
+                });
             }
             
             //controlBigText();

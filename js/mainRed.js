@@ -12,7 +12,7 @@ var nameImageArr=["body10","body11",'body12','body13','body14','body15','body16'
                 "bonusPatron",'bonusBullet','garage',
                 'wall',"water","brickwall","badbrickwall",'bullet',"rocket",
                 'patron','burst','burstBig','burstSmall','barrel',/*'barrel2',*/
-                'ganIcon','shop',"star",'starContur','gate',"base",
+                'gunIcon','shop',"star",'starContur','gate',"base",
                 'delete','deleteBig',];
 var imageArr=new Map();// массив картинок
 var countLoadImage=0;// количество загруженных картинок
@@ -597,8 +597,8 @@ var selectInterface={
     },
     update:function()
     {
-        mX=mouseX-mouseOffsetX;
-        mY=mouseY-mouseOffsetY;
+        mX = mouseX;//-mouseOffsetX;
+        mY = mouseY;//-mouseOffsetY;
      
         this.enabledPanzerGRO();
        //this.tabMenu=(this.tabMenu+1)%6;

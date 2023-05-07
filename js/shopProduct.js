@@ -7,7 +7,7 @@ let shopProduct=[
         id:"cartridges",
         pieces:10,
         price:10,
-        maskGan:[0,1,0,0],
+        maskGun:[0,1,0,0],
         title:"Патроны для пулемёта в количестве 10 штук. ",
     },
     {
@@ -18,7 +18,7 @@ let shopProduct=[
         id:"cartridges",
         pieces:25,
         price:20,
-        maskGan:[0,1,0,0],
+        maskGun:[0,1,0,0],
         title:"Патроны для пулемёта в количестве 25 штук."
     },
     {
@@ -29,7 +29,7 @@ let shopProduct=[
         id:"cartridges",
         pieces:50,
         price:35,
-        maskGan:[0,1,0,0],
+        maskGun:[0,1,0,0],
         title:"Патроны для пулемёта в количестве 50 штук. ",
     },
     {
@@ -40,7 +40,7 @@ let shopProduct=[
         id:'shell',
         pieces:5,
         price:50,
-        maskGan:[1,0,0,0],
+        maskGun:[1,0,0,0],
         title:"Снаряды для пушки в количестве 5 штук." +
                 " Они наносят приличный урон. "+
                 "А также ими можно пробивать стены.",
@@ -53,7 +53,7 @@ let shopProduct=[
         id:'shell',
         pieces:10,
         price:90,
-        maskGan:[1,0,0,0],
+        maskGun:[1,0,0,0],
         title:"Снаряды для пушки в количестве 10 штук." +
                 " Они наносят приличный урон. "+
                 "А также ими можно пробивать стены.",
@@ -68,7 +68,7 @@ let shopProduct=[
         id:'shell',
         pieces:25,
         price:200,
-        maskGan:[1,0,0,0],
+        maskGun:[1,0,0,0],
         title:"Снаряды для пушки в количестве 25 штук."+
                 " Они наносят приличный урон. "+
                 "А также ими можно пробивать стены.",
@@ -83,7 +83,7 @@ let shopProduct=[
         id:"laser",
         pieces:1,
         price:100,
-        maskGan:[0,0,1,0],
+        maskGun:[0,0,1,0],
         title:"Лазер убивает с одного попадания. ",
     },
     {
@@ -94,7 +94,7 @@ let shopProduct=[
         id:"rocket",
         pieces:1,
         price:150,
-        maskGan:[0,0,0,1],
+        maskGun:[0,0,0,1],
         title:"Ракета наносит повреждения рядом с местом в котором она взорвалась. Летит сквозь любые препятствия.",
     },
     {

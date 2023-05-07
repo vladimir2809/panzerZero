@@ -220,7 +220,7 @@ shop={
 
             panzerInGarageArr.push(copy);
 
-            playerGan=nextGan(1);
+            playerGun=nextGun(1);
             let num=lastShop.numShop;
             let entr=lastShop.numEntrance;
             let x=shopImageArr[num].entranceArr[entr].x+shopImageArr[num].x;
@@ -483,27 +483,27 @@ shop={
                         {
                             case "cartridges":
                             {
-                                this.labelText+=" Количество ваших патронов: "+ganQuantityArr[1];
+                                this.labelText+=" Количество ваших патронов: "+gunQuantityArr[1];
                             }
                             break;
                             case "shell":
                             {
-                                this.labelText+=" Количество ваших снарядов: "+ganQuantityArr[0];
+                                this.labelText+=" Количество ваших снарядов: "+gunQuantityArr[0];
                             }
                             break;
                             case "laser":
                             {
-                                this.labelText+=" Количество ваших лазеров: "+ganQuantityArr[2];
+                                this.labelText+=" Количество ваших лазеров: "+gunQuantityArr[2];
                             }
                             break;
                             case "rocket":
                             {
-                                this.labelText+=" Количество ваших ракет: "+ganQuantityArr[3];
+                                this.labelText+=" Количество ваших ракет: "+gunQuantityArr[3];
                             }
                             break;
 //                            case "income":
 //                            {
-//                                this.labelText+=" Количество ваших ракет: "+ganQuantityArr[3];
+//                                this.labelText+=" Количество ваших ракет: "+gunQuantityArr[3];
 //                            }
 //                            break;
                         }
@@ -537,13 +537,13 @@ shop={
                             {
                                 case "cartridges":
                                 {
-                                    ganQuantityArr[1]+=listProduct[i+startI].pieces;
+                                    gunQuantityArr[1]+=listProduct[i+startI].pieces;
 
                                 }
                                 break; 
                                 case "shell":
                                 {
-                                    ganQuantityArr[0]+=listProduct[i+startI].pieces;
+                                    gunQuantityArr[0]+=listProduct[i+startI].pieces;
 
                                 }
                                 break; 
@@ -565,12 +565,12 @@ shop={
                                 break;
                                 case "laser":
                                 {
-                                    ganQuantityArr[2]+=listProduct[i+startI].pieces;
+                                    gunQuantityArr[2]+=listProduct[i+startI].pieces;
                                 }
                                 break;
                                 case "rocket":
                                 {
-                                    ganQuantityArr[3]+=listProduct[i+startI].pieces;;
+                                    gunQuantityArr[3]+=listProduct[i+startI].pieces;;
                                 }
                                 break; 
                                 case "income":
@@ -856,6 +856,7 @@ shop={
     createListProduct:function ()
     {
         this.clearListProduct();
+      //  console.log(panzerArr[numPanzer].maskGun);
         for (let i=0;i<shopProduct.length;i++)
         {
             if (shopProduct[i].category==this.tabMenu)         
@@ -871,10 +872,10 @@ shop={
                 if (this.tabMenu==0)
                 {
                     let flag=false;
-                    for (let j=0;j<panzerArr[numPanzer].maskGan.length;j++)
+                    for (let j=0;j<panzerArr[numPanzer].maskGun.length;j++)
                     {
-                        if (panzerArr[numPanzer].maskGan[j]==1 &&
-                                    shopProduct[i].maskGan[j]==1)
+                        if (panzerArr[numPanzer].maskGun[j]==1 &&
+                                    shopProduct[i].maskGun[j]==1)
                             {
                                 flag=true
                             }
