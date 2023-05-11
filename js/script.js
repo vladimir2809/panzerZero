@@ -34,7 +34,7 @@ var money=option[numOption].startMoney;// деньги игрока
 var addMoney=0;
 var timeAddMoney=0;
 var levelPlayer=1;
-var levelGame=1;
+var levelGame=2;
 var levelXPValue=[1000,2500,5000,8000,12000,20000,30000,50000,];
 var XP=0;
 var gunQuantityArr=[130,500,100,100];
@@ -322,7 +322,7 @@ var barrel={
     hit:100,
     lineArr:[],
 };
-shopImageType={
+var shopImageType={
     being:true,
     x:null,
     y:null,
@@ -339,7 +339,7 @@ shopImageType={
     lineArr:[],
     linePerimetrArr:[],
 }
-garageImageType={
+var garageImageType={
     being:true,
     x:null,
     y:null,
@@ -411,7 +411,7 @@ buttonShop = {
     being: true,
     x:100,
     y:10,
-    width:150,
+    width:100,
     height:28,
     color:"blue",
     text:'Магазин',
@@ -668,61 +668,65 @@ function preload()// функция предзагрузки
 function create ()// функция создание обьектов неоюходимых для игры
 {
         
-        canvas = document.getElementById("canvas");
-       // canvas.setAttribute('width',camera.width);
-       // canvas.setAttribute('height',camera.height);
-       // canvas.width = camera.width;//(window.innerWidth * 90) / 100;
-       // canvas.height = camera.height//(window.innerHeight * 90) / 100;
-       //// updateSize();
-       // canvas.style.setProperty('left', (window.innerWidth - canvas.width)/2 + 'px');
-       // canvas.style.setProperty('top', (window.innerHeight - canvas.height) / 2 + 'px');   
-        context = canvas.getContext("2d");
-        updateSize();
-        //setOffsetMousePosXY((window.innerWidth - canvas.width)/2,
-        //                    (window.innerHeight - canvas.height)/2);
-        initKeyboardAndMouse(["KeyA","KeyS","KeyD","KeyW","KeyM","KeyB","KeyR",'ArrowLeft',
-                    'ArrowRight','ArrowUp','ArrowDown',"Enter","KeyP","KeyO",'KeyG',"KeyM",
-                    "KeyI","KeyK",'ControlLeft',"KeyQ" ]);
-        //changeColorImg(context,imageArr.get('body10'),0xb5e61dff,0xdf0d00ff);
-       // initMap(JSON.parse(localStorage.getItem('gameMap')));
-        mainMenu = new Menu();
-        mainMenu.setOption({ 
-            width: screenWidth,
-            height: screenHeight,
-            listSelect:['Играть','Настройки'],
-            header:'Panzer Zero',
-            headerFontSize: 50,
-            widthOneItem: 300,
-            heightOneItem: 60,
-            sizeFontItem:30,
-        });
-   //     mainMenu.start();
-        initMap(levelMap[levelGame-1]);
-        map.width=mapWidth;
-        map.height=mapHeight;
-        calcQuantityPanzer();
-      //  initPanzers();
-        initBullet();
-        initBurst();
-        //initBox();
+    canvas = document.getElementById("canvas");
+    // canvas.setAttribute('width',camera.width);
+    // canvas.setAttribute('height',camera.height);
+    // canvas.width = camera.width;//(window.innerWidth * 90) / 100;
+    // canvas.height = camera.height//(window.innerHeight * 90) / 100;
+    //// updateSize();
+    // canvas.style.setProperty('left', (window.innerWidth - canvas.width)/2 + 'px');
+    // canvas.style.setProperty('top', (window.innerHeight - canvas.height) / 2 + 'px');   
+    context = canvas.getContext("2d");
+    updateSize();
+    //setOffsetMousePosXY((window.innerWidth - canvas.width)/2,
+    //                    (window.innerHeight - canvas.height)/2);
+    initKeyboardAndMouse(["KeyA","KeyS","KeyD","KeyW","KeyM","KeyB","KeyR",'ArrowLeft',
+                'ArrowRight','ArrowUp','ArrowDown',"Enter","KeyP","KeyO",'KeyG',"KeyM",
+                "KeyI","KeyK",'ControlLeft',"KeyQ" ]);
+    //changeColorImg(context,imageArr.get('body10'),0xb5e61dff,0xdf0d00ff);
+    // initMap(JSON.parse(localStorage.getItem('gameMap')));
+    mainMenu = new Menu();
+    mainMenu.setOption({ 
+        width: screenWidth,
+        height: screenHeight,
+        listSelect:['Играть','Настройки'],
+        header:'Panzer Zero',
+        headerFontSize: 50,
+        widthOneItem: 300,
+        heightOneItem: 60,
+        sizeFontItem:30,
+    });
+
+    mainMenu.start();
+    mainSettings = new Settings();
+    mainSettings.init();
+    //mainSettings.start();
+    initMap(levelMap[levelGame-1]);
+    map.width=mapWidth;
+    map.height=mapHeight;
+    calcQuantityPanzer();
+    //  initPanzers();
+    initBullet();
+    initBurst();
+    //initBox();
         
-        //initAllNoMoveObject();
+    //initAllNoMoveObject();
 //        bonusArr=initNoMoveObject(quantityBonus,bonus);
 //        wallArr=initNoMoveObject(quantityWall,wall);
 //        barrelArr=initNoMoveObject(quantityBarrel,barrel);
-        //initWall();
-        //initBarrel();
-        numPanzer=0;
-        playerGun=nextGun(1);
-       // panzerArr[numPanzer].id=1;
-        let panz=copyPanz(panzerArr[numPanzer]);
-        console.log("panz start");
-        console.log(panz);
-        panzerInGarageArr.push(panz);
-        loadLevel=true;
-       // mainMenu.start();
-        startScreen.start();
-       // alert(panzerArr[numPanzer].id);
+    //initWall();
+    //initBarrel();
+    numPanzer=0;
+    playerGun=nextGun(1);
+    // panzerArr[numPanzer].id=1;
+    let panz=copyPanz(panzerArr[numPanzer]);
+    console.log("panz start");
+    console.log(panz);
+    panzerInGarageArr.push(panz);
+    loadLevel=true;
+    // mainMenu.start();
+    startScreen.start();
+    // alert(panzerArr[numPanzer].id);
        
 
         
@@ -742,6 +746,11 @@ function drawAll()// нарисовать все
         if (mainMenu.being==true)
         {
             mainMenu.draw();
+        }
+        else if (mainSettings.being==true)
+        {
+
+            mainSettings.draw();
         }
         else  if (startScreen.being==true)
         {
@@ -882,7 +891,7 @@ function drawAll()// нарисовать все
                         let image=imageArr.get("rocket");
                         
                         drawTurnSprite(context,image,bulletArr[i].x,bulletArr[i].y,
-                        bulletArr[i].angle,7,16,camera,scale);   
+                                         bulletArr[i].angle,7,16,camera,scale);   
                     }
                     
                 }
@@ -891,7 +900,9 @@ function drawAll()// нарисовать все
             {
                 if (panzerArr[i].being==true)
                 if (checkCollision(camera,panzerArr[i])==true || scale<=1)
-                drawPanzer(context,panzerArr[i],camera,scale);
+                {
+                    drawPanzer(context,panzerArr[i],camera,scale);
+                }
             } 
             for (let i=0;i<baseImageArr.length;i++)
             {
@@ -1689,7 +1700,7 @@ function readDatalevel()
                 controlBase();
                 collisionPanzerKeyGate();
                 countIterationGameLoop++;
-                if (mouseLeftClick()==true && levelGame>1)
+                if (mouseLeftClick()==true && mainSettings.being==false && levelGame>1)
                 {
                     if (checkInObj(buttonGarage,mouseX,mouseY)==true)
                     {
@@ -1714,7 +1725,22 @@ function readDatalevel()
                                 startScreen.start();
                                 break;
                             }
+                        case 'Настройки':
+                            {
+                                mainMenu.close();
+                                mainSettings.start();
+                                break;
+                            }
+                        
                     }
+                });
+            }
+            if (mainSettings.being==true)
+            {
+                mainSettings.update();
+                mainSettings.changeProp(function (id, value) {
+                    console.log('idProp '+id+' value '+value);
+                    //alert(5252);
                 });
             }
             
@@ -2022,6 +2048,7 @@ function panzerControll(num)// функция автоуправления та�
     }
     if (checkMouseLeft()==false) flagShot=false; 
     if (flagShot==false)
+    if((checkInObj(buttonGarage,mouseX,mouseY)==false && checkInObj(buttonShop,mouseX,mouseY)==false))
     if (checkMouseLeft()==true && num==numPanzer &&panzerArr[num].being==true)// условие выстрела
         {
             calcPanzerShotXY(num);
@@ -2044,6 +2071,9 @@ function panzerControll(num)// функция автоуправления та�
                         countShot++;
                     }
                 }
+                
+                
+            
                 shot(panzerArr[num].shotX,panzerArr[num].shotY,
                         panzerArr[num].angleTower+
                                 ((playerGun>=2)? 0:
@@ -3811,6 +3841,7 @@ function initOnePanzer(x,y,GR,type)
     onePanzer.DMG*=myBinSearch(onePanzer.accuracy,
          accuracyToHits,"accuracy","hits")/100;
         console.log(onePanzer.DMG);
+    onePanzer.updateState();
     let flag=false;
     for (let i=0;i<panzerArr.length;i++)
     {
@@ -4038,12 +4069,13 @@ function uploadLevelOrRestart(restart=1,loadBrowser=false)// функция об
                 {
                     panzerArr[0].x=x;
                     panzerArr[0].y=y;
+                    panzerArr[0].updateState();
                     break;
                 }
             }
             else
             {
-              panzerArr.splice(0,1);  
+                panzerArr.splice(0,1);  
             }
         } 
     }
@@ -4115,7 +4147,7 @@ function uploadLevelOrRestart(restart=1,loadBrowser=false)// функция об
     countBeforeUpload=0;
     playerGun=nextGun(1);
     levelUpdates = false;
-
+    console.log(panzerArr);
 //    //console.log('USPEH');
 //    //console.log(panzerArr.length);
 //    //console.log(bulletArr.length);

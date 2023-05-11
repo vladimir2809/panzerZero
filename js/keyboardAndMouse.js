@@ -2,6 +2,7 @@ var keyUp={code:null,timeOld:0}
 var pressKeyArr=[];// массив нажатых клавиш в данный момент
 var keyUpArr=[];
 var gameKeyArr=[];
+var pressKeyNow = null;
 var mouseX=250;
 var mouseY=250;
 var mouseMultX = 1;
@@ -19,7 +20,11 @@ function initKeyboardAndMouse(keyArr)// инициализировать пер�
           {
               pressKeyArr.push(event.code);
           }
-          // console.log(pressKeyArr);
+          //console.log(pressKeyArr);
+          if (pressKeyNow==null)
+          {
+              pressKeyNow = event.code;
+          }
     });
     window.addEventListener('keyup', function () {
           deleteElemArr(pressKeyArr,event.code);
@@ -34,6 +39,10 @@ function initKeyboardAndMouse(keyArr)// инициализировать пер�
           {
               let index=indexOfKeyUp(event.code);
               keyUpArr[index].timeOld=new Date().getTime();
+          }
+          if (pressKeyNow!=null)
+          {
+              pressKeyNow = null;
           }
     });
     window.addEventListener('mousemove', function () {
@@ -75,6 +84,10 @@ function initKeyboardAndMouse(keyArr)// инициализировать пер�
     { // IE8-
         canvas.attachEvent("onmousewheel", onWheel);
     }
+}
+function getPressKeyNow()
+{
+    return pressKeyNow;
 }
 function onWheel(e)// если врашения колисика мыши
 {
