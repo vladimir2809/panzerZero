@@ -12,6 +12,7 @@ startScreen={
     start:function()
     {
         //if (this.being==true)
+        this.being = true;
         this.timerId=setInterval(function(){
            startScreen.update(); 
         },50);

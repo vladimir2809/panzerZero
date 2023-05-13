@@ -212,6 +212,7 @@ garage={
     },
     update: function()
     {
+        //console.log(777);
         let x=this.x;
         let y=this.y;
         mX=mouseX-mouseOffsetX;

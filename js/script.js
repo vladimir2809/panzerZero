@@ -725,7 +725,7 @@ function create ()// функция создание обьектов неоюх
     panzerInGarageArr.push(panz);
     loadLevel=true;
     // mainMenu.start();
-    startScreen.start();
+    //startScreen.start();
     // alert(panzerArr[numPanzer].id);
        
 
@@ -785,7 +785,7 @@ function drawAll()// нарисовать все
         }
         if (shop.open==true || boxWindowSelect.open==true || 
                 garage.open==true ||   messageBox.open==true ||
-                startScreen.being==true )
+                startScreen.being==true || mainSettings.being==true ||  mainMenu.being==true)
         {
            return 0;   
         }
@@ -1700,7 +1700,7 @@ function readDatalevel()
                 controlBase();
                 collisionPanzerKeyGate();
                 countIterationGameLoop++;
-                if (mouseLeftClick()==true && mainSettings.being==false && levelGame>1)
+                if (mainSettings.being==false && mouseLeftClick()==true && levelGame>1)
                 {
                     if (checkInObj(buttonGarage,mouseX,mouseY)==true)
                     {
@@ -1713,7 +1713,7 @@ function readDatalevel()
                 }
             
             }
-            if (mainMenu.being==true)
+            if (mainMenu.being == true /*&& mainSettings.being == false*/)
             {
                 mainMenu.update();
                 mainMenu.selectOn(function (select) {
@@ -1741,6 +1741,9 @@ function readDatalevel()
                 mainSettings.changeProp(function (id, value) {
                     console.log('idProp '+id+' value '+value);
                     //alert(5252);
+                });
+                mainSettings.closing(function () {
+                    mainMenu.start();
                 });
             }
             

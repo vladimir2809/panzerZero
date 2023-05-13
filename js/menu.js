@@ -124,7 +124,7 @@
             this.selectNow = true;
        
         }   
-
+        //console.log(777);
     }
     this.selectOn=function(callback)
     {

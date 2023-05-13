@@ -4,9 +4,12 @@ var changePropData = {
     id:null,
     value:null,
 }
+var exceptionArrKey = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'KeyR','Digit1','Digit2','Digi3','Digit4'
+                        ,'F1','F5','F7','F11','F12','Tab','PrintScreen','NumLock','','Escape'];
+var arrKeyRAM = ['KeyM','KeyG'];
 function Settings() {
     this.being = false;
-   
+    this.flagClose = false;
     this.width = screenWidth;
     this.height = screenHeight;
     this.x = screenWidth/2-this.width/2;
@@ -62,9 +65,13 @@ function Settings() {
     }
     this.init=function()
     {
-        this.addProperty(0,'Кнопка гараж','toggle'/*'selectKey'*/,300);
-        this.addProperty(1,'Кнопка гараж','slider'/*'selectKey'*/,300);
+        //this.addProperty(0,'Кнопка гараж','toggle'/*'selectKey'*/,300);
+        //this.addProperty(1,'Кнопка гараж','slider'/*'selectKey'*/,300);
         this.addProperty(2,'Кнопка гараж','selectKey',300);
+        this.setPropertyById (2,'key','KeyM');
+        this.addProperty(3,'Кнопка магазин','selectKey',300);
+        this.setPropertyById(3,'key','KeyG');;
+        //this.propertyArr[2].element.setExceptionArrKey(['KeyW','KeyA','KeyS','KeyD','KeyR',]);
         //this.buttonExit.x = this.x + this.width - this. buttonExit.width;
         //this.buttonExit.y = this.y ;
         //this.buttonMainMenu.x = this.x + this.width / 2 - this.buttonMainMenu.width / 2;
@@ -122,7 +129,16 @@ function Settings() {
     this.close=function()
     {
         this.being = false;
-        clearInterval(this.timerId);
+       // clearInterval(this.timerId);
+        this.flagClose = true;
+    }
+    this.closing=function(callback)
+    {
+        if (this.flagClose==true)
+        {
+            this.flagClose = false;
+            callback();
+        }
     }
     this.draw=function()
     {
@@ -182,6 +198,18 @@ function Settings() {
             //this.speedMotion.slider.draw();
             //this.toggle.draw();
           //  settings.messageBox.draw();
+        }
+    }
+    this.setPropertyById=function(id,prop,value)
+    {
+        for (let i = 0; i < this.propertyArr.length;i++)
+        {
+            //alert(7799);
+            if (this.propertyArr[i].element.id==id)
+            {
+               // alert(7799);
+                this.propertyArr[i].element[prop] = value;
+            }
         }
     }
     this.update=function ()
@@ -247,12 +275,15 @@ function PropertyOne(id,x,y,type,xElem,yElem)
             case 'toggle': this.element = new Toggle(xElem, yElem, false); break; 
             case 'selectKey': this.element = new SelectKey(xElem, yElem, 'KeyA'); break; 
         }
+        this.element.id = this.id;
         //this.nameSettingTypeArr = ['slider', 'toggle', 'selectKey'];
 
     }
 }
 function Slider(x,y,width,value,min,max)// ползунок
 {
+    this.being = true;
+    this.id=0;
     this.x = x;
     this.y = y;
     this.width = width;
@@ -373,6 +404,7 @@ function Slider(x,y,width,value,min,max)// ползунок
 function Toggle(x,y,valueOn)//  переключатель
 {
     this.being = true;
+    this.id=0;
     this.x = x;
     this.y = y;
     this.width = 60;
@@ -447,6 +479,7 @@ function Toggle(x,y,valueOn)//  переключатель
 function SelectKey(x,y,key)
 {
     this.being = true;
+    this.id=0;
     this.x = x;
     this.y = y;
     this.key = key;
@@ -457,6 +490,7 @@ function SelectKey(x,y,key)
     this.width = 150;
     this.height = 20;
     this.flagChange = false;
+    this.exceptionArrKey = [];
     this.draw=function()
     {
         if (this.being==true)
@@ -485,6 +519,10 @@ function SelectKey(x,y,key)
         }
 
     }
+    //this.setExceptionArrKey=function(valueArr)
+    //{
+    //    this.exceptionArrKey = valueArr;
+    //}
     this.update=function(clickMouse)
     {
         if (clickMouse==true)      
@@ -519,8 +557,24 @@ function SelectKey(x,y,key)
             }
             if (getPressKeyNow()!=null)
             {
-                this.key = getPressKeyNow();
-                this.flagChange = true;
+                if (checkElemArr(exceptionArrKey,getPressKeyNow())==false)
+                {
+                    if (checkElemArr(arrKeyRAM,getPressKeyNow())==false)
+                    {
+                        deleteElemArr(arrKeyRAM, this.key);
+                        arrKeyRAM.push(getPressKeyNow());
+                        this.key = getPressKeyNow();
+                        this.flagChange = true;
+                    }
+                   
+
+                }
+                console.log(arrKeyRAM);
+                //if (checkElemArr(this.exceptionArrKey,getPressKeyNow())==false)
+                //{
+                //    this.key = getPressKeyNow();
+                //    this.flagChange = true;
+                //}
             }
             //console.log(getPressKeyNow());
         }
