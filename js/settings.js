@@ -4,9 +4,33 @@ var changePropData = {
     id:null,
     value:null,
 }
-var exceptionArrKey = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'KeyR','Digit1','Digit2','Digi3','Digit4'
+var exceptionArrKey = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'KeyR','Digit1','Digit2','Digig3','Digit4'
                         ,'F1','F5','F7','F11','F12','Tab','PrintScreen','NumLock','','Escape'];
-var arrKeyRAM = ['KeyM','KeyG'];
+var valueSwapKey = [];
+var leters = 'QWERTYUIOPLKJHGFDSAZXCVBNM';
+var allowedKeyArr = [];
+var arrKeyRAM = [/*'KeyM','KeyG'*/];
+for (let i = 0; i < leters.length;i++)
+{
+    let key = 'Key' + leters[i]; 
+      //checkElemArr
+    if (checkElemArr(exceptionArrKey,key)==false)
+    {
+        allowedKeyArr.push(key);
+    }
+
+}
+for (let i = 0; i < 10;i++)
+{
+    let key = 'Digit' + i; 
+      //checkElemArr
+  //  if (checkElemArr(exceptionArrKey,key)==false)
+    {
+        allowedKeyArr.push(key);
+    }
+
+}
+console.log(allowedKeyArr);
 function Settings() {
     this.being = false;
     this.flagClose = false;
@@ -23,6 +47,7 @@ function Settings() {
     //this.messageBox = new MessageBox();
    // this.selectKey = new SelectKey(100,100,'KeyB');
     this.propertyArr = [];
+    this.messageWin2 = new MessageWin();
     this.buttonExit = { 
         width:40,
         height:40,
@@ -46,7 +71,7 @@ function Settings() {
 
     //}
     this.toggle = null;
-    this.addProperty=function(id,label,type,xElem)
+    this.addProperty=function(id,label,type,xElem,value)
     {
         let y = this.propertyArr.length * 80 + 150;
         let yElem = y-20///null;
@@ -57,7 +82,7 @@ function Settings() {
         //    case 'selectKey': yElem = y + 20; break; 
 
         //}
-        let property = new PropertyOne(id,50,y,type,xElem,yElem)
+        let property = new PropertyOne(id,50,y,type,xElem,yElem,value)
         property.strLabel = label;    
         this.propertyArr.push(property);
         console.log(this.propertyArr);
@@ -65,12 +90,15 @@ function Settings() {
     }
     this.init=function()
     {
-        //this.addProperty(0,'Кнопка гараж','toggle'/*'selectKey'*/,300);
-        //this.addProperty(1,'Кнопка гараж','slider'/*'selectKey'*/,300);
-        this.addProperty(2,'Кнопка гараж','selectKey',300);
-        this.setPropertyById (2,'key','KeyM');
-        this.addProperty(3,'Кнопка магазин','selectKey',300);
-        this.setPropertyById(3,'key','KeyG');;
+    //    this.addProperty(0,'Кнопка гараж','toggle'/*'selectKey'*/,300,false);
+        this.addProperty(1,'Кнопка гараж','slider'/*'selectKey'*/,300,0.5);
+        this.addProperty(2,'Кнопка гараж','selectKey',300,'KeyG');
+       // this.setPropertyById (2,'key','KeyM');
+        this.addProperty(3,'Кнопка магазин','selectKey',300,'Digit1'/*"KeyM"*/);
+        this.addProperty(4,'Кнопка магазин','selectKey',300,'Digit2'/*"KeyH"*/);
+        this.addProperty(5,'Кнопка магазин','selectKey',300,'Digit3'/*"KeyP"*/);
+        console.log(this.propertyArr);
+       // this.setPropertyById(3,'key','KeyG');;
         //this.propertyArr[2].element.setExceptionArrKey(['KeyW','KeyA','KeyS','KeyD','KeyR',]);
         //this.buttonExit.x = this.x + this.width - this. buttonExit.width;
         //this.buttonExit.y = this.y ;
@@ -173,6 +201,7 @@ function Settings() {
                                 this.propertyArr[i].y);
                 this.propertyArr[i].element.draw();
             }
+            this.messageWin2.draw();
             //context.strokeStyle = 'red'//"rgb(128,128,128)";
 
             //context.strokeRect(this.buttonMainMenu.x,this.buttonMainMenu.y,
@@ -214,8 +243,8 @@ function Settings() {
     }
     this.update=function ()
     {   
-        let mouseCLick = mouseLeftClick();
-        if (mouseCLick==true)
+        let clickMouse = mouseLeftClick();
+        if (clickMouse==true)
         { 
             if (checkInObj(this.buttonExit,mouseX,mouseY)==true)
             {
@@ -226,7 +255,7 @@ function Settings() {
         }
         for (let i = 0; i < this.propertyArr.length;i++)
         {
-            this.propertyArr[i].element.update(mouseCLick);
+            this.propertyArr[i].element.update(clickMouse);
          
             let idFlag = null;
             this.propertyArr[i].element.change(function (value) {
@@ -236,14 +265,54 @@ function Settings() {
                 changePropData.value = value;
                // alert(111);
             });
-            if (idFlag==true) changePropData.id = this.propertyArr[i].id;
+            if (idFlag==true)
+            {
+                changePropData.id = this.propertyArr[i].id;
+            }
+            if (this.propertyArr[i].element.type=='selectKey')
+            {
+                let flag = false;
+                this.propertyArr[i].element.doubleKey(function () {
+                    flag = true;
+                    
+                   // this.messageWin2.start();
+                });
+                if (flag==true)
+                {
+                    this.messageWin2.start('Повтор клавиши',['Поменять местами','Отмена',]);
+                    valueSwapKey = [];
+                    valueSwapKey.push( getPressKeyNow());//this.propertyArr[i].element.key;
+                    valueSwapKey.push(this.propertyArr[i].element.key);
+                    console.log(45);
+                }
+            }
+            if (this.messageWin2.being==true)
+            {
+                this.messageWin2.update(clickMouse);
+                let select = null;
+                this.messageWin2.getSelect(function (value) {
+                    select = value;
+               
+                });   
+                switch (select)
+                {
+                    case 0:
+                        {
+                            this.swapKeys(valueSwapKey[0],valueSwapKey[1]);
+                            this.messageWin2.close();
+                            break;
+                        }
+                    case 1: this.messageWin2.close(); break;
+                }
+            }
+            
         }
         //var changePropData = {
         //    flag:false,
         //    id:null,
         //    value:null,
         //}
-      //  this.selectKey.update(mouseCLick);
+      //  this.selectKey.update(clickMouse);
     }
     this.changeProp=function(callback)
     {
@@ -254,9 +323,37 @@ function Settings() {
             callback(changePropData.id,changePropData.value);
         }
     }
+    this.swapKeys=function(key1,key2)
+    {
+        for (let i = 0;i < this.propertyArr.length;i++)
+        {
+            let flagBreak = false;
+            for (let j = 0;j < this.propertyArr.length;j++)
+            {
+                if (i!=j)
+                {
+                    if (this.propertyArr[i].element.type == 'selectKey' &&
+                        this.propertyArr[j].element.type == 'selectKey' &&
+                        this.propertyArr[i].element.key == key1 &&
+                        this.propertyArr[j].element.key == key2
+                        /*&&
+                        this.propertyArr[i].element.key==this.propertyArr[j].element.key*/)
+                    {
+                        let buffer = this.propertyArr[i].element.key;
+                        //this.propertyArr[j].element.key =  this.propertyArr[i].element.key;
+                        this.propertyArr[i].element.key = this.propertyArr[j].element.key;
+                        this.propertyArr[j].element.key =  buffer;
+                        flagBreak = true;
+                        break;
+                    }
+                }
+            }
+            if (flagBreak == true) break;
+        }
+    }
 
 }
-function PropertyOne(id,x,y,type,xElem,yElem) 
+function PropertyOne(id,x,y,type,xElem,yElem,value) 
 {
     this.id = id;
     this.x = x;
@@ -271,11 +368,17 @@ function PropertyOne(id,x,y,type,xElem,yElem)
         this.typeName = type;
         switch (type)
         {
-            case 'slider': this.element = new Slider(xElem, yElem,50, 10, 1, 100); break; 
-            case 'toggle': this.element = new Toggle(xElem, yElem, false); break; 
-            case 'selectKey': this.element = new SelectKey(xElem, yElem, 'KeyA'); break; 
+            case 'slider': this.element = new Slider(xElem, yElem,150, value, 0, 1); break; 
+            case 'toggle': this.element = new Toggle(xElem, yElem, value); break; 
+            case 'selectKey':
+                {
+                    this.element = new SelectKey(xElem, yElem, value);
+                    arrKeyRAM.push(value);
+                    break; 
+                }
         }
         this.element.id = this.id;
+        this.element.type = type;
         //this.nameSettingTypeArr = ['slider', 'toggle', 'selectKey'];
 
     }
@@ -284,6 +387,7 @@ function Slider(x,y,width,value,min,max)// ползунок
 {
     this.being = true;
     this.id=0;
+    this.type = '';
     this.x = x;
     this.y = y;
     this.width = width;
@@ -351,9 +455,9 @@ function Slider(x,y,width,value,min,max)// ползунок
             if (this.grabMouseBar==true)
             {
                 this.bar.x +=( mouseX - this.oldX);
-                if (this.bar.x > this.x + this.width)
+                if (this.bar.x > this.x + this.width-this.bar.width)
                 {
-                    this.bar.x = this.x + this.width;
+                    this.bar.x = this.x + this.width-this.bar.width;
                     this.grabMouseBar = false;
                 }
                 if (this.bar.x < this.x)
@@ -361,7 +465,7 @@ function Slider(x,y,width,value,min,max)// ползунок
                     this.bar.x = this.x;
                     this.grabMouseBar = false;
                 }
-                this.value = this.min+((this.max - this.min) * (this.bar.x - this.x) / this.width);
+                this.value = this.min+((this.max - this.min) * (this.bar.x - this.x) / (this.width-this.bar.width));
                 this.flagChange = true;
             }
      
@@ -405,6 +509,7 @@ function Toggle(x,y,valueOn)//  переключатель
 {
     this.being = true;
     this.id=0;
+    this.type = '';
     this.x = x;
     this.y = y;
     this.width = 60;
@@ -480,6 +585,7 @@ function SelectKey(x,y,key)
 {
     this.being = true;
     this.id=0;
+    this.type = '';
     this.x = x;
     this.y = y;
     this.key = key;
@@ -491,6 +597,9 @@ function SelectKey(x,y,key)
     this.height = 20;
     this.flagChange = false;
     this.exceptionArrKey = [];
+    this.messageWin = new MessageWin();
+    this.flagDoubleKey = false;
+    this.messageWin.setOption({width:500});
     this.draw=function()
     {
         if (this.being==true)
@@ -509,12 +618,15 @@ function SelectKey(x,y,key)
             
             context.fillRect(this.x,this.y,this.width,this.height)
             context.fillStyle = 'yellow';
-            let str = this.key;
+            let str = this.key.at(-1);
             context.font = '18px Arial';
             let widthText = context.measureText(str).width;
             context.fillText(str,this.x+ this.width / 2 - widthText / 2, this.y+ 18);
             //context.restore();
-
+            if (this.messageWin.being==true)
+            {
+                this.messageWin.draw();
+            }
             
         }
 
@@ -557,8 +669,9 @@ function SelectKey(x,y,key)
             }
             if (getPressKeyNow()!=null)
             {
-                if (checkElemArr(exceptionArrKey,getPressKeyNow())==false)
+                if (checkElemArr(allowedKeyArr,getPressKeyNow())==true)
                 {
+                    
                     if (checkElemArr(arrKeyRAM,getPressKeyNow())==false)
                     {
                         deleteElemArr(arrKeyRAM, this.key);
@@ -566,19 +679,62 @@ function SelectKey(x,y,key)
                         this.key = getPressKeyNow();
                         this.flagChange = true;
                     }
+                    else if (getPressKeyNow()!=this.key)
+                    {
+                        this.flagDoubleKey = true;
+                    }
+                    //if (checkElemArr(arrKeyRAM,getPressKeyNow())==false)
+                    //{
+                    //    deleteElemArr(arrKeyRAM, this.key);
+                    //    arrKeyRAM.push(getPressKeyNow());
+                    //    this.key = getPressKeyNow();
+                    //    this.flagChange = true;
+                    //}
                    
 
                 }
+                else
+                {
+                    this.messageWin.start('Можно выбрать только буквы и цивры. За исключением WASD и 1234', ['ok',]);
+                }
                 console.log(arrKeyRAM);
+           
                 //if (checkElemArr(this.exceptionArrKey,getPressKeyNow())==false)
                 //{
                 //    this.key = getPressKeyNow();
                 //    this.flagChange = true;
                 //}
             }
+     
             //console.log(getPressKeyNow());
         }
+        if (this.messageWin.being==true)
+        {
+            this.messageWin.update(clickMouse);
+            let flag = false;
+            this.messageWin.getSelect(function (value) {
+                if (value==0) 
+                {
+                    flag = true;
+                       
+                }
+            });
+            if (flag==true)
+            {
+                this.messageWin.close();
+            }
+        }
     }
+    this.doubleKey=function(callback)
+    {
+        if (this.flagDoubleKey==true)
+        {
+            this.flagDoubleKey = false;
+          //  alert(6456);
+            callback(this.key);
+        }
+    }
+
     this.change=function(callback)
     {
         if (this.flagChange==true)
