@@ -87,6 +87,10 @@ var countLoopShot=0;
 var countShot=0;
 var flagShot=false;
 var canvasWidthMore = null;
+var volumeSoundTrack = 1;
+var volumeAudio = 1;
+var flagAudio = false;
+var timerAudio = null;
 var lastShop={
     numShop:0,
     numEntrance:0,
@@ -636,7 +640,7 @@ function preload()// функция предзагрузки
     //Howler.autoUnlock = false;
     audio = new Howl({
         src: ['sound/sound.mp3'],
-        volume: 0.4,
+        volume: volumeAudio,
         sprite:{
             patron:[1,1418],
             shot: [5000,1613],
@@ -652,7 +656,7 @@ function preload()// функция предзагрузки
     soundTrack = new Howl({
         src: ['sound/BlitzKaskade.mp3'],
         //src: ['sound/ton.mp3'],
-        volume: 0.6,
+        volume: volumeSoundTrack,
         //autoplay:false,
         loop:true,
 //        onplayerror: function() {
@@ -682,25 +686,47 @@ function create ()// функция создание обьектов неоюх
     //                    (window.innerHeight - canvas.height)/2);
     initKeyboardAndMouse(["KeyA","KeyS","KeyD","KeyW","KeyM","KeyB","KeyR",'ArrowLeft',
                 'ArrowRight','ArrowUp','ArrowDown',"Enter","KeyP","KeyO",'KeyG',"KeyM",
-                "KeyI","KeyK",'ControlLeft',"KeyQ" ]);
+                "KeyI","KeyK",'ControlLeft',"KeyQ",'Escape' ]);
     //changeColorImg(context,imageArr.get('body10'),0xb5e61dff,0xdf0d00ff);
     // initMap(JSON.parse(localStorage.getItem('gameMap')));
     mainMenu = new Menu();
     mainMenu.setOption({ 
         width: screenWidth,
         height: screenHeight,
-        listSelect:['Играть','Настройки'],
+        listSelect:['Продолжить','Новая игра'],
         header:'Panzer Zero',
         headerFontSize: 50,
         widthOneItem: 300,
         heightOneItem: 60,
         sizeFontItem:30,
     });
-
     mainMenu.start();
-    mainSettings = new Settings();
-    mainSettings.init();
-    //mainSettings.start();
+    gameMenu = new Menu();
+    gameMenu.setOption({
+        width: screenWidth / 3,
+        height: screenHeight / 2,
+        listSelect:['Продолжить','Настройки','Помошь','Главное меню'],
+        header:'Игровое меню',
+        headerFontSize: 20,
+        widthOneItem: 150,
+        heightOneItem: 30,
+        sizeFontItem:20,
+    });
+    gameSettings = new Settings();
+    gameSettings.addProperty(0,'Громкость музыки','slider'/*'selectKey'*/,300,0);
+    gameSettings.addProperty(1,'Громкость выстрела','slider',300,0);;
+    gameSettings.addProperty(2,'Кнопка магазин','selectKey',300,'KeyM'/*"KeyM"*/);
+    gameSettings.addProperty(3,'Кнопка гараж','selectKey',300,'KeyG'/*"KeyM"*/);
+    gameSettings.addProperty(4,'Кнопка открыть','selectKey',300,'KeyR'/*"KeyM"*/);
+    // this.addProperty(4,'Кнопка магазин','selectKey',300,'Digit2'/*"KeyH"*/);
+    // this.addProperty(5,'Кнопка магазин','selectKey',300,'Digit3'/*"KeyP"*/);
+    gameSettings.init();
+    messageExitMainMenu = new MessageWin();
+    messageNewGame = new MessageWin();
+    messageNewGame.setOption({
+        width: 500,
+    });
+    //gameSettings.start();
     initMap(levelMap[levelGame-1]);
     map.width=mapWidth;
     map.height=mapHeight;
@@ -747,10 +773,14 @@ function drawAll()// нарисовать все
         {
             mainMenu.draw();
         }
-        else if (mainSettings.being==true)
+        else if (gameMenu.being==true)
+        {
+            gameMenu.draw();
+        }
+        else if (gameSettings.being==true)
         {
 
-            mainSettings.draw();
+            gameSettings.draw();
         }
         else  if (startScreen.being==true)
         {
@@ -783,9 +813,14 @@ function drawAll()// нарисовать все
             messageBox.draw();
           //  return 0;
         }
+        messageExitMainMenu.draw();
+        messageNewGame.draw();
         if (shop.open==true || boxWindowSelect.open==true || 
                 garage.open==true ||   messageBox.open==true ||
-                startScreen.being==true || mainSettings.being==true ||  mainMenu.being==true)
+                startScreen.being==true || gameSettings.being==true ||
+                mainMenu.being==true ||
+                gameMenu.being==true ||
+                messageExitMainMenu.being==true)
         {
            return 0;   
         }
@@ -1700,7 +1735,7 @@ function readDatalevel()
                 controlBase();
                 collisionPanzerKeyGate();
                 countIterationGameLoop++;
-                if (mainSettings.being==false && mouseLeftClick()==true && levelGame>1)
+                if (gameSettings.being==false && mouseLeftClick()==true && levelGame>1)
                 {
                     if (checkInObj(buttonGarage,mouseX,mouseY)==true)
                     {
@@ -1713,37 +1748,146 @@ function readDatalevel()
                 }
             
             }
-            if (mainMenu.being == true /*&& mainSettings.being == false*/)
+            if (mainMenu.being == true && messageNewGame.being == false)
             {
                 mainMenu.update();
                 mainMenu.selectOn(function (select) {
                     switch (select) 
                     {
-                        case 'Играть': 
+                        case 'Продолжить': 
                             {
                                 mainMenu.close();
                                 startScreen.start();
                                 break;
                             }
-                        case 'Настройки':
+                        case 'Новая игра':
                             {
-                                mainMenu.close();
-                                mainSettings.start();
+                                //mainMenu.close();
+                                //gameSettings.start();
+                                messageNewGame.start("Вы действительно хотите начать новую игру? Прогресс будет утерян.",
+                                                    ['Да','Нет']);
                                 break;
                             }
                         
                     }
                 });
             }
-            if (mainSettings.being==true)
+            if (gameMenu.being==true && messageExitMainMenu.being==false)
             {
-                mainSettings.update();
-                mainSettings.changeProp(function (id, value) {
+                gameMenu.update();
+                gameMenu.selectOn(function (select) {
+                    switch (select) {
+                        case 'Продолжить':
+                            {
+                                gameMenu.close();
+                                //startScreen.start();
+                                pause = false;
+                                break;
+                            }
+                        case 'Настройки':
+                            {
+                                gameMenu.close();
+                                gameSettings.start();
+                                break;
+                            }
+                        case 'Помошь':
+                            {
+                                gameMenu.close();
+                                startScreen.start();
+                                break;
+                            }
+                        case 'Главное меню':
+                            {
+                                messageExitMainMenu.start('Вы действительно хотите выйты?',['Да','Нет']);
+                                //gameMenu.close();
+                                //mainMenu.start();
+                                //startScreen.start();
+                                break;
+                            }
+
+                    }
+                });
+            }
+            if (gameSettings.being==true)
+            {
+                gameSettings.update();
+                //let flagAudio = false;
+                gameSettings.changeProp(function (id, value) {
                     console.log('idProp '+id+' value '+value);
+                    switch (id)
+                    {
+                        case 0:
+                            {
+                                volumeSoundTrack = value;
+                                soundTrack.volume(volumeSoundTrack);
+                                break;
+                            }
+                        case 1:
+                            {
+                                volumeAudio = value;
+                                audio.volume(volumeAudio);
+                                if (flagAudio==false)
+                                {
+                                    timerAudio= setInterval(function () {
+                                        if (checkMouseLeft()==false)
+                                        {
+                                            audio.play('shot');
+                                            flagAudio = false;
+                                            clearInterval(timerAudio);
+                                            
+                                        }
+                                    });
+
+                                }
+                                flagAudio = true;            
+                                break;
+                            }
+                    }
                     //alert(5252);
                 });
-                mainSettings.closing(function () {
-                    mainMenu.start();
+                
+            
+                gameSettings.closing(function () {
+                    //gameSettings.close();
+                    drawAll();
+                    gameMenu.start();
+
+                });
+            }
+            if (messageExitMainMenu.being==true)
+            {
+                messageExitMainMenu.update(mouseLeftClick());
+                messageExitMainMenu.getSelect(function (select) {
+                    switch(select)
+                    {
+                        case 0: 
+                            {
+                                
+                                messageExitMainMenu.close();
+                                gameMenu.close();
+                                mainMenu.start();
+                                break;
+                            };
+                        case 1: 
+                        {
+                                messageExitMainMenu.close();
+                                gameMenu.close();
+                                drawAll();
+                                gameMenu.start();
+                                break; ;
+                        }
+                    }
+                });
+            }
+            if (messageNewGame.being==true)
+            {
+                messageNewGame.update(mouseLeftClick());
+                messageNewGame.getSelect(function (select) {
+                    switch(select)
+                    {
+                        case 0: break;
+                        case 1: messageNewGame.close(); break;
+                    }
                 });
             }
             
@@ -1880,19 +2024,37 @@ function controlHuman()// управление программой челове
     {
        garage.start();
     }//    console.log("sosiska");
-    if (keyUpDuration("Digit2",100)) 
+    if (keyUpDuration("Escape", 100) && garage.open == false && shop.open == false) 
+    {
+        if (gameMenu.being==false)
+        {
+            if (gameSettings.being==false && startScreen.being==false)
+            {
+                gameMenu.start(); 
+                pause = true;
+            }
+
+        }
+        else
+        {
+            gameMenu.close();
+            pause = false;
+        }
+         
+    }
+    if (keyUpDuration("Digit2",100) && panzerArr[0].maskGun[0]==1) 
     {
         playerGun=0;
     }
-    if (keyUpDuration("Digit1",100)) 
+    if (keyUpDuration("Digit1",100) && panzerArr[0].maskGun[1]==1) 
     {
         playerGun=1;
     }
-    if (keyUpDuration("Digit3",100)) 
+    if (keyUpDuration("Digit3",100) && panzerArr[0].maskGun[3]==1) 
     {
         if (panzerArr[numPanzer].numType==5)playerGun=3;
     }
-    if (keyUpDuration("Digit4",100)) 
+    if (keyUpDuration("Digit4",100) && panzerArr[0].maskGun[2]==1) 
     {
         if (panzerArr[numPanzer].numType==5) playerGun=2;
     }

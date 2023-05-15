@@ -4,7 +4,7 @@ var changePropData = {
     id:null,
     value:null,
 }
-var exceptionArrKey = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'KeyR','Digit1','Digit2','Digig3','Digit4'
+var exceptionArrKey = ['KeyW', 'KeyA', 'KeyS', 'KeyD','Digit1','Digit2','Digig3','Digit4'
                         ,'F1','F5','F7','F11','F12','Tab','PrintScreen','NumLock','','Escape'];
 var valueSwapKey = [];
 var leters = 'QWERTYUIOPLKJHGFDSAZXCVBNM';
@@ -91,12 +91,12 @@ function Settings() {
     this.init=function()
     {
     //    this.addProperty(0,'Кнопка гараж','toggle'/*'selectKey'*/,300,false);
-        this.addProperty(1,'Кнопка гараж','slider'/*'selectKey'*/,300,0.5);
-        this.addProperty(2,'Кнопка гараж','selectKey',300,'KeyG');
-       // this.setPropertyById (2,'key','KeyM');
-        this.addProperty(3,'Кнопка магазин','selectKey',300,'Digit1'/*"KeyM"*/);
-        this.addProperty(4,'Кнопка магазин','selectKey',300,'Digit2'/*"KeyH"*/);
-        this.addProperty(5,'Кнопка магазин','selectKey',300,'Digit3'/*"KeyP"*/);
+       // this.addProperty(1,'Кнопка гараж','slider'/*'selectKey'*/,300,0.5);
+       // this.addProperty(2,'Кнопка гараж','selectKey',300,'KeyG');
+       //// this.setPropertyById (2,'key','KeyM');
+       // this.addProperty(3,'Кнопка магазин','selectKey',300,'Digit1'/*"KeyM"*/);
+       // this.addProperty(4,'Кнопка магазин','selectKey',300,'Digit2'/*"KeyH"*/);
+       // this.addProperty(5,'Кнопка магазин','selectKey',300,'Digit3'/*"KeyP"*/);
         console.log(this.propertyArr);
        // this.setPropertyById(3,'key','KeyG');;
         //this.propertyArr[2].element.setExceptionArrKey(['KeyW','KeyA','KeyS','KeyD','KeyR',]);
@@ -201,6 +201,13 @@ function Settings() {
                                 this.propertyArr[i].y);
                 this.propertyArr[i].element.draw();
             }
+            for (let i = 0; i < this.propertyArr.length;i++)
+            {                            // drawMessageWin
+                if (this.propertyArr[i].element.type=='selectKey')
+                {
+                    this.propertyArr[i].element.drawMessageWin();
+                }
+            }
             this.messageWin2.draw();
             //context.strokeStyle = 'red'//"rgb(128,128,128)";
 
@@ -283,7 +290,7 @@ function Settings() {
                     valueSwapKey = [];
                     valueSwapKey.push( getPressKeyNow());//this.propertyArr[i].element.key;
                     valueSwapKey.push(this.propertyArr[i].element.key);
-                    console.log(45);
+                    //console.log(45);
                 }
             }
             if (this.messageWin2.being==true)
@@ -335,12 +342,9 @@ function Settings() {
                     if (this.propertyArr[i].element.type == 'selectKey' &&
                         this.propertyArr[j].element.type == 'selectKey' &&
                         this.propertyArr[i].element.key == key1 &&
-                        this.propertyArr[j].element.key == key2
-                        /*&&
-                        this.propertyArr[i].element.key==this.propertyArr[j].element.key*/)
+                        this.propertyArr[j].element.key == key2)
                     {
                         let buffer = this.propertyArr[i].element.key;
-                        //this.propertyArr[j].element.key =  this.propertyArr[i].element.key;
                         this.propertyArr[i].element.key = this.propertyArr[j].element.key;
                         this.propertyArr[j].element.key =  buffer;
                         flagBreak = true;
@@ -408,7 +412,7 @@ function Slider(x,y,width,value,min,max)// ползунок
     }
     this.updateBar=function()
     {
-        this.bar.x = this.x + this.width * (this.value -this.min)/ (this.max - this.min);
+        this.bar.x = this.x + (this.width-this.bar.width) * (this.value -this.min)/ (this.max - this.min);
         this.bar.y = this.y - (this.bar.height - this.height) / 2;
     }
     this.init=function()
@@ -623,13 +627,17 @@ function SelectKey(x,y,key)
             let widthText = context.measureText(str).width;
             context.fillText(str,this.x+ this.width / 2 - widthText / 2, this.y+ 18);
             //context.restore();
-            if (this.messageWin.being==true)
-            {
-                this.messageWin.draw();
-            }
+      
             
         }
 
+    }
+    this.drawMessageWin=function()
+    {
+        if (this.messageWin.being==true)
+        {
+            this.messageWin.draw();
+        }
     }
     //this.setExceptionArrKey=function(valueArr)
     //{
