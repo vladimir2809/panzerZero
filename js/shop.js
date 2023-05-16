@@ -520,8 +520,8 @@ shop={
                     }
                     if (levelPlayer<listProduct[i+startI].levelOpen)
                     {
-                        this.labelText="Не доступно. Откроется когда вы достигнете "+
-                                listProduct[i+startI].levelOpen+" уровня";
+                        this.labelText="Не доступно. Откроется когда вы достигнете звания: "+
+                                nameRankLevel[listProduct[i+startI].levelOpen-1];
                     }
                     if (mouseLeftClick())
                     {
@@ -636,7 +636,7 @@ shop={
                         else if (levelOpen>levelPlayer)
                         {
                             this.labelText="Для того что бы увеличить этот "+
-                             "параметр достигнете уровня: "+levelOpen;
+                             "параметр достигнете звания: "+nameRankLevel[levelOpen-1];
                         }
 //                        else
 //                        {
@@ -743,8 +743,8 @@ shop={
             if (levelPlayer<listProduct[startI].levelOpen)
             {
                 this.labelText="Для того что бы купить этот танк вам необходимо "+
-                                 "достигнуть уровня: "+
-                                 listProduct[startI].levelOpen;
+                                 "достигнуть звания: "+
+                                 nameRankLevel[listProduct[startI].levelOpen-1];
                  
             }
             else if(money<listProduct[startI].price)

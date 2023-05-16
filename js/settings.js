@@ -30,6 +30,10 @@ for (let i = 0; i < 10;i++)
     }
 
 }
+//for (let i = 0; i < allowedKeyArr.length; i++)
+//{
+//    addInKeyArr(allowedKeyArr[i])
+//}
 console.log(allowedKeyArr);
 function Settings() {
     this.being = false;

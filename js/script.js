@@ -91,6 +91,13 @@ var volumeSoundTrack = 1;
 var volumeAudio = 1;
 var flagAudio = false;
 var timerAudio = null;
+var nameRankLevel = ['Рядовой','Сержант','Старшина','Прапорщик','Лейтенант','Капитан',
+                     'Майор','Полковник','Генерал',];
+var keysGame = {
+    buttonShop: 'KeyF',
+    buttonGarage: 'KeyG',
+    buttonOpen: 'KeyR',
+}
 var lastShop={
     numShop:0,
     numEntrance:0,
@@ -509,6 +516,28 @@ function updateSize()
     //camera.width = canvasWidth;
     //camera.height = canvasHeight;
 }
+//document.addEventListener("visibilitychange", function(){
+//	if (document.hidden){
+//        pause = true;
+//        soundTrack.pause();//console.log('Вкладка не активна');
+//	} else {
+
+//        pause = false;
+//        if (flagSoundTrack == true) soundTrack.play();
+//		console.log('Вкладка активна');    
+//	}
+//});
+window.onfocus = function(){
+   // pause = false;
+    if (flagSoundTrack == true) soundTrack.play();
+	console.log('Вкладка активна');
+}
+ 
+window.onblur = function(){ 
+  //  pause = true;
+    soundTrack.pause();
+	console.log('Вкладка не активна');
+}
 window.addEventListener('load', function () {
     //console.log(localStorage.getItem("gameMap"));
     preload();
@@ -564,7 +593,7 @@ function playSoundTrack()
     if (soundTrack.playing()==false)
     {
        soundTrack.play();
-      // flagSoundTrack=true;
+       flagSoundTrack=true;
     }
 }
 //window.addEventListener("DOMContentLoaded",function() {
@@ -686,7 +715,11 @@ function create ()// функция создание обьектов неоюх
     //                    (window.innerHeight - canvas.height)/2);
     initKeyboardAndMouse(["KeyA","KeyS","KeyD","KeyW","KeyM","KeyB","KeyR",'ArrowLeft',
                 'ArrowRight','ArrowUp','ArrowDown',"Enter","KeyP","KeyO",'KeyG',"KeyM",
-                "KeyI","KeyK",'ControlLeft',"KeyQ",'Escape' ]);
+                "KeyI","KeyK",'ControlLeft',"KeyQ",'Escape', ]);
+    for (let i = 0; i < allowedKeyArr.length; i++)
+    {
+        addInKeyArr(allowedKeyArr[i])
+    }
     //changeColorImg(context,imageArr.get('body10'),0xb5e61dff,0xdf0d00ff);
     // initMap(JSON.parse(localStorage.getItem('gameMap')));
     mainMenu = new Menu();
@@ -713,13 +746,18 @@ function create ()// функция создание обьектов неоюх
         sizeFontItem:20,
     });
     gameSettings = new Settings();
-    gameSettings.addProperty(0,'Громкость музыки','slider'/*'selectKey'*/,300,0);
-    gameSettings.addProperty(1,'Громкость выстрела','slider',300,0);;
-    gameSettings.addProperty(2,'Кнопка магазин','selectKey',300,'KeyM'/*"KeyM"*/);
-    gameSettings.addProperty(3,'Кнопка гараж','selectKey',300,'KeyG'/*"KeyM"*/);
-    gameSettings.addProperty(4,'Кнопка открыть','selectKey',300,'KeyR'/*"KeyM"*/);
+    gameSettings.addProperty(0,'Громкость музыки','slider'/*'selectKey'*/,300,volumeSoundTrack);
+    gameSettings.addProperty(1,'Громкость выстрела','slider',300,volumeAudio);;
+    gameSettings.addProperty(2,'Кнопка магазин','selectKey',300,keysGame.buttonShop/*"KeyM"*/);
+    gameSettings.addProperty(3,'Кнопка гараж','selectKey',300,keysGame.buttonGarage/*"KeyM"*/);
+    gameSettings.addProperty(4,'Кнопка открыть','selectKey',300,keysGame.buttonOpen/*"KeyM"*/);
     // this.addProperty(4,'Кнопка магазин','selectKey',300,'Digit2'/*"KeyH"*/);
     // this.addProperty(5,'Кнопка магазин','selectKey',300,'Digit3'/*"KeyP"*/);
+//    var keysGame = {
+//    buttonShop: 'KeyM',
+//    buttonGarage: 'KeyG',
+//    buttonOpen: 'KeyR',
+//}
     gameSettings.init();
     messageExitMainMenu = new MessageWin();
     messageNewGame = new MessageWin();
@@ -785,11 +823,11 @@ function drawAll()// нарисовать все
         else  if (startScreen.being==true)
         {
             startScreen.draw(); 
-            drawTextNow('xButton: ' + Math.trunc(startScreen.button.x), 20, 100, 100, "Red");
-            drawTextNow('yButton: ' + Math.trunc(startScreen.button.y), 20, 100, 150, "Red");
-            drawTextNow('xMouse: ' + Math.trunc( mouseX-mouseOffsetX), 20, 220, 100, "Green");
-            //drawTextNow(canvasWidthMore ? 'WidthMore' :'HeightMore', 20, 220, 100, "Blue");
-            drawTextNow('yMouse: ' + Math.trunc( mouseY-mouseOffsetY), 20, 220, 150, "Green");
+            //drawTextNow('xButton: ' + Math.trunc(startScreen.button.x), 20, 100, 100, "Red");
+            //drawTextNow('yButton: ' + Math.trunc(startScreen.button.y), 20, 100, 150, "Red");
+            //drawTextNow('xMouse: ' + Math.trunc( mouseX-mouseOffsetX), 20, 220, 100, "Green");
+            ////drawTextNow(canvasWidthMore ? 'WidthMore' :'HeightMore', 20, 220, 100, "Blue");
+            //drawTextNow('yMouse: ' + Math.trunc( mouseY-mouseOffsetY), 20, 220, 150, "Green");
             
         }    
         
@@ -978,7 +1016,7 @@ function drawAll()// нарисовать все
     //                '  HP2:'+panzerArr[1].HP,"#44FF44",10,y-stepY);
             if (levelGame>1) 
             {
-                setText('Level','Уровень: '+levelPlayer,"#44FF44",10,y);
+                setText('Level','Звание: '+nameRankLevel[levelPlayer-1],"#44FF44",10,y);
                 drawButton(buttonGarage);
                 drawButton(buttonShop);
             }
@@ -1008,7 +1046,8 @@ function drawAll()// нарисовать все
             {
                 if (viewTextInShop==false)
                 {
-                    setText('MessageText',"нажмите R для того что бы войти в магазин","#00FF00",(screenWidth/2)-210,400);
+                    let str = keysGame.buttonOpen.at(-1);
+                    setText('MessageText',"нажмите "+str+" для того что бы войти в магазин","#00FF00",(screenWidth/2)-210,400);
                   //  messageCenterScreen("нажмите R для того что бы войти в магазин","#00FF00");
                     viewTextInShop=true;
                 }
@@ -1579,7 +1618,7 @@ function readDatalevel()
             money+=addMoney;
             timeAddMoney=0;
         }
-        if(shop.open==false)controlHuman();// управление программой с клавиатуры
+        if(shop.open==false &&  garage.open==false)controlHuman();// управление программой с клавиатуры
         if (gamePlayer==true && pause==false)panzerControll(numPanzer);// управление танком игрока
         // следим за танком игрока
         camera.focusXY(panzerArr[numPanzer].x+panzerArr[numPanzer].mixTowerPosX,
@@ -1782,6 +1821,7 @@ function readDatalevel()
                                 gameMenu.close();
                                 //startScreen.start();
                                 pause = false;
+                                if (flagSoundTrack==true)  soundTrack.play();
                                 break;
                             }
                         case 'Настройки':
@@ -1842,6 +1882,21 @@ function readDatalevel()
                                 flagAudio = true;            
                                 break;
                             }
+                        case 2:
+                            {
+                                keysGame.buttonShop = value;
+                                break;
+                            }
+                        case 3:
+                            {
+                                keysGame.buttonGarage = value;
+                                break;
+                            }
+                        case 4:
+                            {
+                                keysGame.buttonOpen = value;
+                                break;
+                            }
                     }
                     //alert(5252);
                 });
@@ -1866,6 +1921,8 @@ function readDatalevel()
                                 messageExitMainMenu.close();
                                 gameMenu.close();
                                 mainMenu.start();
+                                soundTrack.stop();
+                                flagSoundTrack = false;
                                 break;
                             };
                         case 1: 
@@ -1990,7 +2047,7 @@ function informationOfPanzer(numPanz)
 }
 function controlHuman()// управление программой человеком
 {
-    if (checkPressKey("KeyR"))
+    if (checkPressKey(keysGame.buttonOpen/*"KeyR"*/))
     {
         let numShop=checkInShop(numPanzer);
         if (numShop.num!=-1) 
@@ -2019,11 +2076,16 @@ function controlHuman()// управление программой челове
         }
               
     }  
-    if (shop.open==false && garage.open==false && checkPressKey("KeyG")
+    if (shop.open==false && garage.open==false && checkPressKey(keysGame.buttonGarage/*"KeyG"*/)
             && pause==false && levelGame>1) 
     {
        garage.start();
     }//    console.log("sosiska");
+    if (shop.open==false && garage.open==false && checkPressKey(keysGame.buttonShop/*"KeyM"*/) 
+            && pause==false &&levelGame>1) 
+    {
+          shop.start(0);
+    }
     if (keyUpDuration("Escape", 100) && garage.open == false && shop.open == false) 
     {
         if (gameMenu.being==false)
@@ -2031,6 +2093,7 @@ function controlHuman()// управление программой челове
             if (gameSettings.being==false && startScreen.being==false)
             {
                 gameMenu.start(); 
+                soundTrack.pause();
                 pause = true;
             }
 
@@ -2039,6 +2102,7 @@ function controlHuman()// управление программой челове
         {
             gameMenu.close();
             pause = false;
+            if (flagSoundTrack==true)  soundTrack.play();
         }
          
     }
@@ -2058,11 +2122,7 @@ function controlHuman()// управление программой челове
     {
         if (panzerArr[numPanzer].numType==5) playerGun=2;
     }
-    if (shop.open==false && garage.open==false && checkPressKey("KeyM") 
-            && pause==false &&levelGame>1) 
-    {
-          shop.start(0);
-    }
+ 
     let resWhell=checkWheel();
     if (resWhell==1) 
     {    

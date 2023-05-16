@@ -11,9 +11,10 @@ var mouseLeftPress=false;
 var mouseClick=false;
 var wheelDelta=0;
 function initKeyboardAndMouse(keyArr)// инициализировать переменные для работы с клавиатурой и мышью
-{
+{ 
+    gameKeyArr=keyArr;
     window.addEventListener('keydown', function () {
-          gameKeyArr=keyArr;//["KeyA","KeyS","KeyD","KeyW",'ArrowLeft','ArrowRight','ArrowUp','ArrowDown' ]; 
+         //["KeyA","KeyS","KeyD","KeyW",'ArrowLeft','ArrowRight','ArrowUp','ArrowDown' ]; 
           
           if (checkElemArr(gameKeyArr,event.code)==true &&
                    checkElemArr(pressKeyArr,event.code)==false)
