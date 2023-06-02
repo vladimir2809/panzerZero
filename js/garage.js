@@ -263,7 +263,9 @@ garage={
                         }
                     }
                 }  
+                panzerNumGarage = this.numPanz;
                 panzerArr[numPanzer].being=true;
+                panzerArr[numPanzer].HP = panzerArr[numPanzer].maxHP;
                 let num=lastNumGarage;
                 let x=garageImageArr[num].entranceArr[0].x+garageImageArr[num].x;
                 let y=garageImageArr[num].entranceArr[0].y+garageImageArr[num].y;

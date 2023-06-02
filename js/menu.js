@@ -13,6 +13,7 @@
     this.sizeFontItem = 20;
     this.dist = 15;
     this.listSelect = [];
+    this.listFlagOn = [];
     this.header = '';
     this.headerFontSize = 30;
     this.numSelectHower = null;
@@ -91,6 +92,7 @@
             context.strokeRect(x,y+i*(this.heightOneItem+this.dist),this.widthOneItem,this.heightOneItem);
             let addX = this.widthOneItem / 2 - widthText / 2;
             //console.log(addX);
+            context.fillStyle=this.listFlagOn[i]==true?'#FF8800':'#AAAAAA';
             context.fillText(this.listSelect[i],x+addX,y+i*this.heightOneItem+this.dist*i+this.heightOneItem/2+sizeFont/3);
             context.restore();
         }
@@ -110,7 +112,8 @@
             {
                 if ( mX>x && mX<x+this.widthOneItem &&
                     mY>y+i*(this.heightOneItem+this.dist)&&
-                    mY<y+i*(this.heightOneItem+this.dist)+ this.heightOneItem)
+                    mY<y+i*(this.heightOneItem+this.dist)+ this.heightOneItem &&
+                    this.listFlagOn[i]==true)
                 {
                     this.numSelectHower = i;
                     this.selectHower = this.listSelect[i];

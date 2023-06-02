@@ -43,7 +43,7 @@ var win=0;// количество побед зеленых над красны�
 var maxPowerGroup;// максимальная мошность команды
 var numBattle=0;// количество битв
 var countBeforeUpload=0;// время задержки в циклах после того как бой закончен
-let flagPressV=false;// флаг того что нажата кнопка отключить\включить отобюражение
+let flagPressV=false;// флаг того что нажата кнопка отключить\включить отображение
 var maxPanzerId=0;
 var modeDev=false;
 var XPminDev=0;
@@ -91,6 +91,10 @@ var volumeSoundTrack = 1;
 var volumeAudio = 1;
 var flagAudio = false;
 var timerAudio = null;
+var flagFocus = true;
+var flagSaveDataStoroge = false;
+var panzerNumGarage = null;
+var flagPanzerLoad = false;
 var nameRankLevel = ['Рядовой','Сержант','Старшина','Прапорщик','Лейтенант','Капитан',
                      'Майор','Полковник','Генерал',];
 var keysGame = {
@@ -530,12 +534,15 @@ function updateSize()
 window.onfocus = function(){
    // pause = false;
     if (flagSoundTrack == true) soundTrack.play();
+    flagFocus = true;
 	console.log('Вкладка активна');
 }
  
 window.onblur = function(){ 
   //  pause = true;
     soundTrack.pause();
+    flagFocus = false;
+    clearPressKey();
 	console.log('Вкладка не активна');
 }
 window.addEventListener('load', function () {
@@ -698,7 +705,7 @@ function preload()// функция предзагрузки
  //   soundTrack.play();
 }
 
-function create ()// функция создание обьектов неоюходимых для игры
+ function create ()// функция создание обьектов неоюходимых для игры
 {
         
     canvas = document.getElementById("canvas");
@@ -716,6 +723,12 @@ function create ()// функция создание обьектов неоюх
     initKeyboardAndMouse(["KeyA","KeyS","KeyD","KeyW","KeyM","KeyB","KeyR",'ArrowLeft',
                 'ArrowRight','ArrowUp','ArrowDown',"Enter","KeyP","KeyO",'KeyG',"KeyM",
                 "KeyI","KeyK",'ControlLeft',"KeyQ",'Escape', ]);
+    if (localStorage.getItem('panzerZeroData')!=null &&
+        localStorage.getItem('panzerZeroData')!=undefined)
+    {
+        flagSaveDataStoroge = true;
+    }
+    
     for (let i = 0; i < allowedKeyArr.length; i++)
     {
         addInKeyArr(allowedKeyArr[i])
@@ -726,19 +739,22 @@ function create ()// функция создание обьектов неоюх
     mainMenu.setOption({ 
         width: screenWidth,
         height: screenHeight,
-        listSelect:['Продолжить','Новая игра'],
+        listSelect:['Новая игра','Продолжить'],
+        listFlagOn:[true,false],
         header:'Panzer Zero',
         headerFontSize: 50,
         widthOneItem: 300,
         heightOneItem: 60,
         sizeFontItem:30,
     });
+    if (flagSaveDataStoroge == true) mainMenu.listFlagOn[1] = true;
     mainMenu.start();
     gameMenu = new Menu();
     gameMenu.setOption({
         width: screenWidth / 3,
         height: screenHeight / 2,
         listSelect:['Продолжить','Настройки','Помошь','Главное меню'],
+        listFlagOn:[true,true,true,true,],
         header:'Игровое меню',
         headerFontSize: 20,
         widthOneItem: 150,
@@ -765,7 +781,8 @@ function create ()// функция создание обьектов неоюх
         width: 500,
     });
     //gameSettings.start();
-    initMap(levelMap[levelGame-1]);
+
+  //  initMap(levelMap[levelGame-1]);
     map.width=mapWidth;
     map.height=mapHeight;
     calcQuantityPanzer();
@@ -781,13 +798,13 @@ function create ()// функция создание обьектов неоюх
     //initWall();
     //initBarrel();
     numPanzer=0;
-    playerGun=nextGun(1);
+    //playerGun=nextGun(1);
     // panzerArr[numPanzer].id=1;
-    let panz=copyPanz(panzerArr[numPanzer]);
-    console.log("panz start");
-    console.log(panz);
-    panzerInGarageArr.push(panz);
-    loadLevel=true;
+    //let panz=copyPanz(panzerArr[numPanzer]);
+    //console.log("panz start");
+    //console.log(panz);
+    //panzerInGarageArr.push(panz);
+    //loadLevel=true;
     // mainMenu.start();
     //startScreen.start();
     // alert(panzerArr[numPanzer].id);
@@ -1517,7 +1534,8 @@ function saveDataLevel()
     //    dataFood.push({x: arrFood.children[i].x, y: arrFood.children[i].y});
     //}
     localStorage.setItem('panzerZeroData',JSON.stringify({panzerInGarageArr:panzerInGarageArr,
-                                            money:money,XP:XP,gunQuantityArr,gunQuantityArr,
+                                            panzerNumGarage:panzerNumGarage,
+                                            money:money,XP:XP,gunQuantityArr:gunQuantityArr,
                                             levelPlayer:levelPlayer,levelGame:levelGame,}));
     console.log('Уровень сохранен');
     console.log(localStorage.getItem('panzerZeroData'))
@@ -1568,6 +1586,13 @@ function readDatalevel()
     {
         levelPlayer=data.levelPlayer;
     }
+    if (typeof(data.panzerNumGarage)=='number')
+    {
+        panzerNumGarage=data.panzerNumGarage;
+    }
+    flagPanzerLoad = true;
+    //panzerArr[numPanzer].HP = panzerArr[numPanzer].maxHP;
+    //panzerArr[numPanzer].being = true;
     // if (typeof(data.money)=='number')
     //{
     //    money=data.money;
@@ -1580,6 +1605,20 @@ function readDatalevel()
     //{
     //    leftFood = data.leftFood;
     //}
+}
+function startNewGame()
+{
+    removeDataLevel();
+    messageNewGame.close();
+    mainMenu.close();
+    initMap(levelMap[levelGame-1]);
+    playerGun=nextGun(1);
+    let panz=copyPanz(panzerArr[numPanzer]);
+    console.log("panz start");
+    console.log(panz);
+    panzerInGarageArr.push(panz);
+    calcQuantityPanzer();
+    startScreen.start();
 }
  function gameLoop(mult,visible)// игровой цикл
 {
@@ -1619,7 +1658,7 @@ function readDatalevel()
             timeAddMoney=0;
         }
         if(shop.open==false &&  garage.open==false)controlHuman();// управление программой с клавиатуры
-        if (gamePlayer==true && pause==false)panzerControll(numPanzer);// управление танком игрока
+        if (gamePlayer==true && pause==false && flagFocus==true)panzerControll(numPanzer);// управление танком игрока
         // следим за танком игрока
         camera.focusXY(panzerArr[numPanzer].x+panzerArr[numPanzer].mixTowerPosX,
                 panzerArr[numPanzer].y+panzerArr[numPanzer].mixTowerPosY,map);
@@ -1628,7 +1667,7 @@ function readDatalevel()
             
             for (let i=0;i<panzerArr.length; i++)// тики танков
             {
-                if (panzerArr[i].being==true && pause==false 
+                if (panzerArr[i].being==true && pause==false && flagFocus==true
                         && (i!=numPanzer || ( gamePlayer==false || visibleGame==false))&&
                         (controlEnabled(panzerArr[i])==true&&i!=numPanzer))
                 {
@@ -1761,7 +1800,7 @@ function readDatalevel()
                     break;
                 }
             }
-            if (pause==false)
+            if (pause==false && flagFocus==true)
             {
                 controlBullets();
                 if (( checkPressKey("KeyA")||checkPressKey("KeyS")||
@@ -1787,30 +1826,54 @@ function readDatalevel()
                 }
             
             }
-            if (mainMenu.being == true && messageNewGame.being == false)
-            {
-                mainMenu.update();
-                mainMenu.selectOn(function (select) {
-                    switch (select) 
-                    {
-                        case 'Продолжить': 
-                            {
-                                mainMenu.close();
-                                startScreen.start();
-                                break;
-                            }
-                        case 'Новая игра':
-                            {
-                                //mainMenu.close();
-                                //gameSettings.start();
-                                messageNewGame.start("Вы действительно хотите начать новую игру? Прогресс будет утерян.",
-                                                    ['Да','Нет']);
-                                break;
-                            }
+            //function startNewGame()
+            //{
+            //    removeDataLevel();
+            //    messageNewGame.close();
+            //    mainMenu.close();
+            //    startScreen.start();
+            //}
+            //if (mainMenu.being == true && messageNewGame.being == false)
+            //{
+            //    mainMenu.update();
+            //    mainMenu.selectOn(function (select) {
+            //        switch (select) 
+            //        {
+            //            case 'Продолжить': 
+            //                {
+            //                    mainMenu.close();
+            //                    startScreen.start();
+            //                    //if (localStorage.getItem('panzerZeroData')!=null &&
+            //                    //    localStorage.getItem('panzerZeroData')!=undefined)
+            //                    if (flagSaveDataStoroge==true )
+            //                    {
+            //                        readDatalevel();
+            //                        uploadLevelOrRestart(2);
+            //                       // initMap(levelMap[levelGame-1]);
+            //                    }
+            //                    break;
+            //                }
+            //            case 'Новая игра':
+            //                {
+            //                    //mainMenu.close();
+            //                    //gameSettings.start();
+            //                    if (flagSaveDataStoroge==true)
+            //                    {
+            //                        messageNewGame.start("Вы действительно хотите начать новую игру? Прогресс будет утерян.",
+            //                                        ['Да','Нет']);
+            //                    }
+                                
+            //                    else
+            //                    {
+            //                        startNewGame();
+            //                    }
+                               
+            //                    break;
+            //                }
                         
-                    }
-                });
-            }
+            //        }
+            //    });
+            //}
             if (gameMenu.being==true && messageExitMainMenu.being==false)
             {
                 gameMenu.update();
@@ -1936,17 +1999,7 @@ function readDatalevel()
                     }
                 });
             }
-            if (messageNewGame.being==true)
-            {
-                messageNewGame.update(mouseLeftClick());
-                messageNewGame.getSelect(function (select) {
-                    switch(select)
-                    {
-                        case 0: break;
-                        case 1: messageNewGame.close(); break;
-                    }
-                });
-            }
+   
             
             //controlBigText();
             
@@ -1954,6 +2007,69 @@ function readDatalevel()
 
         }
     }
+    if (mainMenu.being == true && messageNewGame.being == false)
+    {
+        mainMenu.update();
+        mainMenu.selectOn(function (select) {
+            switch (select) 
+            {
+                case 'Продолжить': 
+                    {
+                        mainMenu.close();
+                        startScreen.start();
+                        //if (localStorage.getItem('panzerZeroData')!=null &&
+                        //    localStorage.getItem('panzerZeroData')!=undefined)
+                        if (flagSaveDataStoroge==true )
+                        {
+                            readDatalevel();
+                            uploadLevelOrRestart(2);
+                            // initMap(levelMap[levelGame-1]);
+                        }
+                        loadLevel = true;
+                        break;
+                    }
+                case 'Новая игра':
+                    {
+                        //mainMenu.close();
+                        //gameSettings.start();
+                        if (flagSaveDataStoroge==true)
+                        {
+                            messageNewGame.start("Вы действительно хотите начать новую игру? Прогресс будет утерян.",
+                                            ['Да','Нет']);
+                        }
+                                
+                        else
+                        {
+                            startNewGame();
+                            loadLevel = true;
+                        }
+                               
+                        break;
+                    }
+                        
+            }
+        });
+     }
+     if (messageNewGame.being==true)
+     {
+        messageNewGame.update(mouseLeftClick());
+        messageNewGame.getSelect(function (select) {
+            switch(select)
+            {
+                case 0: 
+                    {
+                        //removeDataLevel();
+                        //messageNewGame.close();
+                        //mainMenu.close();
+                        //startScreen.start();
+                        startNewGame();
+                        loadLevel = true;
+                        break;
+                    }
+                case 1: messageNewGame.close(); break;
+            }
+        });
+     }
 //    do
 //    {
 //       timeNow=new Date().getTime();
@@ -2152,6 +2268,7 @@ function controlHuman()// управление программой челове
     {
         if (keyUpDuration("KeyN",100)) 
         {
+            
             initBigText("Уровень пройден","#00FF00",130,1); 
             //uploadLevelOrRestart(false);
         } 
@@ -2175,7 +2292,9 @@ function controlHuman()// управление программой челове
         if (keyUpDuration("KeyJ",100)) 
         {
           //  informationOfPanzer(numPanzer);
-          initBigText("Вы проиграли","#FF0000",130,2);
+           // panzerArr[0].HP = 0;
+            killPanzer(0);
+        //  initBigText("Вы проиграли","#FF0000",130,2);
         }
       
     //    if (keyUpDuration("KeyI",100)) 
@@ -4082,7 +4201,7 @@ function initOnePanzer(x,y,GR,type)
         panzerArr.push(onePanzer);
     }  
 }
-function initMap(data)
+function initMap(data,storoge=false)
 {
     mapWidth=data.width*mapSize;
     mapHeight=data.height*mapSize;
@@ -4152,6 +4271,31 @@ function initMap(data)
                 {
                     initOnePanzer(x,y,GR,numType)
                 }
+                else
+                {
+                    if (flagPanzerLoad==true)
+                    {
+                        initOnePanzer(x, y, GR, 0);
+                        for (var attr1 in panzerArr[numPanzer])
+                        {
+                            for (var attr2 in panzerInGarageArr[panzerNumGarage])
+                            {
+                                //console.log(listProduct[this.startI].option[attr2]);
+                                if (attr1==attr2) 
+                                {
+                                   console.log(attr1);
+                                   if (attr1!='x' && attr1!='y')
+                                   {
+                                       panzerArr[numPanzer][attr1]=panzerInGarageArr[panzerNumGarage][attr2];
+                                   }
+                                }
+                            }
+                        }  
+                        flagPanzerLoad = false;
+                        panzerArr[numPanzer].HP = panzerArr[numPanzer].maxHP;
+                        //flagSaveDataStoroge = false;
+                    }
+                }
             }
             break;
             case 'bonus':
@@ -4190,6 +4334,7 @@ function initMap(data)
 //                break;
         }
     }
+    console.log(panzerArr);
     let waterArr=[];
     for (let i=0;i<wallArr.length;i++)
     {
@@ -4272,11 +4417,14 @@ function uploadLevelOrRestart(restart=1,loadBrowser=false)// функция об
             if (levelMap[levelGame-1].mapObjArr[i].type=="panzer" && 
                     levelMap[levelGame-1].mapObjArr[i].numType==6)
             {
-                flag=true;
-               // alert("panz6");
-                x=levelMap[levelGame-1].mapObjArr[i].x;
-                y=levelMap[levelGame-1].mapObjArr[i].y;
-                break;
+                if (restart==0)
+                {
+                    flag=true;
+                    // alert("panz6");
+                    x=levelMap[levelGame-1].mapObjArr[i].x;
+                    y=levelMap[levelGame-1].mapObjArr[i].y;
+                    break;
+                }
                 
             }
         }
@@ -4292,9 +4440,16 @@ function uploadLevelOrRestart(restart=1,loadBrowser=false)// функция об
                 }
                 else
                 {
-                    panzerArr[0].x=x;
-                    panzerArr[0].y=y;
-                    panzerArr[0].updateState();
+                    if (flag==true)
+                    {
+                        panzerArr[0].x=x;
+                        panzerArr[0].y=y;
+                        panzerArr[0].updateState();
+                    
+                        //panzerArr[0].numType = 3//panzerNumGarage;
+                        panzerArr[numPanzer].HP = panzerArr[numPanzer].maxHP;
+                        //panzerArr[0].being = true;
+                    }
                     break;
                 }
             }
@@ -4357,7 +4512,7 @@ function uploadLevelOrRestart(restart=1,loadBrowser=false)// функция об
     else
     {
         if (restart==1) levelGame=1;
-        initMap(levelMap[levelGame-1]);
+        initMap(levelMap[levelGame-1],restart==2?true:false);
         if (levelGame==1) money=option[numOption].startMoney;
     }
     numPanzer=0;
