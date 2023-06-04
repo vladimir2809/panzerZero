@@ -586,7 +586,7 @@ window.addEventListener('load', function () {
        // alert(545);
         levelPlayer=textLevel.value;
         XP=devXP;
-        money=document.getElementById('textMoney').value;
+        money=Number(document.getElementById('textMoney').value);
     }
     
    // audio.play("shot");
@@ -728,7 +728,11 @@ function preload()// функция предзагрузки
     {
         flagSaveDataStoroge = true;
     }
-    
+    if (localStorage.getItem('panzerZeroOption')!=null &&
+        localStorage.getItem('panzerZeroOption')!=undefined)
+    {
+         readDataOption();
+    }
     for (let i = 0; i < allowedKeyArr.length; i++)
     {
         addInKeyArr(allowedKeyArr[i])
@@ -1045,8 +1049,16 @@ function drawAll()// нарисовать все
             {
                 if (levelGame>1) 
                 {
-                    setText('XP','XP: '+XP+"/"+levelXPValue[levelPlayer-1],
+                    if (levelPlayer<9)
+                    {
+                        setText('XP','XP: '+XP+"/"+levelXPValue[levelPlayer-1],
                                                         "#FF0000",10,y+stepY);
+                    }
+                    else
+                    {
+                        setText('XP','XP: '+XP,"#FF0000",10,y+stepY);
+                    }
+                   
                 }
 //                setText('Balance','Balance: '+calcBalance(false),
 //                        calcBalance()<0?"#FF0000":"#00FF00",10,y+stepY*2);
@@ -1517,6 +1529,54 @@ function messageCenterScreen(str)
 //setInterval(function () {
 //    mouseX=
 //}, 60);
+function removeDataOption()
+{
+    localStorage.removeItem('panzerZeroOption');
+}
+function saveDataOption()
+{
+     localStorage.setItem('panzerZeroOption',JSON.stringify({volumeSoundTrack:volumeSoundTrack,
+                                            volumeAudio:volumeAudio,
+                                            keyButtonShop:keysGame.buttonShop,
+                                            keyButtonGarage:keysGame.buttonGarage,
+                                            keyButtonOpen:keysGame.buttonOpen,
+                            }));
+    // volumeSoundTrack = value;
+                
+    //volumeAudio = value;
+                  
+    //keysGame.buttonShop = value;
+                
+    //keysGame.buttonGarage = value;
+                  
+    //keysGame.buttonOpen = value;
+}
+function readDataOption()
+{
+    let data=localStorage.getItem('panzerZeroOption');
+    data = JSON.parse(data);
+    console.log(data);
+    if (typeof(data.volumeSoundTrack)=='number')
+    {
+        volumeSoundTrack=data.volumeSoundTrack;
+    }
+    if (typeof(data.volumeAudio)=='number')
+    {
+        volumeAudio=data.volumeAudio;
+    }
+    if (typeof(data.keyButtonShop)=='string')
+    {
+        keysGame.buttonShop = data.keyButtonShop;
+    }
+    if (typeof(data.keyButtonGarage)=='string')
+    {
+        keysGame.buttonGarage = data.keyButtonGarage;
+    }
+    if (typeof(data.keyButtonOpen)=='string')
+    {
+        keysGame.buttonOpen = data.keyButtonOpen;
+    }
+}
 function removeDataLevel()
 {
     localStorage.removeItem('panzerZeroData');
@@ -1609,15 +1669,17 @@ function readDatalevel()
 function startNewGame()
 {
     removeDataLevel();
+    uploadLevelOrRestart(1);
     messageNewGame.close();
     mainMenu.close();
-    initMap(levelMap[levelGame-1]);
-    playerGun=nextGun(1);
+   // initMap(levelMap[levelGame-1]);
+    playerGun=1;
     let panz=copyPanz(panzerArr[numPanzer]);
     console.log("panz start");
     console.log(panz);
     panzerInGarageArr.push(panz);
     calcQuantityPanzer();
+
     startScreen.start();
 }
  function gameLoop(mult,visible)// игровой цикл
@@ -1923,6 +1985,13 @@ function startNewGame()
                             {
                                 volumeSoundTrack = value;
                                 soundTrack.volume(volumeSoundTrack);
+                                if (soundTrack.playing()==false)
+                                {
+                                    soundTrack.play();
+                                    setTimeout(function () {
+                                        soundTrack.pause();
+                                    }, 2000);
+                                }
                                 break;
                             }
                         case 1:
@@ -1967,6 +2036,7 @@ function startNewGame()
             
                 gameSettings.closing(function () {
                     //gameSettings.close();
+                    saveDataOption();
                     drawAll();
                     gameMenu.start();
 

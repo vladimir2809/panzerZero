@@ -459,7 +459,6 @@ function Slider(x,y,width,value,min,max)// ползунок
             {
                 this.grabMouseBar = true;
             }
-         
             if (this.grabMouseBar==true)
             {
                 this.bar.x +=( mouseX - this.oldX);
