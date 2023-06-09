@@ -16,7 +16,7 @@ shop={
     widthProduct:500,
     heightProduct:30,
     startNumProduct:0,
-    tabText:["Амуниция","Ремонт","Улучшения","Танки"/*,"Доход"*/],
+    tabText:["Ремонт","Амуниция","Улучшения","Танки"/*,"Доход"*/],
     countProductList:4,
     maxI:0,
     quantityTab:null,
@@ -219,7 +219,7 @@ shop={
             let copy=copyPanz(panzerArr[numPanzer]);
 
             panzerInGarageArr.push(copy);
-
+            panzerNumGarage = panzerInGarageArr.length - 1;
             playerGun=nextGun(1);
             let num=lastShop.numShop;
             let entr=lastShop.numEntrance;
@@ -477,7 +477,7 @@ shop={
                 {
                     listProduct[i+startI].select=true;
                     this.labelText=listProduct[i+startI].title; 
-                    if (this.tabMenu==0)
+                    if (this.tabMenu==1)
                     {
                         switch(listProduct[i+startI].id)
                         {
@@ -508,7 +508,7 @@ shop={
 //                            break;
                         }
                     }
-                    if (this.tabMenu==1)
+                    if (this.tabMenu==0)
                     {
                         this.labelText+=" Целостность вашего танка: "+
                         Math.round(panzerArr[numPanzer].HP/panzerArr[numPanzer].maxHP*100)+"%";
@@ -869,7 +869,7 @@ shop={
                 {
                     continue;
                 }
-                if (this.tabMenu==0)
+                if (this.tabMenu==1)
                 {
                     let flag=false;
                     for (let j=0;j<panzerArr[numPanzer].maskGun.length;j++)

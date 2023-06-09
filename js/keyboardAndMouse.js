@@ -137,7 +137,7 @@ function keyUpDuration(code,time)// была ли нажата определе�
     {
         let index=indexOfKeyUp(code);
         let timeNow=new Date().getTime();
-        console.log(timeNow-keyUpArr[index].timeOld);
+        //console.log(timeNow-keyUpArr[index].timeOld);
         if (time>timeNow-keyUpArr[index].timeOld && index!=-1)
         {
             keyUpArr.splice(index,1);

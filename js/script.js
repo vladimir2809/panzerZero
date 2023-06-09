@@ -93,7 +93,7 @@ var flagAudio = false;
 var timerAudio = null;
 var flagFocus = true;
 var flagSaveDataStoroge = false;
-var panzerNumGarage = null;
+var panzerNumGarage = 0;
 var flagPanzerLoad = false;
 var nameRankLevel = ['Рядовой','Сержант','Старшина','Прапорщик','Лейтенант','Капитан',
                      'Майор','Полковник','Генерал',];
@@ -588,7 +588,36 @@ window.addEventListener('load', function () {
         XP=devXP;
         money=Number(document.getElementById('textMoney').value);
     }
-    
+    const file = document.getElementById('your-files');
+    file.addEventListener("change", handleFiles);
+    function handleFiles()
+    {
+        var form=document.getElementById('formFile');
+        
+        var fileOne=file.files[0];
+        //console.log(fileOne);
+        //objMap.loadMap(JSON.parse(localStorage.getItem('gameMap')));
+     //   alert(readFile(file));
+        var reader = new FileReader();
+        reader.readAsText(fileOne);
+        reader.onload = function() {
+            setDataLevel(JSON.parse(reader.result));
+            flagPanzerLoad = true;
+            uploadLevelOrRestart(2);
+            
+         // objMap.loadMap(JSON.parse(reader.result));
+          //  alert(reader.result);
+        }
+        reader.onerror = function() {
+        
+            alert('ошибка загрузки карты');
+        }
+        //;
+        file.value="";
+        form.style.display='none';
+   //     this.form.reset;
+    }
+    form=document.getElementById('')
    // audio.play("shot");
     setInterval(drawAll,16);
     setTimeout(gameLoop,60,1,true);
@@ -722,7 +751,7 @@ function preload()// функция предзагрузки
     //                    (window.innerHeight - canvas.height)/2);
     initKeyboardAndMouse(["KeyA","KeyS","KeyD","KeyW","KeyM","KeyB","KeyR",'ArrowLeft',
                 'ArrowRight','ArrowUp','ArrowDown',"Enter","KeyP","KeyO",'KeyG',"KeyM",
-                "KeyI","KeyK",'ControlLeft',"KeyQ",'Escape', ]);
+                "KeyI","KeyK",'ControlLeft',"KeyQ",'Escape','KeyZ','KeyX' ]);
     if (localStorage.getItem('panzerZeroData')!=null &&
         localStorage.getItem('panzerZeroData')!=undefined)
     {
@@ -731,7 +760,9 @@ function preload()// функция предзагрузки
     if (localStorage.getItem('panzerZeroOption')!=null &&
         localStorage.getItem('panzerZeroOption')!=undefined)
     {
-         readDataOption();
+        readDataOption();
+        soundTrack.volume(volumeSoundTrack);
+        audio.volume(volumeAudio);
     }
     for (let i = 0; i < allowedKeyArr.length; i++)
     {
@@ -996,6 +1027,14 @@ function drawAll()// нарисовать все
                 if (checkCollision(camera,panzerArr[i])==true || scale<=1)
                 {
                     drawPanzer(context,panzerArr[i],camera,scale);
+                    if (panzerArr[i].group==1)
+                    {
+                        context.fillStyle= 'red';
+                        context.fillRect(panzerArr[i].x-camera.x, panzerArr[i].y-camera.y - 7, panzerArr[i].width,4);
+                        context.fillStyle= 'green';
+                        context.fillRect(panzerArr[i].x-camera.x, panzerArr[i].y-camera.y - 7,
+                                panzerArr[i].width*panzerArr[i].HP/panzerArr[i].maxHP,4)
+                    }
                 }
             } 
             for (let i=0;i<baseImageArr.length;i++)
@@ -1608,6 +1647,11 @@ function readDatalevel()
     let data=localStorage.getItem('panzerZeroData');
     data = JSON.parse(data);
     console.log(data);
+    setDataLevel(data);
+    flagPanzerLoad = true;
+}
+function setDataLevel(data)
+{
     if (Array.isArray(data.panzerInGarageArr)==true)
     {
         while (panzerInGarageArr.length>0)
@@ -1650,21 +1694,6 @@ function readDatalevel()
     {
         panzerNumGarage=data.panzerNumGarage;
     }
-    flagPanzerLoad = true;
-    //panzerArr[numPanzer].HP = panzerArr[numPanzer].maxHP;
-    //panzerArr[numPanzer].being = true;
-    // if (typeof(data.money)=='number')
-    //{
-    //    money=data.money;
-    //}
-    //if (typeof(data.level)=='number')
-    //{
-    //    level = data.level;
-    //}
-    //if (typeof(data.leftFood)=='number')
-    //{
-    //    leftFood = data.leftFood;
-    //}
 }
 function startNewGame()
 {
@@ -2371,10 +2400,20 @@ function controlHuman()// управление программой челове
     //    {
     //        console.log(panzerArr);
     //    }
-        if (keyUpDuration("KeyH",100)) 
+        if (keyUpDuration('KeyZ',100))
         {
-            if (messageBox.open==false)messageBox.start("Выбирете что нужно сделать?","сесть","в гараж","отмена");
+            downloadAsFile(/*JSON.stringify*/(localStorage.getItem('panzerZeroData')),'savePanzerZero')
+            alert(localStorage.getItem('panzerZeroData'));
         }
+        if (keyUpDuration('KeyX',100))
+        {
+            var formFile=document.getElementById("formFile");
+            formFile.style.display="block"
+        }
+        //if (keyUpDuration("KeyH",100)) 
+        //{
+        //    if (messageBox.open==false)messageBox.start("Выбирете что нужно сделать?","сесть","в гараж","отмена");
+        //}
         if (keyUpDuration("Space",100)) 
         {
             nextNumPanzer(true);
@@ -4576,7 +4615,7 @@ function uploadLevelOrRestart(restart=1,loadBrowser=false)// функция об
     calcQuantityPanzer();
     if (loadBrowser==true)
     {
-        initMap(JSON.parse(localStorage.getItem('gameMap')));
+        initMap(JSON.parse(localStorage.getItem('gameMap')),true);
         playerGun=nextGun(1);
     }
     else

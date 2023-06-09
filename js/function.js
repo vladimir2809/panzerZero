@@ -233,14 +233,22 @@ function formatByteSize(bytes) // перевод значения памяти �
     else if(bytes < 1073741824) return(bytes / 1048576).toFixed(3) + " MiB";
     else return(bytes / 1073741824).toFixed(3) + " GiB";
 };
-function downloadAsFile(data) 
+function downloadAsFile(data,nameFile='example') 
 {
       let a = document.createElement("a");
       let file = new Blob([data], {type: 'application/json'});
       a.href = URL.createObjectURL(file);
-      a.download = "example.txt";
+      a.download = nameFile+".txt";
       a.click();
-    }
+}
+//function downloadAsFile(data) 
+//{
+//      let a = document.createElement("a");
+//      let file = new Blob([data], {type: 'application/json'});
+//      a.href = URL.createObjectURL(file);
+//      a.download = "example.txt";
+//      a.click();
+//    }
 function getDataGoogleSheets()
 {
     jQuery(document).ready(function() {

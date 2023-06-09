@@ -36,18 +36,20 @@
     <script src="js/menu.js"></script>
 </head>
 <body>
-   <canvas id='canvas' width="800" height="600" style="position:absolute; top:1px; left:1px;">
-       
-   </canvas>
-      <form id="formText" >
-           
-            <p>Уровень игрока</p>    
-            <input class="text" type="text" id="textLevel" value="1">
-            <p id="pXP">Опыт</p>
-            <input type="range" id="range" min="0" max="100" step="1" value="50">
-            <p>Деньги</p>    
-            <input class="text" type="text" id="textMoney" value="1">
-            <input type="button" id="buttonForm" value="Применить">
-        </form>
+    <canvas id='canvas' width="800" height="600" style="position:absolute; top:1px; left:1px;">
+    </canvas>
+    <form id="formText">
+
+        <p>Уровень игрока</p>
+        <input class="text" type="text" id="textLevel" value="1">
+        <p id="pXP">Опыт</p>
+        <input type="range" id="range" min="0" max="100" step="1" value="50">
+        <p>Деньги</p>
+        <input class="text" type="text" id="textMoney" value="1">
+        <input type="button" id="buttonForm" value="Применить">
+    </form>
+    <form id="formFile">
+        <input type="file" id="your-files" multiple>
+    </form>
 </body>
 </html>

@@ -214,7 +214,12 @@ var objMap={
             {
                 let GR=this.objArr[i].group;
                 let type=this.objArr[i].numType;
+                let width = panzerOption[type].width;
                 drawPanzerIcon(x,y,type,GR);
+                context.fillStyle= 'red';
+                context.fillRect(x-camera.x, y-camera.y - 7,width,4);
+                context.fillStyle= 'green';
+                context.fillRect(x - camera.x, y - camera.y - 7, width,4);
             }else if(this.objArr[i].type=="base")
             {
                 let numType=this.objArr[i].numType;
@@ -542,11 +547,13 @@ var selectInterface={
                     let color=redactOption[selectObj.tabMenu][selectObj.numSelect].color;
                     drawKeyForGate(color,posXY.x,posXY.y,scale,false);
                 }
-                else if (selectObj.tabMenu==3)
+                else if (selectObj.tabMenu==3)// рисуем танк на под мышкой
                 {
                     let GR=redactOption[selectObj.tabMenu][selectObj.numSelect].group;
                     let type=redactOption[selectObj.tabMenu][selectObj.numSelect].numType;
-                    drawPanzerIcon(posXY.x,posXY.y,type,GR);
+                    let width = panzerOption[type].width;
+                    let height = panzerOption[type].height;
+                    drawPanzerIcon(posXY.x+mapSize/2-width/2,posXY.y+mapSize/2-width/2,type,GR);
                 }   else if(selectObj.tabMenu==5 && selectObj.numSelect>1)
                 {
                     let numType=redactOption[selectObj.tabMenu][selectObj.numSelect].numType;
