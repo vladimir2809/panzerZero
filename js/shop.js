@@ -253,6 +253,7 @@ shop={
                 onePanz.mapUp[key].levelUp=0;
             }
             panzerInGarageArr.push(onePanz);
+            panzerNumGarage = panzerInGarageArr.length - 1;
         }
         if (messageBox.response==3)
         {

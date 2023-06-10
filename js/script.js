@@ -2956,9 +2956,14 @@ function controlBase()// функция ответственная за то ч�
                 
             }
             else
-            if (controlEnabled(baseImageArr[i])==true)
             {
-                baseImageArr[i].count++;
+                if (controlEnabled(baseImageArr[i])==true)
+                if (checkCrossLinePanzerArrObj(wallArr,0,
+                                {x:baseImageArr[i].x+baseImageArr[i].width/2,
+                                 y:baseImageArr[i].y+baseImageArr[i].height/2}/*,numNeg=-1)*/)==false)
+                {
+                    baseImageArr[i].count++;
+                }
             }
             
         }
@@ -4382,7 +4387,7 @@ function initMap(data,storoge=false)
                 }
                 else
                 {
-                    if (flagPanzerLoad==true)
+                    if (storoge==true/*flagPanzerLoad==true*/)
                     {
                         initOnePanzer(x, y, GR, 0);
                         for (var attr1 in panzerArr[numPanzer])
