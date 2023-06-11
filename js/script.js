@@ -35,7 +35,6 @@ var addMoney=0;
 var timeAddMoney=0;
 var levelPlayer=1;
 var levelGame=2;
-var levelXPValue=[1000,2500,5000,8000,12000,20000,30000,50000,];
 var XP=0;
 var gunQuantityArr=[130,500,100,100];
 var labelGunXY={x:635,y:40};
@@ -95,6 +94,7 @@ var flagFocus = true;
 var flagSaveDataStoroge = false;
 var panzerNumGarage = 0;
 var flagPanzerLoad = false;
+var levelXPValue=[1000,2500,5000,8000,12000,20000,30000,50000,];
 var nameRankLevel = ['Рядовой','Сержант','Старшина','Прапорщик','Лейтенант','Капитан',
                      'Майор','Полковник','Генерал',];
 var keysGame = {
