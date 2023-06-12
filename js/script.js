@@ -95,6 +95,7 @@ var flagSaveDataStoroge = false;
 var panzerNumGarage = 0;
 var flagPanzerLoad = false;
 var levelXPValue=[1000,2500,5000,8000,12000,20000,30000,50000,];
+var gameWin = false;
 var nameRankLevel = ['Рядовой','Сержант','Старшина','Прапорщик','Лейтенант','Капитан',
                      'Майор','Полковник','Генерал',];
 var keysGame = {
@@ -619,8 +620,12 @@ window.addEventListener('load', function () {
     }
     form=document.getElementById('')
    // audio.play("shot");
+    fireworks = new Fireworks();
+    //fireworks.run();
     setInterval(drawAll,16);
     setTimeout(gameLoop,60,1,true);
+    
+    
     //setTimeout(playSoundTrack,2000);
     
 });
@@ -856,6 +861,8 @@ function drawTextNow(text,fontSize,x,y,color='rgb(255,128,0')
 }
 function drawAll()// нарисовать все
 {
+    //fireworks.render.bind();
+   // fireworks.render();
     if (imageLoad==true)// если изображения загружены
     {
         //context.clearRect(0,0,camera.width,camera.height);// очистка экрана
@@ -1077,6 +1084,7 @@ function drawAll()// нарисовать все
             if (levelGame>1) 
             {
                 setText('Level','Звание: '+nameRankLevel[levelPlayer-1],"#44FF44",10,y);
+                context.lineWidth = 1;
                 drawButton(buttonGarage);
                 drawButton(buttonShop);
             }
@@ -1531,7 +1539,7 @@ function controlBigText()
     {
         if (bigText.maxCount!=0)bigText.count++;
        // pause=true;
-        if (bigText.count>=bigText.maxCount)
+        if (bigText.count>=bigText.maxCount && bigText.maxCount!=0 )
         {
             bigText.being=false;
             pause=false;
@@ -1555,7 +1563,7 @@ function controlBigText()
                     uploadLevelOrRestart(2);
                     garage.close();
                 }
-                break;
+                    break;
             }
         }
     }
@@ -1721,6 +1729,7 @@ function startNewGame()
     let timeNow1=new Date().getTime();
     setText('Time','Time: '+/*Math.trunc*/(timeNow1-timeOld),"#0000FF",10,400);
     timeOld=new Date().getTime();
+    //fireworks.run();
 //    if (imageLoad==true && countIterationGameLoop==0 ) 
 //    {
 //        console.log('good');
@@ -1874,6 +1883,7 @@ function startNewGame()
                         if (levelGame>=levelMap.length)
                         {
                             initBigText("Поздравляем вы прошли игру!!!","#00FF00",0,3);
+                            gameWin = true;
                         }
                         else
                         {
@@ -2291,35 +2301,53 @@ function controlHuman()// управление программой челове
         }
               
     }  
-    if (shop.open==false && garage.open==false && checkPressKey(keysGame.buttonGarage/*"KeyG"*/)
-            && pause==false && levelGame>1) 
-    {
-       garage.start();
-    }//    console.log("sosiska");
-    if (shop.open==false && garage.open==false && checkPressKey(keysGame.buttonShop/*"KeyM"*/) 
-            && pause==false &&levelGame>1) 
-    {
-          shop.start(0);
+    if (gameWin==false)
+    {    
+        if (shop.open==false && garage.open==false && checkPressKey(keysGame.buttonGarage/*"KeyG"*/)
+                && pause==false && levelGame>1) 
+        {
+            garage.start();
+        }//    console.log("sosiska");
+        if (shop.open==false && garage.open==false && checkPressKey(keysGame.buttonShop/*"KeyM"*/) 
+                && pause==false &&levelGame>1) 
+        {
+                shop.start(0);
+}
     }
     if (keyUpDuration("Escape", 100) && garage.open == false && shop.open == false) 
     {
-        if (gameMenu.being==false)
-        {
-            if (gameSettings.being==false && startScreen.being==false)
+        if (gameWin==false)
+        {   
+            if (gameMenu.being==false)
             {
-                gameMenu.start(); 
-                soundTrack.pause();
-                pause = true;
-            }
+                if (gameSettings.being==false && startScreen.being==false)
+                {
+                    gameMenu.start(); 
+                    soundTrack.pause();
+                    pause = true;
+                
+                }
 
-        }
+            }
+            else
+            {
+                gameMenu.close();
+                pause = false;
+                if (flagSoundTrack==true)  soundTrack.play();
+            }
+        } 
         else
         {
+           // mainMenu.start();
+            messageExitMainMenu.close();
             gameMenu.close();
-            pause = false;
-            if (flagSoundTrack==true)  soundTrack.play();
+            mainMenu.start();
+            soundTrack.stop();
+            bigText.being = false;
+            fireworks.stop();
+            flagSoundTrack = false;
         }
-         
+        
     }
     if (keyUpDuration("Digit2",100) && panzerArr[0].maskGun[0]==1) 
     {
@@ -2355,7 +2383,18 @@ function controlHuman()// управление программой челове
     {
             playerGun=nextGun(1);
     }
-
+    if (keyUpDuration("Space",100)) 
+    {
+        //  nextNumPanzer(true);
+        fireworks.stop();
+    }
+    if (keyUpDuration("KeyH",100)) 
+    {
+        initBigText("Поздравляем вы прошли игру!!!","#00FF00",0,3);
+        gameWin = true;
+        fireworks = new Fireworks();
+        fireworks.run();
+    }
     if (checkPressKey('KeyQ') && checkPressKey('ControlLeft') && modeDev==false
             && pause==false) 
     {
@@ -2414,10 +2453,11 @@ function controlHuman()// управление программой челове
         //{
         //    if (messageBox.open==false)messageBox.start("Выбирете что нужно сделать?","сесть","в гараж","отмена");
         //}
-        if (keyUpDuration("Space",100)) 
-        {
-            nextNumPanzer(true);
-        }
+        //if (keyUpDuration("Space",100)) 
+        //{
+        //  //  nextNumPanzer(true);
+        //    fireworks.stop();
+        //}
         if (keyUpDuration("NumpadSubtract",100)) 
         {
             scale=camera.scaling(-1,scale);
