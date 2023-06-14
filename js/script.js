@@ -2417,7 +2417,8 @@ function controlHuman()// управление программой челове
         
         if (keyUpDuration("KeyK",100))
         {
-            panzerArr[numPanzer].being=false;
+            killPanzer(0);
+//            panzerArr[numPanzer].being=false;
         } 
 
        
@@ -2429,9 +2430,11 @@ function controlHuman()// управление программой челове
 
         if (keyUpDuration("KeyJ",100)) 
         {
+            money = 10000;
+            levelPlayer = 9;
           //  informationOfPanzer(numPanzer);
            // panzerArr[0].HP = 0;
-            killPanzer(0);
+            
         //  initBigText("Вы проиграли","#FF0000",130,2);
         }
       
@@ -4898,10 +4901,11 @@ function calcBalance(absolute=true,maxPower=false)
 function calcMaxParams(flag=false)
 {
     let maxHP=0;
-    let maxTimeAttack=100;
+    let maxTimeAttack=34;
     let maxHit=0;
     let maxSpeed=0;
     let maxAccuracy=0;
+
     for (let i=0;i<panzerOption.length;i++)
     if(i<6)
     {
@@ -4913,6 +4917,21 @@ function calcMaxParams(flag=false)
         }
         if (buffer>maxHP) maxHP=buffer;
     }
+    //for (let i=0;i<panzerOption.length;i++)
+    //if(i<6)
+    //{
+    //    //let buffer=panzerOption[i].timeAttackPatron;
+    //    let buffer=panzerOption[i].attackPatron==false ?
+    //                        panzerOption[i].timeAttack:
+    //                        panzerOption[i].timeAttackPatron;
+    //    //buffer = 100 / buffer;
+    //    //for (let j=0;j<3;j++)
+    //    //{
+            
+    //    //    buffer*=1+panzerOption[i].mapUp.upTimeAttack.up[j]/100;
+    //    //}
+    //    if (buffer>maxTimeAttack) maxTimeAttack=buffer;
+    //}
     for (let i=0;i<panzerOption.length;i++)
     if(i<6)
     {

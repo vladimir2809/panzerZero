@@ -76,13 +76,13 @@
         DMG:1,
         attackPatron:true,
         timeAttack:1000/50,// время перезарядки
-        timeAttackPatron:1000/250,// время перезарядки пулемята
+        timeAttackPatron:1000/333,// время перезарядки пулемята
         hitAttack:10,
-        hitAttackPatron:2,
+        hitAttackPatron:3,
         maskGun:[0,1,0,0],
         speedReaction:100,// скорость реакции при виде врага
         timeReaction:1000/this.speedReaction,// время реакции
-        accuracy:72,// точность//точность
+        accuracy:80,// точность//точность
         mapUp:{
             upHP:{up:[5,10,15],price:[60,200,400],levelOpen:[4,5,6],levelUp:0},
             upTimeAttack:{up:[5,10,15],price:[60,200,400],levelOpen:[4,5,6],levelUp:0},

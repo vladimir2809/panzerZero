@@ -16,7 +16,7 @@ shop={
     widthProduct:500,
     heightProduct:30,
     startNumProduct:0,
-    tabText:["Ремонт","Амуниция","Улучшения","Танки"/*,"Доход"*/],
+    tabText:["Ремонт","Амуниция","Улучшения","Танки","Доход"],
     countProductList:4,
     maxI:0,
     quantityTab:null,
