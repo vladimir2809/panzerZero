@@ -32,6 +32,7 @@ shop={
     labelCoord:{x:20,y:220,width:535,height:130},
     buttonPayPanz:{x:400,y:180,width:100,height:30,text:"Купить!"},
     labelText:'',
+    boughtIncomeArr:[],
     create:function()
     {
 
@@ -262,6 +263,18 @@ shop={
         messageBox.response=0;
 
     },
+    calcBought:function(value)
+    {
+        //let bought = false;
+        for (let j = 0; j < this.boughtIncomeArr.length;j++)
+        {
+            if (this.boughtIncomeArr[j]==value/*listProduct[i+startI].numCount*/ )
+            {
+                return true;
+            }
+        }
+        return false;
+    },
     draw:function()
     {
         context.fillStyle="#000000"
@@ -316,6 +329,14 @@ shop={
                     context.fillText(listProduct[i+startI].text, this.x+25,this.y+60+40*i);
                     context.fillText('цена '+listProduct[i+startI].price+"$", 
                                     this.x+this.widthProduct-100,this.y+60+40*i);
+                    if (this.tabMenu==4)
+                    {                    
+                        if (this.calcBought(listProduct[i+startI].numCount)==true/*bought==true*/)
+                        {
+                            context.fillStyle = '#00FF00';    
+                            context.fillText('Куплено',this.x+this.widthProduct-250,this.y+60+40*i);
+                        }
+                    }
                     if (levelPlayer<listProduct[i+startI].levelOpen)
                     {
                         context.fillStyle="#888888AA";
@@ -516,6 +537,7 @@ shop={
                     }
                     if (money<listProduct[i+startI].price)
                     {
+                        if (this.calcBought(listProduct[i+startI].numCount)==false || this.tabMenu!=4)
                         this.labelText=" Недостачно средств!";
                      
                     }
@@ -532,7 +554,11 @@ shop={
                             if (listProduct[i+startI].id!='repairs'||
                                 panzerArr[numPanzer].HP<panzerArr[numPanzer].maxHP)
                             {
-                                money-=listProduct[i+startI].price;
+                                if (this.calcBought(listProduct[i+startI].numCount)==false || this.tabMenu!=4)
+                                {
+                                    money-=listProduct[i+startI].price;
+                                }
+                                
                             }
                             switch (listProduct[i+startI].id)
                             {
@@ -576,7 +602,11 @@ shop={
                                 break; 
                                 case "income":
                                 {
-                                   addMoney+=listProduct[i+startI].pieces;
+                                   if (this.calcBought(listProduct[i+startI].numCount)==false )
+                                   {
+                                       addMoney+=listProduct[i+startI].pieces;
+                                       this.boughtIncomeArr.push(listProduct[i + startI].numCount);
+                                   }
                                 }
                                 break;
                             }

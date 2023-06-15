@@ -1075,8 +1075,18 @@ function drawAll()// нарисовать все
             }
             addText('QuantityGun',"13px Arial","#0000FF",+gunQuantityArr[playerGun],
                         labelGunXY.x+35,labelGunXY.y+12/*+30*/);
-            let str=money+"$";
-            setText('Money',str,"#00FF00",screenWidth-53-str.length*10,95);
+            if (addMoney==0)
+            {
+
+            
+                let str=money+"$";
+                setText('Money',str,"#00FF00",screenWidth-53-str.length*10,95);
+            }
+            else
+            {
+                let str=money+"$ + "+addMoney+'$';
+                setText('Money',str,"#00FF00",screenWidth-43-str.length*10,95);
+            }
             let y=475
             let stepY=25;
     //        setText('Shot/Hits','Test:'+countTestMixShot+' HP1: '+panzerArr[0].HP+
@@ -1727,6 +1737,7 @@ function startNewGame()
     let countIter=visible==true?mult:mult*(countUpload/mult)*multIter;
     let countBreak=0;
     let timeNow1=new Date().getTime();
+    let time1 = timeNow1 - timeOld;
     setText('Time','Time: '+/*Math.trunc*/(timeNow1-timeOld),"#0000FF",10,400);
     timeOld=new Date().getTime();
     //fireworks.run();
@@ -1756,6 +1767,15 @@ function startNewGame()
             
             money+=addMoney;
             timeAddMoney=0;
+        }
+        if (shop.open==false && boxWindowSelect.open==false && garage.open==false)
+        {
+            if ( checkPressKey("KeyA")||checkPressKey("KeyS")||
+                    checkPressKey("KeyD")||checkPressKey("KeyW"))
+            {
+                timeAddMoney+=time1//time!=0?time:1;
+             //   console.log(timeAddMoney+' '+time1+' '+timeNow+' '+timeOld);
+            }
         }
         if(shop.open==false &&  garage.open==false)controlHuman();// управление программой с клавиатуры
         if (gamePlayer==true && pause==false && flagFocus==true)panzerControll(numPanzer);// управление танком игрока
@@ -1802,14 +1822,7 @@ function startNewGame()
         //        }
         //    }
             controlBigText();
-            if (shop.open==false && boxWindowSelect.open==false && garage.open==false)
-            {
-                if ( checkPressKey("KeyA")||checkPressKey("KeyS")||
-                        checkPressKey("KeyD")||checkPressKey("KeyW"))
-                {
-                    timeAddMoney+=time!=0?time:1;
-                }
-            }
+  
             
            //if (countIterationGameLoop>countUpload) // условия обновления уровня       
             if (killGroupPanzer()==0 ||
@@ -2186,6 +2199,8 @@ function startNewGame()
 //    while(timeNow-timeOld<1)
     timeNow=new Date().getTime();
     time=timeNow-timeOld;
+   // timeOld=new Date().getTime();
+
     let timeLoop=16;
    // setText('Time','Time: '+/*Math.trunc*/(timeLoop-time),"#0000FF",10,400);
     
@@ -2346,6 +2361,7 @@ function controlHuman()// управление программой челове
             bigText.being = false;
             fireworks.stop();
             flagSoundTrack = false;
+            gameWin = false;
         }
         
     }
