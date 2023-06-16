@@ -1066,7 +1066,7 @@ function drawAll()// нарисовать все
             }
             if (bigText.being==true)
             {
-                context.font = "38px Arial";
+                context.font = "32px Arial";
                 context.fillStyle=bigText.color;
                 
                 let widthText=context.measureText(bigText.str).width+10;
@@ -1491,6 +1491,7 @@ function drawKeyForGate(keyGate,rect=true,xx=-1,yy=-1)
     let y;
     if (rect==true && xx==-1 && yy==-1)
     {
+        context.lineWidth = 1;
         context.strokeStyle="blue";
         context.strokeRect (keyGate.x*scale-(camera.x*camera.summMultScalingX),
                         keyGate.y*scale-(camera.y*camera.summMultScalingY),
@@ -1652,6 +1653,7 @@ function saveDataLevel()
     //}
     localStorage.setItem('panzerZeroData',JSON.stringify({panzerInGarageArr:panzerInGarageArr,
                                             panzerNumGarage:panzerNumGarage,
+                                            boughtIncomeArr:shop.boughtIncomeArr,
                                             money:money,XP:XP,gunQuantityArr:gunQuantityArr,
                                             levelPlayer:levelPlayer,levelGame:levelGame,}));
     console.log('Уровень сохранен');
@@ -1690,6 +1692,25 @@ function setDataLevel(data)
         for (let i = 0; i <data.gunQuantityArr.length;i++)
         {
             gunQuantityArr.push(data.gunQuantityArr[i]);
+        }
+    }
+    addMoney = 0;
+    shop.boughtIncomeArr = [];
+    if (Array.isArray(data.boughtIncomeArr)==true)
+    {
+        
+        for (let i = 0; i < data.boughtIncomeArr.length;i++)
+        {
+            shop.boughtIncomeArr.push(data.boughtIncomeArr[i]);
+            let numCount = data.boughtIncomeArr[i];
+            for (let j = 0; j < shopProduct.length;j++)
+            {
+                if (shopProduct[j].id=="income" && shopProduct[j].numCount==numCount)
+                {
+                    addMoney += shopProduct[j].pieces;
+                }
+            }
+            
         }
     }
     if (typeof(data.levelGame)=='number')
@@ -1761,7 +1782,11 @@ function startNewGame()
 //         //   str="Нажмите R для того чтобы войти в гараж";
 //         //   context.fillText(str, (screenWidth/2)-240,400);
 //        }
-        if (XP>=levelXPValue[levelPlayer-1]) levelPlayer++;
+        if (XP>=levelXPValue[levelPlayer-1])
+        {
+            levelPlayer++;
+            initBigText("Поздравляем с новым званием: "+nameRankLevel[levelPlayer-1]+"!!!","#FFFF00",220,5);
+        }
         if (timeAddMoney>=1000) 
         {
             
@@ -1773,7 +1798,7 @@ function startNewGame()
             if ( checkPressKey("KeyA")||checkPressKey("KeyS")||
                     checkPressKey("KeyD")||checkPressKey("KeyW"))
             {
-                timeAddMoney+=time1//time!=0?time:1;
+                timeAddMoney += time1;//time!=0?time:1;
              //   console.log(timeAddMoney+' '+time1+' '+timeNow+' '+timeOld);
             }
         }
