@@ -2352,7 +2352,7 @@ function controlHuman()// управление программой челове
                 && pause==false &&levelGame>1) 
         {
                 shop.start(0);
-}
+        }
     }
     if (keyUpDuration("Escape", 100) && garage.open == false && shop.open == false) 
     {
@@ -3695,7 +3695,7 @@ function checkPointCollisionAll(x,y,noPanzer=false)//попадает ли то�
     if (wallArr.length>0 && checkCollisionArr(objCheck,wallArr)!=-1) return true;
     if (bonusArr.length>0 && checkCollisionArr(objCheck,bonusArr)!=-1) return true;
     if (barrelArr.length>0 && checkCollisionArr(objCheck,barrelArr)!=-1) return true;
-    if (barrelArr.length>0 && checkCollisionArr(objCheck,baseImageArr)!=-1) return true;
+    if (baseImageArr.length>0 && checkCollisionArr(objCheck,baseImageArr)!=-1) return true;
    
     return false;
 
