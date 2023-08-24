@@ -40,7 +40,7 @@ class Battery
 
             this.fireworks.engine.lineWidth = 3;
             this.fireworks.engine.stroke();
-
+            this.fireworks.engine.lineWidth = 1;
             // this.fireworks.engine.fillRect((this.x + salve.x) * this.fireworks.width, salve.y * this.fireworks.height, 10, 10);
         };
 

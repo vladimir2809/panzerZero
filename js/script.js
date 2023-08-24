@@ -34,7 +34,7 @@ var money=option[numOption].startMoney;// деньги игрока
 var addMoney=0;
 var timeAddMoney=0;
 var levelPlayer=1;
-var levelGame=2;
+var levelGame=1;
 var XP=0;
 var gunQuantityArr=[130,500,100,100];
 var labelGunXY={x:635,y:40};
@@ -61,7 +61,7 @@ var countIterationGameLoop=0;// счетчик игровых циклов
 var nameImageArr=["body10","body11",'body12','body13','body14','body15',
                 "body101","body111",'body121','body131','body141',
                 "body20","body21",'body22','body23','body24','body25',
-                "tower1","tower2","tower3","tower4","box","bonusMoney","bonusXP",
+                "tower1","tower2","tower3","tower4"/*,"box"*/,"bonusMoney","bonusXP",
                 "bonusPatron",'bonusBullet','garage',
                 'wall',"water","brickwall","badbrickwall",'bullet',"rocket",
                 'patron','burst','burstBig','burstSmall','barrel',/*'barrel2',*/
@@ -96,6 +96,8 @@ var panzerNumGarage = 0;
 var flagPanzerLoad = false;
 var levelXPValue=[1000,2500,5000,8000,12000,20000,30000,50000,];
 var gameWin = false;
+var ADVOpen = false;
+var callADVBeginApp = false;
 var nameRankLevel = ['Рядовой','Сержант','Старшина','Прапорщик','Лейтенант','Капитан',
                      'Майор','Полковник','Генерал',];
 var keysGame = {
@@ -108,6 +110,51 @@ var lastShop={
     numEntrance:0,
 }
 var strFile='';
+var ADV = {
+    flagInGame: false,
+    timerOn:false,
+    time: 0,
+    timeOld:0,
+    maxTime: 180000,
+};
+var initYsdk = false;
+YaGames
+    .init()
+    .then(ysdk => {
+        console.log('Yandex SDK initialized');
+        window.ysdk = ysdk;
+        initYsdk = true;
+    });
+function adversting()
+{
+    var interval=setInterval(function () {
+        if (initYsdk==true)
+        {
+            ysdk.adv.showFullscreenAdv({
+                callbacks: {
+                    onClose: function () {
+                        ADVOpen = false
+                        console.log('adversting close');
+
+                    },
+                    onOpen: function () {
+                        ADVOpen = true;
+                        console.log('adversting open');
+                    },
+                    onError: function () {
+                        ADVOpen = false
+                        console.log('adversting Error');
+
+                    },
+                    onOffline: function () {
+                        ADVOpen = false;
+                    }
+                },
+            });
+            clearInterval(interval);
+        }
+    },100);
+}
 // обьект танк
 var panzer={
     id:0,
@@ -260,7 +307,7 @@ var wall={
     y:null,
     being:false,
     type:0,// если тип 0 - это стена, 1 - вода, 2 - кирпичная стена
-    HP:100,
+    HP:40,
     state:0,
     width:mapSize,
     height:mapSize,
@@ -412,6 +459,13 @@ bigText={
     value:null,
     
 }
+textNewRange = {
+    being:false,
+    count:0,
+    maxCount:100,
+    str:'',
+    color:"#FFFF00",
+}
 buttonGarage = {
     being: true,
     x:10,
@@ -446,6 +500,26 @@ panzerArr=[];// массив танков
 panzerInGarageArr=[];
 textArr=new Object();// массив текстов
 //panzerArr.push(panzer);
+function callADV() 
+{
+    //if (ADV.timerOn==false)
+    //{
+    //    ADV.timerOn = true;
+    //    ADV.time = ADV.timeOld = new Date().getTime();
+    //}
+    
+    if (ADV.timerOn==true)
+    {
+        ADV.time = new Date().getTime();
+        console.log(ADV.time - ADV.timeOld);
+    }
+    if (ADV.time > ADV.timeOld + ADV.maxTime)
+    {
+        ADV.timeOld = new Date().getTime(); 
+        adversting();
+    }
+       
+}
 function addText(key,font,fill,str,x,y)// добавить текс
 {
     textArr[key]={font:font,fill:fill,str:str,x:x,y:y};
@@ -781,7 +855,7 @@ function preload()// функция предзагрузки
         height: screenHeight,
         listSelect:['Новая игра','Продолжить'],
         listFlagOn:[true,false],
-        header:'Panzer Zero',
+        header:'Танковый герой',
         headerFontSize: 50,
         widthOneItem: 300,
         heightOneItem: 60,
@@ -1031,7 +1105,7 @@ function drawAll()// нарисовать все
             for (let i=0;i<panzerArr.length;i++)
             {
                 if (panzerArr[i].being==true)
-                if (checkCollision(camera,panzerArr[i])==true || scale<=1)
+                if (checkCollision(camera,panzerArr[i])==true /*|| scale<=1*/)
                 {
                     drawPanzer(context,panzerArr[i],camera,scale);
                     if (panzerArr[i].group==1)
@@ -1073,6 +1147,15 @@ function drawAll()// нарисовать все
                 let x=screenWidth/2-widthText/2;
                 context.fillText(bigText.str,x,280);
             }
+            if (textNewRange.being==true)
+            {
+                context.font = "32px Arial";
+                context.fillStyle=textNewRange.color;
+                
+                let widthText=context.measureText(textNewRange.str).width+10;
+                let x=screenWidth/2-widthText/2;
+                context.fillText(textNewRange.str,x,280);
+            }
             addText('QuantityGun',"13px Arial","#0000FF",+gunQuantityArr[playerGun],
                         labelGunXY.x+35,labelGunXY.y+12/*+30*/);
             if (addMoney==0)
@@ -1095,8 +1178,12 @@ function drawAll()// нарисовать все
             {
                 setText('Level','Звание: '+nameRankLevel[levelPlayer-1],"#44FF44",10,y);
                 context.lineWidth = 1;
-                drawButton(buttonGarage);
-                drawButton(buttonShop);
+                //drawButton(buttonGarage);
+                //drawButton(buttonShop);
+            }
+            else 
+            {
+                setText('Level','',"#44FF44",10,y);
             }
             
            // money++;
@@ -1116,6 +1203,10 @@ function drawAll()// нарисовать все
                         setText('XP','XP: '+XP,"#FF0000",10,y+stepY);
                     }
                    
+                }
+                else
+                {
+                    setText('XP',"","#FF0000",10,y+stepY);
                 }
 //                setText('Balance','Balance: '+calcBalance(false),
 //                        calcBalance()<0?"#FF0000":"#00FF00",10,y+stepY*2);
@@ -1548,20 +1639,33 @@ function controlBigText()
 {
     if (bigText.being==true)
     {
-        if (bigText.maxCount!=0)bigText.count++;
+        if (bigText.maxCount!=0 && 
+            (mainMenu.being==true || gameMenu.being==true ||
+            gameSettings.being==true || startScreen.being==true)==false
+           )
+        {
+            bigText.count++;
+        }
        // pause=true;
         if (bigText.count>=bigText.maxCount && bigText.maxCount!=0 )
         {
             bigText.being=false;
             pause=false;
+            console.log ('BIG Text')
             bigText.count=0;
             switch (bigText.value)
             {
                 case 1://  уровень пройден
                     {
-                        
+                        if (levelGame==1)
+                        {
+                             gunQuantityArr[2]=0;//[130,500,100,100];
+                             gunQuantityArr[3]=0;
+                        }
                         uploadLevelOrRestart(0);
+                   
                         saveDataLevel();
+                        callADV();
                     }
                     break;
                 case 2:// вы проиграли
@@ -1742,12 +1846,17 @@ function startNewGame()
     mainMenu.close();
    // initMap(levelMap[levelGame-1]);
     playerGun=1;
+    gunQuantityArr=[130,500,100,100];
+    addMoney = 0;
+    XP = 0;
+    money = 0;
+    levelPlayer = 1;
     let panz=copyPanz(panzerArr[numPanzer]);
     console.log("panz start");
     console.log(panz);
     panzerInGarageArr.push(panz);
     calcQuantityPanzer();
-
+    drawAll();
     startScreen.start();
 }
  function gameLoop(mult,visible)// игровой цикл
@@ -1759,7 +1868,7 @@ function startNewGame()
     let countBreak=0;
     let timeNow1=new Date().getTime();
     let time1 = timeNow1 - timeOld;
-    setText('Time','Time: '+/*Math.trunc*/(timeNow1-timeOld),"#0000FF",10,400);
+    //setText('Time','Time: '+/*Math.trunc*/(timeNow1-timeOld),"#0000FF",10,400);
     timeOld=new Date().getTime();
     //fireworks.run();
 //    if (imageLoad==true && countIterationGameLoop==0 ) 
@@ -1768,8 +1877,12 @@ function startNewGame()
 //        console.log(changeColorImg(context,imageArr.get('body10'), [181,230,29],[255,0,0]));
 //        
 //    }
-    
-    if (imageLoad==true && loadLevel==true)
+    if (callADVBeginApp==false)
+    {
+        adversting();
+        callADVBeginApp = true;
+    }
+    if (imageLoad==true && loadLevel==true && ADVOpen==false)
     {
     
        // playSoundTrack();
@@ -1782,10 +1895,26 @@ function startNewGame()
 //         //   str="Нажмите R для того чтобы войти в гараж";
 //         //   context.fillText(str, (screenWidth/2)-240,400);
 //        }
+        if (ADV.timerOn==false)
+        {
+            ADV.timerOn = true;
+            ADV.time = ADV.timeOld = new Date().getTime();
+        }
+
+        if (textNewRange.being==true)
+        {
+            textNewRange.count++;
+            if (textNewRange.count>textNewRange.maxCount)
+            {
+                textNewRange.being = false;
+                textNewRange.count = 0;
+            }
+        }
         if (XP>=levelXPValue[levelPlayer-1])
         {
             levelPlayer++;
-            initBigText("Поздравляем с новым званием: "+nameRankLevel[levelPlayer-1]+"!!!","#FFFF00",220,5);
+            textNewRange.being = true;
+            textNewRange.str="Поздравляем с новым званием: "+nameRankLevel[levelPlayer-1]+"!!!";
         }
         if (timeAddMoney>=1000) 
         {
@@ -1822,33 +1951,7 @@ function startNewGame()
                 }
 
             }
-           // calibrationAccuracy();
-
-//            if (keyUpDuration('KeyP',300))
-//            {
-//                restartLevel();
-//            }
-        //    if (false)
-        //    {    
-        //        if (keyUpDuration('KeyV',300)) // вкл\выкл отображение игры
-        //        {
-        //            if (flagPressV==false)
-        //            {
-        //                visibleGame=!visibleGame;
-        //                flagPressV=true;
-        //                uploadLevelOrRestart();
-        ////                    countIterationGameLoop=0;
-        ////                    countBeforeUpload=0;
-        //             }
-        //        }
-        //        else
-        //        {
-        //            flagPressV=false;
-        //        }
-        //    }
             controlBigText();
-  
-            
            //if (countIterationGameLoop>countUpload) // условия обновления уровня       
             if (killGroupPanzer()==0 ||
                     (killGroupPanzer()==1 && checkKillBaseAll()==true)
@@ -1864,73 +1967,81 @@ function startNewGame()
                     {
                         if (calcBalance()>0) win++; else win--;
                     }
-                    if (killGroupPanzer()==0 && killGroupPanzer()!=-1 && levelUpdates==false)
+                    if  (textNewRange.being==false)
                     {
-                        if (pause==false)
+                        if (killGroupPanzer()==0 && killGroupPanzer()!=-1 && levelUpdates==false )
                         {
-                            let num=calcNumById(panzerArr[numPanzer].id,
-                                                                panzerInGarageArr);
-                          //deleteElemArrToNum
-                        //    alert(num+" "+panzerArr[numPanzer].id+" "+panzerInGarageArr[0].id);
-                        //    alert (num);
-                            deleteElemArrToNum(panzerInGarageArr,num);
-                            let flag=false;
-                            if (panzerInGarageArr.length>0 &&
-                                                garageImageArr.length>0)
+                            if (ADVOpen==false && garage.open==false && shop.open==false)
                             {
-                                if (garage.open==false)garage.start();
+                                callADV();
                             }
-                            else
+                            if (pause==false /*&& ADVOpen==false*/)
                             {
-                                if (money>=500)
+                                let num=calcNumById(panzerArr[numPanzer].id,
+                                                                    panzerInGarageArr);
+                              //deleteElemArrToNum
+                            //    alert(num+" "+panzerArr[numPanzer].id+" "+panzerInGarageArr[0].id);
+                            //    alert (num);
+                                deleteElemArrToNum(panzerInGarageArr,num);
+                                let flag=false;
+                                if (panzerInGarageArr.length>0 &&
+                                                    garageImageArr.length>0)
                                 {
-                                    if (shopImageArr.length>0)
-                                    {
-                                        if (shop.open==false)shop.start(0,true); 
-                                    }
-                                    else
-                                    {
-                                       // uploadLevelOrRestart();
-                                       flag=true;
-                                       // 
-                                        //console.log(panzerArr);
-                                   //     alert("Game Over");
-                                    }
-                                        
-                                    
+                                    if (garage.open==false)garage.start();
                                 }
                                 else
                                 {
-                                  //  alert("Game Over");
-                                 //   uploadLevelOrRestart();
-                                    flag=true;
-                                }
-                                if (flag==true)
-                                {
-                                    initBigText("Вы проиграли","#FF0000",130,2);
-                                    levelUpdates = true;
+                                    if (money>=500)
+                                    {
+                                        if (shopImageArr.length>0)
+                                        {
+                                            if (shop.open==false)shop.start(0,true); 
+                                        }
+                                        else
+                                        {
+                                           // uploadLevelOrRestart();
+                                           flag=true;
+                                           // 
+                                            //console.log(panzerArr);
+                                       //     alert("Game Over");
+                                        }
+                                        
+                                    
+                                    }
+                                    else
+                                    {
+                                      //  alert("Game Over");
+                                     //   uploadLevelOrRestart();
+                                        flag=true;
+                                    }
+                                    if (flag==true)
+                                    {
+                                        initBigText("Вы проиграли","#FF0000",130,2);
+                                        levelUpdates = true;
+                                    }
                                 }
                             }
                         }
-                    }
-                    else if (killGroupPanzer()==1 && killGroupPanzer()!=-1&&
-                            checkKillBaseAll()==true
-                            )
-                    {
-                        
-                        if (levelGame>=levelMap.length)
+                        else if (killGroupPanzer()==1 && killGroupPanzer()!=-1&&
+                                checkKillBaseAll()==true
+                                )
                         {
-                            initBigText("Поздравляем вы прошли игру!!!","#00FF00",0,3);
-                            gameWin = true;
-                        }
-                        else
-                        {
-                        //    saveDataLevel();
-                          initBigText("Уровень пройден","#00FF00",130,1); 
-                        }
-                        console.log(panzerArr);
                         
-//                        alert("YOU WIN!!!");
+                            if (levelGame>=levelMap.length )
+                            {
+                                //initBigText("Поздравляем вы прошли игру!!!","#00FF00",0,3);
+                                //gameWin = true;
+                                if (gameWin==false && mainMenu.being==false) gameWinner();
+                            }
+                            else
+                            {
+                            //    saveDataLevel();
+                              initBigText("Уровень пройден","#00FF00",130,1); 
+                            }
+                          //  console.log(panzerArr);
+                        
+    //                        alert("YOU WIN!!!");
+                        }
                     }
 //                    countIterationGameLoop=0;
 //                    countBeforeUpload=0;
@@ -1952,209 +2063,164 @@ function startNewGame()
                 controlBase();
                 collisionPanzerKeyGate();
                 countIterationGameLoop++;
-                if (gameSettings.being==false && mouseLeftClick()==true && levelGame>1)
-                {
-                    if (checkInObj(buttonGarage,mouseX,mouseY)==true)
-                    {
-                        garage.start();
-                    }
-                    if (checkInObj(buttonShop,mouseX,mouseY)==true)
-                    {
-                        shop.start();
-                    }
-                }
             
             }
-            //function startNewGame()
-            //{
-            //    removeDataLevel();
-            //    messageNewGame.close();
-            //    mainMenu.close();
-            //    startScreen.start();
-            //}
-            //if (mainMenu.being == true && messageNewGame.being == false)
-            //{
-            //    mainMenu.update();
-            //    mainMenu.selectOn(function (select) {
-            //        switch (select) 
-            //        {
-            //            case 'Продолжить': 
-            //                {
-            //                    mainMenu.close();
-            //                    startScreen.start();
-            //                    //if (localStorage.getItem('panzerZeroData')!=null &&
-            //                    //    localStorage.getItem('panzerZeroData')!=undefined)
-            //                    if (flagSaveDataStoroge==true )
-            //                    {
-            //                        readDatalevel();
-            //                        uploadLevelOrRestart(2);
-            //                       // initMap(levelMap[levelGame-1]);
-            //                    }
-            //                    break;
-            //                }
-            //            case 'Новая игра':
-            //                {
-            //                    //mainMenu.close();
-            //                    //gameSettings.start();
-            //                    if (flagSaveDataStoroge==true)
-            //                    {
-            //                        messageNewGame.start("Вы действительно хотите начать новую игру? Прогресс будет утерян.",
-            //                                        ['Да','Нет']);
-            //                    }
-                                
-            //                    else
-            //                    {
-            //                        startNewGame();
-            //                    }
-                               
-            //                    break;
-            //                }
-                        
-            //        }
-            //    });
-            //}
-            if (gameMenu.being==true && messageExitMainMenu.being==false)
-            {
-                gameMenu.update();
-                gameMenu.selectOn(function (select) {
-                    switch (select) {
-                        case 'Продолжить':
-                            {
-                                gameMenu.close();
-                                //startScreen.start();
-                                pause = false;
-                                if (flagSoundTrack==true)  soundTrack.play();
-                                break;
-                            }
-                        case 'Настройки':
-                            {
-                                gameMenu.close();
-                                gameSettings.start();
-                                break;
-                            }
-                        case 'Помошь':
-                            {
-                                gameMenu.close();
-                                startScreen.start();
-                                break;
-                            }
-                        case 'Главное меню':
-                            {
-                                messageExitMainMenu.start('Вы действительно хотите выйты?',['Да','Нет']);
-                                //gameMenu.close();
-                                //mainMenu.start();
-                                //startScreen.start();
-                                break;
-                            }
-
-                    }
-                });
-            }
-            if (gameSettings.being==true)
-            {
-                gameSettings.update();
-                //let flagAudio = false;
-                gameSettings.changeProp(function (id, value) {
-                    console.log('idProp '+id+' value '+value);
-                    switch (id)
-                    {
-                        case 0:
-                            {
-                                volumeSoundTrack = value;
-                                soundTrack.volume(volumeSoundTrack);
-                                if (soundTrack.playing()==false)
-                                {
-                                    soundTrack.play();
-                                    setTimeout(function () {
-                                        soundTrack.pause();
-                                    }, 2000);
-                                }
-                                break;
-                            }
-                        case 1:
-                            {
-                                volumeAudio = value;
-                                audio.volume(volumeAudio);
-                                if (flagAudio==false)
-                                {
-                                    timerAudio= setInterval(function () {
-                                        if (checkMouseLeft()==false)
-                                        {
-                                            audio.play('shot');
-                                            flagAudio = false;
-                                            clearInterval(timerAudio);
-                                            
-                                        }
-                                    });
-
-                                }
-                                flagAudio = true;            
-                                break;
-                            }
-                        case 2:
-                            {
-                                keysGame.buttonShop = value;
-                                break;
-                            }
-                        case 3:
-                            {
-                                keysGame.buttonGarage = value;
-                                break;
-                            }
-                        case 4:
-                            {
-                                keysGame.buttonOpen = value;
-                                break;
-                            }
-                    }
-                    //alert(5252);
-                });
-                
-            
-                gameSettings.closing(function () {
-                    //gameSettings.close();
-                    saveDataOption();
-                    drawAll();
-                    gameMenu.start();
-
-                });
-            }
-            if (messageExitMainMenu.being==true)
-            {
-                messageExitMainMenu.update(mouseLeftClick());
-                messageExitMainMenu.getSelect(function (select) {
-                    switch(select)
-                    {
-                        case 0: 
-                            {
-                                
-                                messageExitMainMenu.close();
-                                gameMenu.close();
-                                mainMenu.start();
-                                soundTrack.stop();
-                                flagSoundTrack = false;
-                                break;
-                            };
-                        case 1: 
-                        {
-                                messageExitMainMenu.close();
-                                gameMenu.close();
-                                drawAll();
-                                gameMenu.start();
-                                break; ;
-                        }
-                    }
-                });
-            }
-   
-            
-            //controlBigText();
-            
-
-
         }
     }
-    if (mainMenu.being == true && messageNewGame.being == false)
+    if (gameMenu.being==true && messageExitMainMenu.being==false)
+    {
+        gameMenu.update();
+        gameMenu.selectOn(function (select) {
+            switch (select) {
+                case 'Продолжить':
+                    {
+                        gameMenu.close();
+                        //startScreen.start();
+                        pause = false;
+                        if (flagSoundTrack==true)  soundTrack.play();
+                        break;
+                    }
+                case 'Настройки':
+                    {
+                        gameMenu.close();
+                        gameSettings.start();
+                        break;
+                    }
+                case 'Помошь':
+                    {
+                        gameMenu.close();
+                        startScreen.start();
+                        break;
+                    }
+                case 'Главное меню':
+                    {
+                        messageExitMainMenu.start('Вы действительно хотите выйты?',['Да','Нет']);
+                        //gameMenu.close();
+                        //mainMenu.start();
+                        //startScreen.start();
+                        break;
+                    }
+
+            }
+        });
+    }
+    if (gameSettings.being==true)
+    {
+        gameSettings.update();
+        //let flagAudio = false;
+        gameSettings.changeProp(function (id, value) {
+            console.log('idProp '+id+' value '+value);
+            switch (id)
+            {
+                case 0:
+                    {
+                        volumeSoundTrack = value;
+                        soundTrack.volume(volumeSoundTrack);
+                        if (soundTrack.playing()==false)
+                        {
+                            soundTrack.play();
+                            setTimeout(function () {
+                                soundTrack.pause();
+                            }, 2000);
+                        }
+                        break;
+                    }
+                case 1:
+                    {
+                        volumeAudio = value;
+                        audio.volume(volumeAudio);
+                        if (flagAudio==false)
+                        {
+                            timerAudio= setInterval(function () {
+                                if (checkMouseLeft()==false)
+                                {
+                                    audio.play('shot');
+                                    flagAudio = false;
+                                    clearInterval(timerAudio);
+                                            
+                                }
+                            });
+
+                        }
+                        flagAudio = true;            
+                        break;
+                    }
+                case 2:
+                    {
+                        keysGame.buttonShop = value;
+                        break;
+                    }
+                case 3:
+                    {
+                        keysGame.buttonGarage = value;
+                        break;
+                    }
+                case 4:
+                    {
+                        keysGame.buttonOpen = value;
+                        break;
+                    }
+            }
+            //alert(5252);
+        });
+                
+            
+        gameSettings.closing(function () {
+            //gameSettings.close();
+            saveDataOption();
+            drawAll();
+            gameMenu.start();
+
+        });
+    }
+    if (messageExitMainMenu.being==true)
+    {
+        messageExitMainMenu.update(mouseLeftClick());
+        messageExitMainMenu.getSelect(function (select) {
+            switch(select)
+            {
+                case 0: 
+                    {
+                                
+                        messageExitMainMenu.close();
+                        gameMenu.close();
+                        if (localStorage.getItem('panzerZeroData')!=null &&
+                        localStorage.getItem('panzerZeroData')!=undefined && 
+                            levelGame>1)
+                        {
+                            flagSaveDataStoroge = true;
+                                    
+                        }
+                        else
+                        {   
+                                flagSaveDataStoroge = false;  
+                        }
+                        if (flagSaveDataStoroge == true) 
+                        {
+                            mainMenu.listFlagOn[1] = true;
+                        }
+                        else
+                        {
+                            mainMenu.listFlagOn[1] = false;
+                        }
+                                    
+                        mainMenu.start();
+                        soundTrack.stop();
+                        flagSoundTrack = false;
+                        break;
+                    };
+                case 1: 
+                {
+                        messageExitMainMenu.close();
+                        gameMenu.close();
+                        drawAll();
+                        gameMenu.start();
+                        break; ;
+                }
+            }
+        });
+    }
+    if (mainMenu.being == true && messageNewGame.being == false && ADVOpen==false)
     {
         mainMenu.update();
         mainMenu.selectOn(function (select) {
@@ -2197,7 +2263,7 @@ function startNewGame()
             }
         });
      }
-     if (messageNewGame.being==true)
+    if (messageNewGame.being==true && ADVOpen==false)
      {
         messageNewGame.update(mouseLeftClick());
         messageNewGame.getSelect(function (select) {
@@ -2217,6 +2283,10 @@ function startNewGame()
             }
         });
      }
+    if  (mainMenu.being==true || gameMenu.being==true || gameSettings.being==true || startScreen.being==true)
+    {
+        pause = true;
+    }
 //    do
 //    {
 //       timeNow=new Date().getTime();
@@ -2429,26 +2499,35 @@ function controlHuman()// управление программой челове
         //  nextNumPanzer(true);
         fireworks.stop();
     }
-    if (keyUpDuration("KeyH",100)) 
-    {
-        initBigText("Поздравляем вы прошли игру!!!","#00FF00",0,3);
-        gameWin = true;
-        fireworks = new Fireworks();
-        fireworks.run();
-    }
-    if (checkPressKey('KeyQ') && checkPressKey('ControlLeft') && modeDev==false
-            && pause==false) 
-    {
-        modeDev=true;
-        initBigText("Режим разработчика активирован.","#0000FF",80,-1);
-        document.getElementById('formText').style.display="block"; 
-    }
+ 
+    //if (checkPressKey('KeyQ') && checkPressKey('ControlLeft') && modeDev==false
+    //        && pause==false) 
+    //{
+    //    modeDev=true;
+    //    initBigText("Режим разработчика активирован.","#0000FF",80,-1);
+    //    document.getElementById('formText').style.display="block"; 
+    //}
     if (modeDev==true)
-    {
+    {  
+        if (keyUpDuration("KeyH",100)) 
+        {
+            gameWinner();
+        }
         if (keyUpDuration("KeyN",100)) 
         {
-            
-            initBigText("Уровень пройден","#00FF00",130,1); 
+            for (let i = 0; i < panzerArr.length;i++)
+            {
+                if (i!=numPanzer)
+                {
+                    killPanzer(i);
+                    //panzerArr[i].HP = -1;
+                }
+            }
+            for (let i=0;i<baseImageArr.length;i++)
+            {
+                baseImageArr[i].being = false;
+            }
+            //initBigText("Уровень пройден","#00FF00",130,1); 
             //uploadLevelOrRestart(false);
         } 
         if (keyUpDuration("KeyL",100)) 
@@ -2458,6 +2537,7 @@ function controlHuman()// управление программой челове
         
         if (keyUpDuration("KeyK",100))
         {
+            money = 0;
             killPanzer(0);
 //            panzerArr[numPanzer].being=false;
         } 
@@ -2532,6 +2612,15 @@ function controlHuman()// управление программой челове
     
    
 }
+function gameWinner()
+{
+    initBigText("Поздравляем вы прошли игру!!!","#00FF00",0,3);
+    pause = true;
+    gameWin = true;
+    fireworks = new Fireworks();
+    fireworks.run();
+    console.log('Winner');
+}
 function nextGun(dir)
 {
     let count=0;
@@ -2585,7 +2674,7 @@ function panzerControll(num)// функция автоуправления та�
     }
     if (checkMouseLeft()==false) flagShot=false; 
     if (flagShot==false)
-    if((checkInObj(buttonGarage,mouseX,mouseY)==false && checkInObj(buttonShop,mouseX,mouseY)==false))
+   /* if((checkInObj(buttonGarage,mouseX,mouseY)==false && checkInObj(buttonShop,mouseX,mouseY)==false))*/
     if (checkMouseLeft()==true && num==numPanzer &&panzerArr[num].being==true)// условие выстрела
         {
             calcPanzerShotXY(num);
@@ -2624,9 +2713,9 @@ function panzerControll(num)// функция автоуправления та�
                 );
                 panzerArr[num].countAttack=0;
                 gunQuantityArr[playerGun]--;
-                console.log(panzerArr[num].x+' '+panzerArr[num].x+' '+
-                        ' '+panzerArr[num].shotX+" "+panzerArr[num].shotY+
-                        " "+mouseX+' '+mouseY);
+                //console.log(panzerArr[num].x+' '+panzerArr[num].x+' '+
+                //        ' '+panzerArr[num].shotX+" "+panzerArr[num].shotY+
+                //        " "+mouseX+' '+mouseY);
                 
                 if (playerGun==1) audio.play("patron");
                 if (playerGun==0) audio.play("shot");
@@ -3767,8 +3856,8 @@ function checkCollision(obj1,obj2)// проверка столкновений �
     x1=obj2.x;//-dx1;
     y1=obj2.y;//-dy1;
     ////console.log('x '+x+' y '+y+'  x1'+x1+'  y1'+y1+'  Dx1'+dx1+'  Dy1'+dy1);
-    if (x<=x1+obj2.width && x+obj1.width>=x1 &&
-        y<=y1+obj2.height && y+obj1.height>=y1)
+    if (x<x1+obj2.width && x+obj1.width>x1 &&
+        y<y1+obj2.height && y+obj1.height>y1)
     {
         return true;
     }

@@ -92,13 +92,13 @@ messageBox={
         clearInterval(messageBox.timerId);
     },
     draw:function(){
-        context.fillStyle="#000000"
+        context.fillStyle="#0000FF"
         context.fillRect(this.x,this.y,this.width,this.height);
         context.font = this.font;
         context.fillStyle="#FFFFFF";
         let strLenPix=context.measureText(this.message).width;
         context.fillText(this.message, this.x+this.width/2-strLenPix/2.0,this.y+20);
-        context.strokeStyle="#FFFFFF"
+        context.strokeStyle="#FF0000"
         for (let i=0;i<this.buttonArr.length;i++)
         {
             let a=this.a;

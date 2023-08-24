@@ -23,7 +23,7 @@ startScreen={
         context.fillRect(0,0,camera.width,camera.height);// очистка экрана
         context.font = "58px Arial";
         context.fillStyle='#FF8800';
-        context.fillText("PANZER-ZERO",165,60);
+        context.fillText("Танковый герой",157,60);
         context.font = "38px Arial";
         context.fillStyle='#3333FF';
         let y=30;
